@@ -233,7 +233,8 @@ angular.module('activitiApp')
 
             $scope.selectToday = function(field, callback) {
                 var today = new Date();
-                today = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
+         //       console.log("today : " + today)
+              //  today = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
                 field.value = today;
                 if (callback) {
                     callback(field.value);
@@ -671,7 +672,11 @@ angular.module('activitiApp')
                             }
                             
                         } else if (field.type === 'date' && field.value) {
-                        	postData.values[field.id] = field.value.toISOString().slice(0, 10);
+                        	//处理日期类型
+                        //	console.log("before :"+field.value);
+                        	//postData.values[field.id] = field.value.toISOString().slice(0, 10);
+                        	postData.values[field.id] = field.value;
+                        	//console.log("date form data : "+postData.values[field.id])
 
                         } else {
                             postData.values[field.id] = field.value;

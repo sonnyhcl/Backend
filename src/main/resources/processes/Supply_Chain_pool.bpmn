@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="pool1" name="Vessel" processRef="supply_chain_pool"></participant>
+    <participant id="pool2" name="Manager" processRef="process_pool2"></participant>
+    <participant id="pool3" name="Coordinator" processRef="process_pool3"></participant>
+    <participant id="pool4" name="Supplier" processRef="process_pool4"></participant>
+  </collaboration>
+  <message id="Msg_StartManager" name="Msg_StartManager"></message>
+  <message id="Msg_StartCood" name="Msg_StartCood"></message>
+  <message id="Msg_StartSupplier" name="Msg_StartSupplier"></message>
+  <process id="supply_chain_pool" name="Vessel" isExecutable="true">
+    <laneSet id="laneSet_supply_chain_pool">
+      <lane id="lane1" name="vessel">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>usertask1</flowNodeRef>
+        <flowNodeRef>usertask2</flowNodeRef>
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>manualtask3</flowNodeRef>
+        <flowNodeRef>sid-C930C379-7793-458A-8A06-B47E1D08B8A1</flowNodeRef>
+        <flowNodeRef>flow1</flowNodeRef>
+        <flowNodeRef>flow27</flowNodeRef>
+        <flowNodeRef>flow4</flowNodeRef>
+        <flowNodeRef>flow3</flowNodeRef>
+        <flowNodeRef>sid-904E277D-3E5B-4498-B9DB-806376E9124B</flowNodeRef>
+        <flowNodeRef>flow26</flowNodeRef>
+        <flowNodeRef>flow7</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start" activiti:initiator="${sailor}" activiti:formKey="start-form">
+      <extensionElements>
+        <activiti:formProperty id="sailor" name="船员" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="V_id" name="船号" type="string"></activiti:formProperty>
+        <activiti:executionListener event="start" delegateExpression="${initListener}"></activiti:executionListener>
+      </extensionElements>
+    </startEvent>
+    <userTask id="usertask1" name="Apply for spare parts">
+      <extensionElements>
+        <activiti:formProperty id="sp_name" name="配件名称" type="string" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="usertask2" name="Anchoring">
+      <extensionElements>
+        <activiti:formProperty id="anchorDuration" name="下锚点到目的港预计时长(min)" type="long" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="exclusivegateway1"></exclusiveGateway>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <manualTask id="manualtask3" name="Delivering"></manualTask>
+    <userTask id="sid-C930C379-7793-458A-8A06-B47E1D08B8A1" name="Voyaging">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="${voyaTaskStartListener}"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
+    <sequenceFlow id="flow27" sourceRef="manualtask3" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="usertask2" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="sid-C930C379-7793-458A-8A06-B47E1D08B8A1" targetRef="usertask2"></sequenceFlow>
+    <sequenceFlow id="sid-904E277D-3E5B-4498-B9DB-806376E9124B" sourceRef="usertask1" targetRef="sid-C930C379-7793-458A-8A06-B47E1D08B8A1"></sequenceFlow>
+    <sequenceFlow id="flow26" name="交货成功" sourceRef="exclusivegateway1" targetRef="manualtask3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${V_Info.V_TargetLocation.X_Coor  == V_Info.X_coor && V_Info.V_TargetLocation.Y_Coor  == V_Info.Y_coor }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow7" name="交货失败" sourceRef="exclusivegateway1" targetRef="sid-C930C379-7793-458A-8A06-B47E1D08B8A1">
+      <extensionElements>
+        <activiti:executionListener event="take" delegateExpression="${flowIntoVoyaListener}"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!(NowLoc.X_coor == V_TargLoc.X_coor && NowLoc.Y_coor == V_TargLoc.Y_coor)}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <process id="process_pool2" name="Manager" isExecutable="true">
+    <laneSet id="laneSet_process_pool2">
+      <lane id="lane2" name="manager">
+        <flowNodeRef>messagestartevent1</flowNodeRef>
+        <flowNodeRef>usertask4</flowNodeRef>
+        <flowNodeRef>usertask5</flowNodeRef>
+        <flowNodeRef>endevent2</flowNodeRef>
+        <flowNodeRef>endevent4</flowNodeRef>
+        <flowNodeRef>flow10</flowNodeRef>
+        <flowNodeRef>flow11</flowNodeRef>
+        <flowNodeRef>flow12</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="messagestartevent1" name="Message start">
+      <messageEventDefinition messageRef="Msg_StartManager"></messageEventDefinition>
+    </startEvent>
+    <userTask id="usertask4" name="Approving"></userTask>
+    <userTask id="usertask5" name="Ordering"></userTask>
+    <endEvent id="endevent2" name="End"></endEvent>
+    <endEvent id="endevent4" name="End"></endEvent>
+    <sequenceFlow id="flow10" sourceRef="messagestartevent1" targetRef="usertask4"></sequenceFlow>
+    <sequenceFlow id="flow11" sourceRef="usertask4" targetRef="usertask5"></sequenceFlow>
+    <sequenceFlow id="flow12" sourceRef="usertask5" targetRef="endevent2"></sequenceFlow>
+  </process>
+  <process id="process_pool3" name="Coordinator" isExecutable="true">
+    <laneSet id="laneSet_process_pool3">
+      <lane id="lane3" name="coordinator">
+        <flowNodeRef>messagestartevent6</flowNodeRef>
+        <flowNodeRef>endevent5</flowNodeRef>
+        <flowNodeRef>businessruletask1</flowNodeRef>
+        <flowNodeRef>flow20</flowNodeRef>
+        <flowNodeRef>flow21</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="messagestartevent6" name="Message start">
+      <messageEventDefinition messageRef="Msg_StartCood"></messageEventDefinition>
+    </startEvent>
+    <endEvent id="endevent5" name="End"></endEvent>
+    <manualTask id="businessruletask1" name="Coordinator Rule Task"></manualTask>
+    <sequenceFlow id="flow20" sourceRef="messagestartevent6" targetRef="businessruletask1"></sequenceFlow>
+    <sequenceFlow id="flow21" sourceRef="businessruletask1" targetRef="endevent5"></sequenceFlow>
+  </process>
+  <process id="process_pool4" name="Supplier" isExecutable="true">
+    <laneSet id="laneSet_process_pool4">
+      <lane id="lane4" name="weagon">
+        <flowNodeRef>messagestartevent3</flowNodeRef>
+        <flowNodeRef>manualtask1</flowNodeRef>
+        <flowNodeRef>manualtask2</flowNodeRef>
+        <flowNodeRef>endevent3</flowNodeRef>
+        <flowNodeRef>servicetask1</flowNodeRef>
+        <flowNodeRef>sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986</flowNodeRef>
+        <flowNodeRef>sid-E92C70A1-4FB0-4394-96BC-F3F7E8DA93B0</flowNodeRef>
+        <flowNodeRef>flow13</flowNodeRef>
+        <flowNodeRef>flow16</flowNodeRef>
+        <flowNodeRef>flow23</flowNodeRef>
+        <flowNodeRef>sid-334B0B32-B3C7-4F48-973A-519927E06868</flowNodeRef>
+        <flowNodeRef>flow24</flowNodeRef>
+        <flowNodeRef>sid-1256AAD1-78F7-4372-9F14-DCCE63BFD424</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="messagestartevent3" name="Message start">
+      <messageEventDefinition messageRef="Msg_StartSupplier"></messageEventDefinition>
+    </startEvent>
+    <manualTask id="manualtask1" name="Prepare spare parts"></manualTask>
+    <manualTask id="manualtask2" name="delivering"></manualTask>
+    <endEvent id="endevent3" name="End"></endEvent>
+    <serviceTask id="servicetask1" name="Fetch plan path Info " activiti:delegateExpression="${planPathService}"></serviceTask>
+    <userTask id="sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986" name="PlanPath"></userTask>
+    <boundaryEvent id="sid-E92C70A1-4FB0-4394-96BC-F3F7E8DA93B0" attachedToRef="sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986" cancelActivity="true">
+      <timerEventDefinition>
+        <timeDuration>PT1M</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="flow13" sourceRef="messagestartevent3" targetRef="manualtask1"></sequenceFlow>
+    <sequenceFlow id="flow16" sourceRef="manualtask2" targetRef="endevent3"></sequenceFlow>
+    <sequenceFlow id="flow23" sourceRef="sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986" targetRef="manualtask2"></sequenceFlow>
+    <sequenceFlow id="sid-334B0B32-B3C7-4F48-973A-519927E06868" sourceRef="manualtask1" targetRef="sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986"></sequenceFlow>
+    <sequenceFlow id="flow24" sourceRef="sid-E92C70A1-4FB0-4394-96BC-F3F7E8DA93B0" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="sid-1256AAD1-78F7-4372-9F14-DCCE63BFD424" sourceRef="servicetask1" targetRef="sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="pool1" id="BPMNShape_pool1">
+        <omgdc:Bounds height="231.0" width="1081.0" x="250.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane1" id="BPMNShape_lane1">
+        <omgdc:Bounds height="231.0" width="1051.0" x="280.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="pool2" id="BPMNShape_pool2">
+        <omgdc:Bounds height="181.0" width="951.0" x="250.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="181.0" width="921.0" x="280.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="pool3" id="BPMNShape_pool3">
+        <omgdc:Bounds height="181.0" width="941.0" x="250.0" y="580.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane3" id="BPMNShape_lane3">
+        <omgdc:Bounds height="181.0" width="911.0" x="280.0" y="580.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="pool4" id="BPMNShape_pool4">
+        <omgdc:Bounds height="271.0" width="951.0" x="250.0" y="810.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane4" id="BPMNShape_lane4">
+        <omgdc:Bounds height="271.0" width="921.0" x="280.0" y="810.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="350.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="70.0" width="128.0" x="435.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="69.0" width="119.0" x="795.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="975.0" y="115.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="1260.0" y="121.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="manualtask3" id="BPMNShape_manualtask3">
+        <omgdc:Bounds height="70.0" width="116.0" x="1084.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-C930C379-7793-458A-8A06-B47E1D08B8A1" id="BPMNShape_sid-C930C379-7793-458A-8A06-B47E1D08B8A1">
+        <omgdc:Bounds height="68.0" width="124.0" x="619.0" y="101.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent1" id="BPMNShape_messagestartevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="360.0" y="400.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask4" id="BPMNShape_usertask4">
+        <omgdc:Bounds height="55.0" width="105.0" x="440.0" y="390.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask5" id="BPMNShape_usertask5">
+        <omgdc:Bounds height="55.0" width="105.0" x="590.0" y="390.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="740.0" y="400.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent4" id="BPMNShape_endevent4">
+        <omgdc:Bounds height="35.0" width="35.0" x="680.0" y="640.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent6" id="BPMNShape_messagestartevent6">
+        <omgdc:Bounds height="35.0" width="35.0" x="370.0" y="640.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent5" id="BPMNShape_endevent5">
+        <omgdc:Bounds height="35.0" width="35.0" x="680.0" y="640.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="businessruletask1" id="BPMNShape_businessruletask1">
+        <omgdc:Bounds height="71.0" width="105.0" x="490.0" y="622.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent3" id="BPMNShape_messagestartevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="350.0" y="900.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="manualtask1" id="BPMNShape_manualtask1">
+        <omgdc:Bounds height="60.0" width="113.0" x="420.0" y="885.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="manualtask2" id="BPMNShape_manualtask2">
+        <omgdc:Bounds height="61.0" width="111.0" x="780.0" y="887.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="945.0" y="904.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="604.0" y="1000.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986" id="BPMNShape_sid-AD9F79FA-9B99-43DF-AFCC-8BBE59EDC986">
+        <omgdc:Bounds height="62.0" width="113.0" x="600.0" y="884.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E92C70A1-4FB0-4394-96BC-F3F7E8DA93B0" id="BPMNShape_sid-E92C70A1-4FB0-4394-96BC-F3F7E8DA93B0">
+        <omgdc:Bounds height="30.0" width="30.0" x="698.0" y="925.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="385.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="435.0" y="135.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow27" id="BPMNEdge_flow27">
+        <omgdi:waypoint x="1200.0" y="135.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1260.0" y="138.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="914.0" y="134.0"></omgdi:waypoint>
+        <omgdi:waypoint x="975.0" y="135.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="743.0" y="135.0"></omgdi:waypoint>
+        <omgdi:waypoint x="795.0" y="134.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-904E277D-3E5B-4498-B9DB-806376E9124B" id="BPMNEdge_sid-904E277D-3E5B-4498-B9DB-806376E9124B">
+        <omgdi:waypoint x="563.0" y="135.0"></omgdi:waypoint>
+        <omgdi:waypoint x="619.0" y="135.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
+        <omgdi:waypoint x="1015.0" y="135.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1084.0" y="135.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="17.0" width="100.0" x="1015.0" y="135.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="995.0" y="115.0"></omgdi:waypoint>
+        <omgdi:waypoint x="995.0" y="55.0"></omgdi:waypoint>
+        <omgdi:waypoint x="677.0" y="55.0"></omgdi:waypoint>
+        <omgdi:waypoint x="681.0" y="101.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="17.0" width="100.0" x="900.0" y="43.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="395.0" y="417.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="417.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="545.0" y="417.0"></omgdi:waypoint>
+        <omgdi:waypoint x="590.0" y="417.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="695.0" y="417.0"></omgdi:waypoint>
+        <omgdi:waypoint x="740.0" y="417.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
+        <omgdi:waypoint x="405.0" y="657.0"></omgdi:waypoint>
+        <omgdi:waypoint x="490.0" y="657.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
+        <omgdi:waypoint x="595.0" y="657.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="657.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="385.0" y="917.0"></omgdi:waypoint>
+        <omgdi:waypoint x="420.0" y="915.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="891.0" y="917.0"></omgdi:waypoint>
+        <omgdi:waypoint x="945.0" y="921.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow23" id="BPMNEdge_flow23">
+        <omgdi:waypoint x="713.0" y="915.0"></omgdi:waypoint>
+        <omgdi:waypoint x="780.0" y="917.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-334B0B32-B3C7-4F48-973A-519927E06868" id="BPMNEdge_sid-334B0B32-B3C7-4F48-973A-519927E06868">
+        <omgdi:waypoint x="533.0" y="915.0"></omgdi:waypoint>
+        <omgdi:waypoint x="600.0" y="915.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
+        <omgdi:waypoint x="728.0" y="940.0"></omgdi:waypoint>
+        <omgdi:waypoint x="744.0" y="958.0"></omgdi:waypoint>
+        <omgdi:waypoint x="744.0" y="1027.0"></omgdi:waypoint>
+        <omgdi:waypoint x="709.0" y="1027.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1256AAD1-78F7-4372-9F14-DCCE63BFD424" id="BPMNEdge_sid-1256AAD1-78F7-4372-9F14-DCCE63BFD424">
+        <omgdi:waypoint x="656.0" y="1000.0"></omgdi:waypoint>
+        <omgdi:waypoint x="656.0" y="946.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

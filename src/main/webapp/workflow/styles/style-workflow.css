@@ -60,3 +60,28 @@
     padding: 10px 3px 0 25px;
     width: 50%;
 }
+
+/* custom css  */
+.generic-container {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 60px;
+	margin-bottom: 20px;
+	padding: 20px;
+	background-color: #e9eef2;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	box-shadow: 0 0 3px black;
+}
+
+.voya-table {
+	text-align:left;
+}
+.td1 {
+	width : 20%; 
+	color:green;
+}
+.td2 {
+	color:#ef2929;
+}

@@ -13,6 +13,7 @@ ACTIVITI.CONFIG = {
 	'contextRoot' : '/activiti-app',
 	'webContextRoot' : '/activiti-app'
 };
+/*custom config*/
 /*
  * Copyright 2005-2015 Alfresco Software, Ltd. All rights reserved.
  * License rights for this program may be obtained from Alfresco Software, Ltd.

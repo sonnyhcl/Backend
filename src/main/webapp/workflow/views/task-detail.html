@@ -255,7 +255,7 @@
             </div>
          </div>
 
-        <div class="help-container" ng-if="activeTab == 'details' && model.task != null && model.task != undefined && hasDetails() == false && !model.involvementSummary.loading && !model.contentSummary.loading && !model.commentSummary.loading">
+        <div class="help-container" ng-if="isADTask == false && isVoyagingTask == false && activeTab == 'details' && model.task != null && model.task != undefined && hasDetails() == false && !model.involvementSummary.loading && !model.contentSummary.loading && !model.commentSummary.loading">
             <div>
                 <div class="help-text">
 
@@ -321,6 +321,73 @@
                 </div>
             </div>
         </div>
-
+		<div  class="generic-container container"  ng-if="model.task.name == 'Voyaging'" ng-controller="VoyaTaskController">
+			<h3>&nbsp;&nbsp;Voyaging Information</h3>
+				<br/>
+				<table  class="table voya-table" >
+					<tr>
+						<td class="td1" >Port&nbsp;Interval&nbsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['Lname']}}</td>
+					</tr>
+					<tr>
+						<td class="td1">&emsp;&emsp;X_coor &emsp;&emsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['X_coor']}}</td>
+					</tr>
+					<tr>
+						<td class="td1">&emsp;&emsp;Y_coor &emsp;&emsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['Y_coor']}}</td>
+					</tr>
+					<tr>
+						<td class="td1" >&emsp;&emsp;Velocity&emsp;&nbsp;&nbsp;&nbsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['velocity']}} 海里/h</td>
+					</tr>
+					<tr>
+						<td class="td1" >&emsp;&emsp;Time : &emsp;&nbsp;&nbsp;&nbsp;：</td>
+						<td class="td2">{{dispTime}}</td>
+					</tr>
+				</table>
+		</div>
+		<div  class="generic-container container"  ng-if="model.task.name == 'Apply for spare parts'" ng-controller="ApplyTaskController">
+			<h3>&nbsp;&nbsp;Voyaging Information</h3>
+				<br/>
+				<table  class="table voya-table" >
+					<tr>
+						<td class="td1" >Port&nbsp;Interval&nbsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['Lname']}}</td>
+					</tr>
+					<tr>
+						<td class="td1">&emsp;&emsp;X_coor &emsp;&emsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['X_coor']}}</td>
+					</tr>
+					<tr>
+						<td class="td1">&emsp;&emsp;Y_coor &emsp;&emsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['Y_coor']}}</td>
+					</tr>
+					<tr>
+						<td class="td1" >&emsp;&emsp;Velocity&emsp;&nbsp;&nbsp;&nbsp;：</td>
+						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['velocity']}} 海里/h</td>
+					</tr>
+					<tr>
+						<td class="td1" >&emsp;&emsp;Time : &emsp;&nbsp;&nbsp;&nbsp;：</td>
+						<td class="td2">{{dispTime}}</td>
+					</tr>
+				</table>
+		</div>
+		<hr/>
+		<div  class="generic-container container"  ng-if="model.task.name == 'Anchoring-Docking'" ng-controller="ADTaskController">
+			<h3>&nbsp;&nbsp;Anchoring/Docking Information</h3>
+				<br/>
+				<table  class="table voya-table" >
+					<tr>
+						<td class="td1" >Duration&nbsp;Time(min)&nbsp;：</td>
+						<td class="td2">{{countDown}} S</td>
+						<td class="td2"><input ng-model = "durax" /></td>
+						<td>
+							<button  ng-click="setDuration()" class="btn btn-success">OK</button>
+						</td>
+					</tr>
+			</table>
+		</div>
     </div>
+    
 </div>

@@ -38,12 +38,15 @@ angular.module('activitiApp').service('FormService', ['$http', '$q',
             );
         };
 
+        /**
+         * submit task form
+         */
         this.completeTaskForm = function(taskId, data) {
 
             var promise = httpAsPromise(
                 {
                     method: 'POST',
-                    url: ACTIVITI.CONFIG.contextRoot + '/app/rest/task-forms/' + taskId,
+                    url: ACTIVITI.CONFIG.contextRoot + '/api/custom/task-forms/' + taskId,
                     data: data
                 }
             );

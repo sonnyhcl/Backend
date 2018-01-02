@@ -26,6 +26,7 @@ angular.module('activitiApp')
 
             $scope.$on('task-completed', function (event, data) {
                 $rootScope.addAlertPromise($translate('TASK.ALERT.COMPLETED', data));
+                //alert("TaskCtrl");
                 $scope.openTasks();
             });
 
@@ -40,9 +41,13 @@ angular.module('activitiApp')
 );
 
 angular.module('activitiApp')
-  .controller('TaskDetailController', ['$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-        function ($rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+  .controller('TaskDetailController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
+	 $scope.$on('task-completed' , function(event , data){
+		 	console.log("TaskDetailCtrl : " + data.taskId + " completed");
+		 	 $scope.$broadcast('complete-apply' , data);
+	 })
     $scope.model = {
         // Indirect binding between selected task in parent scope to have control over display
         // before actual selected task is switched
@@ -51,9 +56,25 @@ angular.module('activitiApp')
 	    claimButtonDisabled: false,
         uploadInProgress: false
 	};
-
     $scope.activeTab = 'form';
-
+    /**
+     * *******************************************************************
+     * custom variables
+     * ********************************************************************
+     */
+//    $scope.isVoyagingTask = false;
+//    $scope.isADTask = false;
+//    $scope.isApply = false;
+//    
+//    $scope.nowTask = {};
+//    $scope.NowLoc = {};
+//    $scope.velocity = {};
+   // $scope.durax = 10;  //D/A Task --- /min , 默认1min
+//    $scope.pvars = {};
+//    $scope.pidxs = {};
+//    $scope.dispTime = null;
+//    $scope.waitTime =  0;
+    /******************************************************************/
     $scope.model.involvementSummary = {
         loading: false
     };
@@ -66,7 +87,114 @@ angular.module('activitiApp')
         loading: false
     };
 
-    $scope.resetModel = function() {
+    /**
+     * ***************************************************************
+     * Custom functions
+     * ***************************************************************
+     */
+    //返回下标，供子controller使用
+    $scope.createPidxs = function(pvars){
+    	var i = 0;
+    	var pidxs = {};
+    	var arr = pvars;
+    	for(i in arr){
+    		pidxs[arr[i]['name']] = i;
+    	}
+    	return pidxs;
+    }
+//    var voyageTaskTimer = $interval(function(){
+//    	if($scope.isVoyagingTask == true || $scope.isApply == true){
+//    	   	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.nowTask['processInstanceId']+'/variables')
+//        	.success(function(data){
+//        		$scope.pvars = data;
+//        		$scope.pidxs = $scope.createPidxs($scope.pvars);	
+//        		if($scope.pvars[$scope.pidxs['NowLoc']]['value']['Name'] == null && $scope.pvars[$scope.pidxs['PrePort']]['value']['Name'] != undefined &&
+//        				$scope.pvars[$scope.pidxs['NextPort']]['value']['Name'] != undefined){
+//        			$scope.pvars[$scope.pidxs['NowLoc']]['value']['Name'] =$scope.pvars[$scope.pidxs['PrePort']]['value']['Name']+"-->"+$scope.pvars[$scope.pidxs['NextPort']]['value']['Name'];
+//        		}
+//        		console.log("Now State : "+$scope.pvars[$scope.pidxs['State']]['value']);
+//        		if($scope.pvars[$scope.pidxs['State']]['value'] == 'other'){
+//        				$scope.pvars[$scope.pidxs['StartTime']]['value'] = $scope.dispTime;
+//        				$http.put(ACTIVITI.CONFIG.contextRoot+'/api/runtime/vessel-procinst/'+$scope.nowTask['processInstanceId']+'/variables' , $scope.pvars)
+//            			.success(function(res){
+//            				console.log("Voyaging Task 结束， 将StartTime上传")
+//            				$scope.isVoyagingTask = false;
+//            				$scope.completeTask();
+//            			});
+//        				
+//        		}
+//        		//计算展示时间
+//        		console.log("StartTime : "+$scope.pvars[$scope.pidxs['StartTime']]['value']);
+//        		console.log("timeStamp : "+$scope.pvars[$scope.pidxs['NowLoc']]['value']['timeStamp']/60000 + " min");
+//        		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']]['value']) + $scope.pvars[$scope.pidxs['NowLoc']]['value']['timeStamp'];
+//        		var d = new Date();
+//        		d.setTime(ms);
+//        		if(d != 'Invalid Date'){
+//        			$scope.dispTime = $filter('date')(d, "yyyy-MM-dd HH:mm:ss"); 
+//        		}
+//        	})
+//    	}
+//    }, 2000);
+    
+    //如果是D/A Task
+//    $scope.countDown = $scope.durax * 60;
+//    var duraTimer = $interval(function(){
+//    	if($scope.isADTask == true){
+//    		$scope.countDown--;
+//    		$scope.waitTime++;
+//    		console.log("wait time : "+$scope.waitTime);
+//    	}
+//	} , 1000); 
+//    $scope.setDuration = function(){
+//    	$interval.cancel(duraTimer);
+//    	console.log("new dura :"+$scope.durax*60)
+//    	$scope.countDown = $scope.durax * 60;
+//    	duraTimer = $interval(function(){
+//    		$scope.countDown--;
+//    		$scope.waitTime++;
+//    		console.log("wait time : "+$scope.waitTime);
+//    	} , 1000);
+//    }
+//    $scope.$watch('durax' , function(newVal , oldVal){
+//    		 console.log("watch dura  : "+newVal+" "+oldVal);
+//    })
+//    $scope.$watch('countDown' , function(newVal){	
+//    	if(newVal == 0){
+//			//修改StartTime
+//    		$interval.cancel(duraTimer);
+//		 	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.nowTask['processInstanceId']+'/variables')
+//        	.success(function(data){
+//        		$scope.pvars = data;
+//        		console.log("variables after countDown :"+data);
+//        		$scope.pidxs = $scope.createPidxs($scope.pvars);
+//        		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']]['value'])+$scope.waitTime*60*1000;
+//    			var d = new Date();
+//    			d.setTime(ms);
+//    			console.log("d :"+d+"ms : "+ms);
+//    			if(d == 'Invalid Date'){
+//        			d = new Date();
+//        		}
+//    			
+//        		console.log("** StartTime :"+$scope.pvars[$scope.pidxs['StartTime']]['value'])
+//        		console.log("$filter('date')" + $filter('date')(d, "yyyy-MM-dd HH:mm:ss"))
+//        		$scope.pvars[$scope.pidxs['StartTime']]['value'] = $filter('date')(d, "yyyy-MM-dd HH:mm:ss"); 
+//        		console.log("$scope.pvars[$scope.pidxs['StartTime']]['type'] : "+$scope.pvars[$scope.pidxs['StartTime']]['type']);
+//        		//$scope.pvars[$scope.pidxs['StartTime']]['type'] = 'date';
+//        		console.log(" && StartTime  :"+$scope.pvars[$scope.pidxs['StartTime']]['value'])
+//        		$http.put(ACTIVITI.CONFIG.contextRoot+'/api/runtime/vessel-procinst/'+$scope.nowTask['processInstanceId']+'/variables' , $scope.pvars)
+//    			.success(function(res){
+//    				console.log("New StartTime : "+res[$scope.pidxs['StartTime']]['value']);
+//    				$scope.completeTask();
+//    				$scope.isADTask = false;
+//    				$scope.waitTime = 0;
+//    			});
+//        	});
+//		}
+//    });
+
+    /***************************************************************************************************/
+    
+    $scope.resetModel =  function() {
         // Reset tabs
         $scope.taskTabs = [];
         if ($scope.model.task.formKey != null) {
@@ -227,7 +355,29 @@ angular.module('activitiApp')
 
                 $scope.model.loading = false;
                 $scope.noSuchTask = false;
-
+                          
+                /*
+                 * *****************************************************
+                 * Set task symbol
+                 * ******************************************************
+                 */
+//                $scope.nowTask = response;
+//                if(response['name'] == 'Voyaging'){
+//                	 $scope.isApply = false;
+//                	 $scope.isVoyagingTask = true;
+//                	 console.log("enter into Voyaging Task");
+//                }
+//                if(response['name'] == 'Anchoring-Docking'){
+//                	 $scope.isVoyagingTask = false;
+//                	$scope.isADTask = true;
+//                	console.log("enter into anchoring-docking Task");
+//                }
+//                
+//                if(response['name'] == 'Apply for spare parts'){
+//                	$scope.isApply = true;
+//                	console.log("enter into Applying Task");
+//                }
+                /**********************************************************************/
                 if (!$scope.model.hasFormKey) {
                     $scope.resetModel();
                 }
@@ -710,3 +860,170 @@ angular.module('activitiApp')
             };
         }
 ]);
+/**
+ * 改写
+ */
+angular.module('activitiApp')
+.controller('ADTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) { 
+	  $scope.durax = 10;  //D/A Task --- /min , 默认1min
+	  $scope.waitTime =  0;
+	  $scope.countDown = $scope.durax * 60;
+	  if($scope.model.task.name == 'Anchoring-Docking'){
+     	 	console.log("Enter into ADTaskCtrl");
+       }
+	   $scope.duraTimer = $interval(function(){
+	    		$scope.countDown--;
+	    		$scope.waitTime++;
+	    		console.log("wait time : "+$scope.waitTime);
+		} , 1000); 
+	    $scope.setDuration = function(){
+	    	$interval.cancel($scope.duraTimer);
+//	    	console.log("new dura :"+$scope.durax*60)
+	    	$scope.countDown = $scope.durax * 60;
+	    	 $scope.duraTimer = $interval(function(){
+	    		$scope.countDown--;
+	    		$scope.waitTime++;
+	    		console.log("wait time : "+$scope.waitTime);
+	    	} , 1000);
+	    }
+	    $scope.$watch('durax' , function(newVal , oldVal){
+//	    		 console.log("watch dura  : "+newVal+" "+oldVal);
+	    })
+	    $scope.$watch('countDown' , function(newVal){	
+	    	if(newVal == 0){
+				//修改StartTime
+	    		$interval.cancel($scope.duraTimer);
+			 	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.model.task.processInstanceId+'/variables')
+	        	.success(function(data){
+	        		$scope.pvars = data;
+//	        		console.log("variables after countDown :"+data);
+	        		$scope.pidxs = $scope.createPidxs($scope.pvars);
+	        		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']]['value'])+$scope.waitTime*60*1000;
+	    			var d = new Date();
+	    			d.setTime(ms);
+//	    			console.log("d :"+d+"ms : "+ms);
+	    			if(d == 'Invalid Date'){
+	        			d = new Date();
+	        		}
+	    			
+//	        		console.log("** StartTime :"+$scope.pvars[$scope.pidxs['StartTime']]['value'])
+//	        		console.log("$filter('date')" + $filter('date')(d, "yyyy-MM-dd HH:mm:ss"))
+	        		$scope.pvars[$scope.pidxs['StartTime']]['value'] = $filter('date')(d, "yyyy-MM-dd HH:mm:ss"); 
+//	        		console.log("$scope.pvars[$scope.pidxs['StartTime']]['type'] : "+$scope.pvars[$scope.pidxs['StartTime']]['type']);
+	        		//$scope.pvars[$scope.pidxs['StartTime']]['type'] = 'date';
+//	        		console.log(" && StartTime  :"+$scope.pvars[$scope.pidxs['StartTime']]['value'])
+	        		$http.put(ACTIVITI.CONFIG.contextRoot+'/api/runtime/vessel-procinst/'+$scope.model.task.processInstanceId+'/variables' , $scope.pvars)
+	    			.success(function(res){
+//	    				console.log("New StartTime : "+res[$scope.pidxs['StartTime']]['value']);
+	    				$scope.completeTask();
+	    				$scope.waitTime = 0;
+	    			});
+	        	});
+			}
+	    });
+}]);
+
+angular.module('activitiApp')
+.controller('VoyaTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+
+    $scope.pvars = {};
+    $scope.pidxs = {};
+    $scope.dispTime = null;
+    
+    if($scope.model.task.name == 'Voyaging'){
+ 	 	console.log("Enter into VoyaTaskCtrl");
+    }
+    $scope.voyageTaskTimer = $interval(function(){
+    	console.log("Voya voyaging")
+    	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.model.task.processInstanceId+'/variables')
+    	.success(function(data){
+    		$scope.pvars = data;
+    		$scope.pidxs = $scope.createPidxs($scope.pvars);	
+    		if($scope.pvars[$scope.pidxs['NowLoc']].value.Name == null && $scope.pvars[$scope.pidxs['PrePort']].value.Name != undefined &&
+    				$scope.pvars[$scope.pidxs['NextPort']].value.Name != undefined){
+    			$scope.pvars[$scope.pidxs['NowLoc']].value.Name =$scope.pvars[$scope.pidxs['PrePort']].value.Name+"-->"+$scope.pvars[$scope.pidxs['NextPort']].value.Name;
+    		}
+//    		console.log("Now State : "+$scope.pvars[$scope.pidxs['State']].value);
+    		//检查前台传来的状态，看该段区间是否航行完成
+    		if($scope.pvars[$scope.pidxs['State']].value == 'arrival'){
+    				$scope.pvars[$scope.pidxs['StartTime']].value = $scope.dispTime;
+    				$http.put(ACTIVITI.CONFIG.contextRoot+'/api/runtime/vessel-procinst/'+$scope.model.task.processInstanceId+'/variables' , $scope.pvars)
+        			.success(function(res){
+        				console.log("Voyaging Task 结束， 将StartTime上传")
+        				$scope.completeTask();  //call parent controller function;
+        				$interval.cancel($scope.voyageTaskTimer);
+        			});
+    				
+    		}
+    		//计算展示时间
+//    		console.log("StartTime : "+$scope.pvars[$scope.pidxs['StartTime']].value);
+//    		console.log("timeStamp : "+$scope.pvars[$scope.pidxs['NowLoc']].value.timeStamp/60000 + " min");
+    		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']].value) + $scope.pvars[$scope.pidxs['NowLoc']].value.timeStamp;
+    		var d = new Date();
+    		d.setTime(ms);
+    		if(d != 'Invalid Date'){
+    			$scope.dispTime = $filter('date')(d, "yyyy-MM-dd HH:mm:ss"); 
+    		}
+    	})
+    }, 2000);
+}]);
+
+angular.module('activitiApp')
+.controller('ApplyTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+	
+	if($scope.model.task['name'] == 'Apply for spare parts'){
+	 	console.log("Enter into VoyaTaskCtrl");
+	 }
+    $scope.pvars = {};
+    $scope.pidxs = {};
+    $scope.dispTime = "1970-01-01 00:00:00";
+    
+    //一直读取船的信息，直到船任务人工完成
+    $scope.ApplyTimer = $interval(function(){
+      	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.model.task.processInstanceId+'/variables')
+    	.success(function(data){
+    		console.log("Apply voyaging");
+    		$scope.pvars = data;
+    		$scope.pidxs = $scope.createPidxs($scope.pvars);	
+    		if($scope.pvars[$scope.pidxs['NowLoc']]['value']['Name'] == null && $scope.pvars[$scope.pidxs['PrePort']]['value']['Name'] != undefined &&
+    				$scope.pvars[$scope.pidxs['NextPort']]['value']['Name'] != undefined){
+    			$scope.pvars[$scope.pidxs['NowLoc']]['value']['Name'] =$scope.pvars[$scope.pidxs['PrePort']]['value']['Name']+"-->"+$scope.pvars[$scope.pidxs['NextPort']]['value']['Name'];
+    		}
+//    		console.log("Now State : "+$scope.pvars[$scope.pidxs['State']].value);
+    		//当前任务是Applying 时 ，如果遇到达下一港口消息，（这里默认在第个区间就会提出申请，不会出现这种情况）
+    		if($scope.pvars[$scope.pidxs['State']].value == 'arrival'){
+    			//******should do nothing
+    			$scope.pvars[$scope.pidxs['StartTime']].value = $scope.dispTime;
+    			$scope.pvars[$scope.pidxs['State']].value = 'voyaging';
+				$http.put(ACTIVITI.CONFIG.contextRoot+'/api/runtime/vessel-procinst/'+$scope.model.task.processInstanceId+'/variables' , $scope.pvars)
+    			.success(function(res){
+    				console.log("过站了...")
+//    				console.log("Voyaging Task 结束， 将StartTime上传")
+//    				$scope.completeTask();  //call parent controller function;
+    			});
+    		}
+    		//计算展示时间
+//    		console.log("StartTime : "+$scope.pvars[$scope.pidxs['StartTime']].value);
+//    		console.log("timeStamp : "+$scope.pvars[$scope.pidxs['NowLoc']].value.timeStamp /60000 + " min");
+    		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']].value) + $scope.pvars[$scope.pidxs['NowLoc']].value.timeStamp;
+    		var d = new Date();
+    		d.setTime(ms);
+    		if(d != 'Invalid Date'){
+    			$scope.dispTime = $filter('date')(d, "yyyy-MM-dd HH:mm:ss"); 
+    		}
+    	})
+    }, 2000);
+    $scope.$on('complete-apply' , function(event , data){
+    	console.log(data + ""+data.taskId+" --> cancel  $scope.ApplyTimer");
+    	console.log(data.taskId == $scope.model.task.id);
+    	if(data.taskId == $scope.model.task.id){
+    		$interval.cancel($scope.ApplyTimer);
+    	}
+    
+    })
+}]);
+
+
