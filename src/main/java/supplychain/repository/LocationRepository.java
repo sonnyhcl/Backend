@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 import supplychain.entity.Location;
 
 
-@Repository
-public interface LocationRepository extends JpaRepository<Location , Long> {
+//@Repository
+public interface LocationRepository {
 	
 }

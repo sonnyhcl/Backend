@@ -28,10 +28,31 @@ var activitiApp = angular.module('activitiApp', [
     'ui.grid.selection',
     'ui.grid.autoResize',
     'angular-loading-bar',
-    'cfp.hotkeys'
+    'cfp.hotkeys',
+    'LocalStorageModule'
 ]);
 
 var activitiModule = activitiApp;
+/**
+ * config localService
+ * @param localStorageServiceProvider
+ * @returns
+ */
+activitiApp.config(function(localStorageServiceProvider){
+	localStorageServiceProvider
+	 .setPrefix('ACTF')
+	 .setStorageType('sessionStorage')
+	 .setNotify(true, true);
+});
+
+/**
+ * if localStorage is not supported , the library will default to cookies instead . this behavior
+ *  can be disabled
+ */
+activitiApp.config(function(localStorageServiceProvider){
+	localStorageServiceProvider.setDefaultToCookie(false);
+});
+
 
 activitiApp
 

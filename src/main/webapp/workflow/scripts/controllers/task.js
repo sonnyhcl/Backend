@@ -41,8 +41,8 @@ angular.module('activitiApp')
 );
 
 angular.module('activitiApp')
-  .controller('TaskDetailController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-        function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+  .controller('TaskDetailController', ['SessionService' ,'$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function (SessionService , $filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
 	 $scope.$on('task-completed' , function(event , data){
 		 	console.log("TaskDetailCtrl : " + data.taskId + " completed");
@@ -57,6 +57,28 @@ angular.module('activitiApp')
         uploadInProgress: false
 	};
     $scope.activeTab = 'form';
+    /**
+     * 轮询
+     */
+   // $scope.lastEventId = 0;
+    $scope.eventTimer = $interval(function(){
+		$http.get(ACTIVITI.CONFIG.contextRoot+'/api/revents')
+		.success(function(data){
+			//console.log("test revents" , data);
+			if(data.length>0){
+				data.sort(function sortNumber(a , b){
+					return a.id - b.id;
+				})
+				for(var  i = 0 ; i < data.length ; i++){
+					var event = data[i];
+					if('RW_PLAN' == event.type){
+						 $scope.$broadcast('RW_PLAN' , event.data);
+						 console.log("receive RW_PLAN" , event.data);
+					}
+				}
+			}
+		})
+	} , 5000);
     /**
      * *******************************************************************
      * custom variables
@@ -875,7 +897,7 @@ angular.module('activitiApp')
 	   $scope.duraTimer = $interval(function(){
 	    		$scope.countDown--;
 	    		$scope.waitTime++;
-	    		console.log("wait time : "+$scope.waitTime);
+	    	//	console.log("wait time : "+$scope.waitTime);
 		} , 1000); 
 	    $scope.setDuration = function(){
 	    	$interval.cancel($scope.duraTimer);
@@ -884,7 +906,7 @@ angular.module('activitiApp')
 	    	 $scope.duraTimer = $interval(function(){
 	    		$scope.countDown--;
 	    		$scope.waitTime++;
-	    		console.log("wait time : "+$scope.waitTime);
+	    		//console.log("wait time : "+$scope.waitTime);
 	    	} , 1000);
 	    }
 	    $scope.$watch('durax' , function(newVal , oldVal){
@@ -1024,6 +1046,26 @@ angular.module('activitiApp')
     	}
     
     })
+}]);
+
+/***
+ * Weagon controllers
+ */
+angular.module('activitiApp')
+.controller('PlanPathController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+	 $scope.$on('RW_PLAN' , function(event , data){
+		 //TODO some work when receive 'RW_PLAN'
+		console.log(" PlanPathController receice RW_PLAN " , data)
+		console.log("发消息给coordinator");
+		//给coordinator 
+	 });
+}]);
+
+angular.module('activitiApp')
+.controller('RunController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+	//
 }]);
 
 

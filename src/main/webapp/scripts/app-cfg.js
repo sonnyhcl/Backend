@@ -14,6 +14,7 @@ ACTIVITI.CONFIG = {
 	'webContextRoot' : '/activiti-app'
 };
 /*custom config*/
+var lastEventId = 0;
 /*
  * Copyright 2005-2015 Alfresco Software, Ltd. All rights reserved.
  * License rights for this program may be obtained from Alfresco Software, Ltd.

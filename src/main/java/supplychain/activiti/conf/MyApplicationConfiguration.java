@@ -24,6 +24,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 })
 @ComponentScan(basePackages = {
+		"com.zbq",
 		"supplychain.*",
         "org.activiti.app.repository",
         "org.activiti.app.service",
@@ -41,5 +42,4 @@ public class MyApplicationConfiguration {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-	
 }

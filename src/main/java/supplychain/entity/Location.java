@@ -3,8 +3,13 @@ package supplychain.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import org.activiti.engine.form.AbstractFormType;
+
 public class Location  extends AbstractFormType implements Serializable {
+	private String name = "Location";
 	private String Lname = "NowLocation";
 	private String X_coor;
 	private String Y_coor;
@@ -44,14 +49,21 @@ public class Location  extends AbstractFormType implements Serializable {
 		X_coor = x_coor;
 		Y_coor = y_coor;
 	}
+	public String getLname() {
+		return Lname;
+	}
+	public void setLname(String lname) {
+		Lname = lname;
+	}
 	public Location() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	@Override
 	public String toString() {
-		return "Location [Name=" + Lname + ", X_coor=" + X_coor + ", Y_coor=" + Y_coor + ", timeStamp=" + timeStamp
-				+ ", velocity=" + velocity + "]";
+		return "Location [name=" + name + ", Lname=" + Lname + ", X_coor=" + X_coor + ", Y_coor=" + Y_coor
+				+ ", timeStamp=" + timeStamp + ", velocity=" + velocity + ", realTime=" + realTime + "]";
 	}
 	public Date getRealTime() {
 		return realTime;
@@ -72,7 +84,12 @@ public class Location  extends AbstractFormType implements Serializable {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "Location";
+		return name;
 	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 
 }

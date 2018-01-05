@@ -388,6 +388,12 @@
 					</tr>
 			</table>
 		</div>
+		<div  class="generic-container container"  ng-if="model.task.name == 'Plan Path'" ng-controller="PlanPathController">
+			<h3>&nbsp;&nbsp;正在规划路径</h3>
+		</div>
+		<div  class="generic-container container"  ng-if="model.task.name == 'Running'"  ng-controller="RunController">
+		<h3>&nbsp;&nbsp;Running Information</h3>
+	</div>   
     </div>
     
 </div>

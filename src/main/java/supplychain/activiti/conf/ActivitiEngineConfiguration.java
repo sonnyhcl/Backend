@@ -54,6 +54,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import supplychain.entity.Location;
 import supplychain.entity.Weagon;
 
 @Configuration
@@ -109,6 +110,7 @@ public class ActivitiEngineConfiguration {
     	processEngineConfiguration.setJpaHandleTransaction(false);
     	List<AbstractFormType> customFormTypes = new ArrayList<AbstractFormType>();
     	customFormTypes.add(new Weagon());
+    	customFormTypes.add(new Location());
     	processEngineConfiguration.setCustomFormTypes(customFormTypes);
 
     	String emailHost = environment.getProperty("email.host");

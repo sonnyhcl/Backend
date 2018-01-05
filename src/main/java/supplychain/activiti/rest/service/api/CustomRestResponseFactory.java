@@ -1,11 +1,17 @@
 package supplychain.activiti.rest.service.api;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
+import java.time.temporal.ValueRange;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.activiti.engine.ActivitiIllegalArgumentException;
+import org.activiti.engine.impl.util.json.JSONObject;
 import org.activiti.rest.service.api.RestResponseFactory;
 import org.activiti.rest.service.api.RestUrlBuilder;
 import org.activiti.rest.service.api.RestUrls;
@@ -44,6 +50,8 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 			// Try locating a converter if the type has been specified
 			RestVariableConverter converter = null;
 			for (RestVariableConverter conv : variableConverters) {
+			//	System.out.println("getClass :" + value.getClass());
+				//System.out.println("getVariableType ： "+conv.getVariableType());
 				if (conv.getRestTypeName().equals(restVariable.getType())) {
 					converter = conv;
 					break;
@@ -86,22 +94,35 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 		if (value != null) {
 			// Try converting the value
 			for (RestVariableConverter c : variableConverters) {
-				System.out.println("getClass :" + value.getClass());
-				System.out.println("getVariableType ： "+c.getVariableType());
+//				System.out.println("getClass :" + value.getClass());
+//				System.out.println("getVariableType ： "+c.getVariableType());
 				if (c.getVariableType().isAssignableFrom(value.getClass())) {
 					converter = c;
 					break;
 				}
-				// 单独判断
-				if (("NowLoc".equals(name) || "V_TargLoc".equals(name) || "NextPort".equals(name) || "PrePort".equals(name) )
-						&& c.getRestTypeName().equals("Location")) {
-					converter = c;
-					break;
+				
+				if(value instanceof LinkedHashMap) {
+					@SuppressWarnings("unchecked")
+					HashMap<String, Object> mp = (HashMap<String, Object> )value;
+ 					if(c.getRestTypeName().equals(mp.get("name"))) {
+ 						converter = c;
+ 						break;
+ 					}
 				}
+//				// 单独判断
+//				if (("Loc".equals(name))|| ("NowLoc".equals(name) || "V_TargLoc".equals(name) || "NextPort".equals(name) || "PrePort".equals(name) )
+//						&& c.getRestTypeName().equals("Location")) {
+//					converter = c;
+//					break;
+//				}
 				if(("apply_time".equals(name) || "StartTime".equals(name)) && c.getRestTypeName().equals("date")) {
 					converter = c;
 					break;
 				}
+//				if("W_Info".equals(name) && c.getRestTypeName().equals("Weagon")) {
+//					converter = c;
+//					break;
+//				}
 			}
 
 			if (converter != null) {

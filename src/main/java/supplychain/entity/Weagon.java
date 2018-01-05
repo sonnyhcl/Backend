@@ -6,6 +6,9 @@ import java.util.Date;
 import org.activiti.engine.form.AbstractFormType;
 
 public class Weagon extends AbstractFormType implements Serializable {
+	//Type Name
+	private String name = "Weagon";
+	private String pid; //流程实例的id
 	
 	private String W_id;
 	
@@ -122,7 +125,7 @@ public class Weagon extends AbstractFormType implements Serializable {
 		this.pArri = pArri;
 	}
 
-	public boolean isNeedPlan() {
+	public boolean getNeedPlan() {
 		return needPlan;
 	}
 
@@ -142,7 +145,7 @@ public class Weagon extends AbstractFormType implements Serializable {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "Weagon";
+		return  name;
 	}
 
 	@Override
@@ -155,6 +158,25 @@ public class Weagon extends AbstractFormType implements Serializable {
 	public String convertModelValueToFormValue(Object modelValue) {
 		// TODO Auto-generated method stub
 		return modelValue.toString();
+	}
+
+	public String getPid() {
+		return pid;
+	}
+
+	public void setPid(String pid) {
+		this.pid = pid;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Weagon [name=" + name + ", pid=" + pid + ", W_id=" + W_id + ", W_Name=" + W_Name + ", X_Coor=" + X_Coor
+				+ ", Y_Coor=" + Y_Coor + ", W_Velocity=" + W_Velocity + ", Start=" + Start + ", End=" + End + ", pArri="
+				+ pArri + ", needPlan=" + needPlan + ", planRes=" + planRes + ", W_TargLoc=" + W_TargLoc + "]";
 	}
 	
 	
