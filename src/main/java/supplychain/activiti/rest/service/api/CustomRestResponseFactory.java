@@ -1,8 +1,5 @@
 package supplychain.activiti.rest.service.api;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,12 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.activiti.engine.ActivitiIllegalArgumentException;
-import org.activiti.engine.impl.util.json.JSONObject;
 import org.activiti.rest.service.api.RestResponseFactory;
 import org.activiti.rest.service.api.RestUrlBuilder;
 import org.activiti.rest.service.api.RestUrls;
 import org.activiti.rest.service.api.engine.variable.BooleanRestVariableConverter;
-import org.activiti.rest.service.api.engine.variable.DateRestVariableConverter;
 import org.activiti.rest.service.api.engine.variable.DoubleRestVariableConverter;
 import org.activiti.rest.service.api.engine.variable.IntegerRestVariableConverter;
 import org.activiti.rest.service.api.engine.variable.LongRestVariableConverter;
