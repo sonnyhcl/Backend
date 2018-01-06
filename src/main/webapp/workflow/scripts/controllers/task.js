@@ -73,7 +73,11 @@ angular.module('activitiApp')
 					var event = data[i];
 					if('RW_PLAN' == event.type){
 						 $scope.$broadcast('RW_PLAN' , event.data);
-						 console.log("receive RW_PLAN" , event.data);
+						// console.log("receive RW_PLAN" , event.data);
+					}
+					if('RW_STOP' == event.type){
+						 $scope.$broadcast('RW_STOP' , event.data);
+						 //console.log("receive RW_PLAN" , event.data);
 					}
 				}
 			}
@@ -1059,13 +1063,33 @@ angular.module('activitiApp')
 		console.log(" PlanPathController receice RW_PLAN " , data)
 		console.log("发消息给coordinator");
 		//给coordinator 
+		//自动完成任务
+		$scope.completeTask();
 	 });
 }]);
 
 angular.module('activitiApp')
 .controller('RunController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
-	//
+	
+	$scope.w = {};
+	$scope.runTimer = $interval(function(){
+		if($scope.model.task.name == 'Running'){
+			$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.model.task.processInstanceId+'/variables/W_Info')
+			.success(function(data){
+				$scope.w = data;
+			})
+		 }	
+	} , 10000)
+	 $scope.$on('RW_STOP' , function(event , data){
+		 //TODO some work when receive 'RW_PLAN'
+		console.log(" RunController receice RW_STOP " , data) 
+		//自动完成任务
+		if(data.isTraffic == true){
+			console.log("前方堵车，需重新规划");
+		}
+		$scope.completeTask();
+	 });
 }]);
 
 

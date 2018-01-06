@@ -40,9 +40,13 @@ public class Weagon extends AbstractFormType implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Weagon(String w_id, String w_Name, String x_Coor, String y_Coor, String w_Velocity, Date start, Date end,
-			Location w_TargetLocation) {
+	
+
+	public Weagon(String name, String pid, String w_id, String w_Name, String x_Coor, String y_Coor, String w_Velocity,
+			Date start, Date end, Date pArri, boolean needPlan, int planRes, Location w_TargLoc) {
 		super();
+		this.name = name;
+		this.pid = pid;
 		W_id = w_id;
 		W_Name = w_Name;
 		X_Coor = x_Coor;
@@ -50,8 +54,13 @@ public class Weagon extends AbstractFormType implements Serializable {
 		W_Velocity = w_Velocity;
 		Start = start;
 		End = end;
-		W_TargLoc = w_TargetLocation;
+		this.pArri = pArri;
+		this.needPlan = needPlan;
+		this.planRes = planRes;
+		W_TargLoc = w_TargLoc;
 	}
+
+
 
 	public String getW_id() {
 		return W_id;

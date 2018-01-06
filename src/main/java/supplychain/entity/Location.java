@@ -89,6 +89,17 @@ public class Location  extends AbstractFormType implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public Location(String name, String lname, String x_coor, String y_coor, String timeStamp, String velocity,
+			Date realTime) {
+		super();
+		this.name = name;
+		Lname = lname;
+		X_coor = x_coor;
+		Y_coor = y_coor;
+		this.timeStamp = timeStamp;
+		this.velocity = velocity;
+		this.realTime = realTime;
+	}
 	
 	
 

@@ -68,6 +68,7 @@ public class VesselController extends AbstractController{
 	@RequestMapping(value = "/revents", method = RequestMethod.POST , produces = "application/json")
 	public ResponseEntity<String> createEvent(@RequestBody HashMap<String, Object> map) throws InterruptedException {
 		System.out.println("Events from frontEnd");
+		System.out.println("Type : "+map.get("type"));
 		ACTFEvent e= new ACTFEvent(translateType((String) map.get("type")));
 		System.out.println(map.get("id").toString());
 		e.setId(Long.parseLong(map.get("id").toString()));
@@ -99,6 +100,9 @@ public class VesselController extends AbstractController{
 		// TODO Auto-generated method stub
 		if(eventType.equals("RW_PLAN")) {
 			return EventType.RW_PLAN;
+		}
+		if(eventType.equals("RW_STOP")) {
+			return EventType.RW_STOP;
 		}
 		return null;
 	}
