@@ -38,8 +38,6 @@ public class MyCorsFilter implements Filter{
         } else {
             chain.doFilter(req, res);
         }
-        
-       
 	}
 
 	@Override

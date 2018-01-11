@@ -4,6 +4,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.activiti.engine.impl.util.json.JSONObject;
 
+
+
+
+
 public class VWFEvent {
 	private static final AtomicLong count = new AtomicLong(0); 
 	
@@ -38,7 +42,7 @@ public class VWFEvent {
 		this.id = id;
 	} 
 	
-	public JSONObject getJson() {
+	public JSONObject getJson(){
 		JSONObject json = new JSONObject();
 		json.put("id", this.id);
 		json.put("type", this.type.toString());

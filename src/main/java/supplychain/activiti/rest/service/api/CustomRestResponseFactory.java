@@ -78,8 +78,7 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 		return result;
 	}
 
-	public RestVariable createRestVariable(String name, Object value, RestVariableScope scope, String id,
-			int variableType, boolean includeBinaryValue, RestUrlBuilder urlBuilder) {
+	public RestVariable createRestVariable(String name, Object value, RestVariableScope scope, String id , int variableType, boolean includeBinaryValue, RestUrlBuilder urlBuilder) {
 
 		RestVariableConverter converter = null;
 		RestVariable restVar = new RestVariable();

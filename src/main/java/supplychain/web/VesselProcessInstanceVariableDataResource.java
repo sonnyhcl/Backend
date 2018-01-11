@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -134,7 +135,7 @@ public class VesselProcessInstanceVariableDataResource extends BaseVariableColle
 
 			result = setSimpleVariable(restVariable, execution, false);
 		}
-		
+
 		return result;
 	}
 
@@ -155,9 +156,23 @@ public class VesselProcessInstanceVariableDataResource extends BaseVariableColle
 			result = resultVariables;
 
 			try {
+
+//				ServletInputStream mServletInputStream = request.getInputStream();
+//				byte[] httpInData = new byte[request.getContentLength()];
+//				int retVal = -1;
+//				StringBuilder stringBuilder = new StringBuilder();
+//
+//				while ((retVal = mServletInputStream.read(httpInData)) != -1) {
+//					for (int i = 0; i < retVal; i++) {
+//						stringBuilder.append(Character.toString((char) httpInData[i]));
+//					}
+//				}
+//
+//				System.out.println("request:" + stringBuilder.toString());
+
 				@SuppressWarnings("unchecked")
-				List<Object> variableObjects = (List<Object>) objectMapper.readValue(request.getInputStream(),
-						List.class);
+				List<Object> variableObjects = (List<Object>) objectMapper.readValue(request.getInputStream(),List.class);
+
 				for (Object restObject : variableObjects) {
 					RestVariable restVariable = objectMapper.convertValue(restObject, RestVariable.class);
 					inputVariables.add(restVariable);
@@ -223,5 +238,7 @@ public class VesselProcessInstanceVariableDataResource extends BaseVariableColle
 		response.setStatus(HttpStatus.CREATED.value());
 		return result;
 	}
+
+	
 
 }

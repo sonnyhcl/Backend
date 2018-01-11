@@ -97,18 +97,15 @@
       <lane id="lane3" name="coordinator">
         <flowNodeRef>messagestartevent6</flowNodeRef>
         <flowNodeRef>endevent5</flowNodeRef>
-        <flowNodeRef>businessruletask1</flowNodeRef>
-        <flowNodeRef>flow20</flowNodeRef>
-        <flowNodeRef>flow21</flowNodeRef>
+        <flowNodeRef>servicetask2</flowNodeRef>
+        <flowNodeRef>servicetask3</flowNodeRef>
+        <flowNodeRef>servicetask4</flowNodeRef>
       </lane>
     </laneSet>
     <startEvent id="messagestartevent6" name="Message start">
       <messageEventDefinition messageRef="Msg_StartCood"></messageEventDefinition>
     </startEvent>
     <endEvent id="endevent5" name="End"></endEvent>
-    <manualTask id="businessruletask1" name="Coordinator Rule Task"></manualTask>
-    <sequenceFlow id="flow20" sourceRef="messagestartevent6" targetRef="businessruletask1"></sequenceFlow>
-    <sequenceFlow id="flow21" sourceRef="businessruletask1" targetRef="endevent5"></sequenceFlow>
   </process>
   <process id="process_pool4" name="Supplier" isExecutable="true">
     <laneSet id="laneSet_process_pool4">
@@ -216,9 +213,6 @@
       <bpmndi:BPMNShape bpmnElement="endevent5" id="BPMNShape_endevent5">
         <omgdc:Bounds height="35.0" width="35.0" x="680.0" y="640.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="businessruletask1" id="BPMNShape_businessruletask1">
-        <omgdc:Bounds height="71.0" width="105.0" x="490.0" y="622.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="messagestartevent3" id="BPMNShape_messagestartevent3">
         <omgdc:Bounds height="35.0" width="35.0" x="350.0" y="900.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
@@ -264,7 +258,7 @@
         <omgdi:waypoint x="1015.0" y="135.0"></omgdi:waypoint>
         <omgdi:waypoint x="1084.0" y="135.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="17.0" width="100.0" x="1015.0" y="135.0"></omgdc:Bounds>
+          <omgdc:Bounds height="17.0" width="44.0" x="1015.0" y="135.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
@@ -273,7 +267,7 @@
         <omgdi:waypoint x="677.0" y="55.0"></omgdi:waypoint>
         <omgdi:waypoint x="681.0" y="101.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="17.0" width="100.0" x="900.0" y="43.0"></omgdc:Bounds>
+          <omgdc:Bounds height="17.0" width="44.0" x="900.0" y="43.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
@@ -287,14 +281,6 @@
       <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
         <omgdi:waypoint x="695.0" y="417.0"></omgdi:waypoint>
         <omgdi:waypoint x="740.0" y="417.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
-        <omgdi:waypoint x="405.0" y="657.0"></omgdi:waypoint>
-        <omgdi:waypoint x="490.0" y="657.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
-        <omgdi:waypoint x="595.0" y="657.0"></omgdi:waypoint>
-        <omgdi:waypoint x="680.0" y="657.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
         <omgdi:waypoint x="385.0" y="917.0"></omgdi:waypoint>

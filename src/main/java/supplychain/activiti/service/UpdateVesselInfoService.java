@@ -21,6 +21,8 @@ public class UpdateVesselInfoService implements Serializable, JavaDelegate {
 	public void execute(DelegateExecution dexe) {
 		// TODO Auto-generated method stub
 		System.out.println("\033[33;1m 正在更新车辆信息...... \033[0m");
+		String pid = dexe.getProcessInstanceId();
+		
 	}
 
 }

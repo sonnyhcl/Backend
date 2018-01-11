@@ -76,11 +76,12 @@ public class WeagonRestVariableConverter implements RestVariableConverter {
 		String w_Velocity = map.get("w_Velocity") == null ? null : (String) map.get("w_Velocity");
 		boolean needPlan =  map.get("needPlan") == null ? null : (boolean)map.get("needPlan");
 		int planRes = map.get("planRes") == null ? null : (Integer)map.get("planRes");
+		boolean isArrival = map.get("isArrival") == null ? null : (boolean)map.get("isArrival");
 		LocationRestVariableConverter c = new LocationRestVariableConverter();
 		@SuppressWarnings("unchecked")
 		HashMap<String , Object> lmap = (HashMap<String, Object>) map.get("w_TargLoc");
 		Location w_TargLoc= c.Map2Location(lmap);
-		Weagon w = new Weagon("Weagon", pid, w_id, w_Name, x_Coor, y_Coor, w_Velocity, start, end, pArri, needPlan, planRes, w_TargLoc);
+		Weagon w = new Weagon("Weagon", pid, w_id, w_Name, x_Coor, y_Coor, w_Velocity, start, end, pArri, needPlan, planRes, w_TargLoc, isArrival);
 		return w;
 	}
 }

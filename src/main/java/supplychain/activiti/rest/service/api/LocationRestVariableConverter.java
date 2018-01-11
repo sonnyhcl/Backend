@@ -68,8 +68,8 @@ public class LocationRestVariableConverter implements RestVariableConverter {
 		String x_coor = map.get("x_coor") == null ? null : map.get("x_coor") .toString() ;
 		String y_coor = map.get("y_coor") == null ? null : map.get("y_coor").toString();
 		String velocity = map.get("velocity") == null ? null : (String)map.get("velocity") ;
-		String timeStamp =  map.get("timeStamp") == null ? null : (String)map.get("timeStamp") ;
-		Date realTime =  map.get("realTime") == null ? null : sdf.parse((String)map.get("realTime")) ;
+		String timeStamp =  map.get("timeStamp") == null ? null : map.get("timeStamp").toString() ;
+		String realTime =  map.get("realTime") == null ? null : map.get("realTime").toString();
 		Location L = new Location("Location", lname, x_coor, y_coor, timeStamp, velocity, realTime);
 		return L;
 	}

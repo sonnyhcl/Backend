@@ -30,38 +30,18 @@ public class Weagon extends AbstractFormType implements Serializable {
 	//isNeedPlan
 	private boolean needPlan;
 	private int planRes;
+	
+
 
 	//当前目的地，一般是最有可能的会和点，初始一般是距离出发位置最近的港口，
 	private Location W_TargLoc;
 	
-	
+	//isArrival
+	private boolean isArrival;
 	public Weagon() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-	
-
-	public Weagon(String name, String pid, String w_id, String w_Name, String x_Coor, String y_Coor, String w_Velocity,
-			Date start, Date end, Date pArri, boolean needPlan, int planRes, Location w_TargLoc) {
-		super();
-		this.name = name;
-		this.pid = pid;
-		W_id = w_id;
-		W_Name = w_Name;
-		X_Coor = x_Coor;
-		Y_Coor = y_Coor;
-		W_Velocity = w_Velocity;
-		Start = start;
-		End = end;
-		this.pArri = pArri;
-		this.needPlan = needPlan;
-		this.planRes = planRes;
-		W_TargLoc = w_TargLoc;
-	}
-
-
-
 	public String getW_id() {
 		return W_id;
 	}
@@ -180,12 +160,36 @@ public class Weagon extends AbstractFormType implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	public boolean getIsArrival() {
+		return isArrival;
+	}
+	public void setIsArrival(boolean isArrival) {
+		this.isArrival = isArrival;
+	}
+	public Weagon(String name, String pid, String w_id, String w_Name, String x_Coor, String y_Coor, String w_Velocity,
+			Date start, Date end, Date pArri, boolean needPlan, int planRes, Location w_TargLoc, boolean isArrival) {
+		super();
+		this.name = name;
+		this.pid = pid;
+		W_id = w_id;
+		W_Name = w_Name;
+		X_Coor = x_Coor;
+		Y_Coor = y_Coor;
+		W_Velocity = w_Velocity;
+		Start = start;
+		End = end;
+		this.pArri = pArri;
+		this.needPlan = needPlan;
+		this.planRes = planRes;
+		W_TargLoc = w_TargLoc;
+		this.isArrival = isArrival;
+	}
 	@Override
 	public String toString() {
 		return "Weagon [name=" + name + ", pid=" + pid + ", W_id=" + W_id + ", W_Name=" + W_Name + ", X_Coor=" + X_Coor
 				+ ", Y_Coor=" + Y_Coor + ", W_Velocity=" + W_Velocity + ", Start=" + Start + ", End=" + End + ", pArri="
-				+ pArri + ", needPlan=" + needPlan + ", planRes=" + planRes + ", W_TargLoc=" + W_TargLoc + "]";
+				+ pArri + ", needPlan=" + needPlan + ", planRes=" + planRes + ", W_TargLoc=" + W_TargLoc
+				+ ", isArrival=" + isArrival + "]";
 	}
 	
 	
