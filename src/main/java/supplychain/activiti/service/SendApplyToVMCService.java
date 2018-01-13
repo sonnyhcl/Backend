@@ -29,9 +29,7 @@ public class SendApplyToVMCService implements TaskListener, Serializable {
 		System.out.println("Apply_Time : "+runtimeService.getVariable(dt.getExecutionId(), "appy_time"));
 		 Map<String, Object> vars = new HashMap<String, Object>();
 		 Weagon W_Info = new Weagon();
-		// Location curloc = new Location("杭州" ,"120.1958370209" ,"30.2695940578");
 		 Location tloc = new Location("南京" ,"118.800095" ,"32.146214");
-		// W_Info.setPid(dt.getProcessInstanceId());
 		 W_Info.setW_TargLoc(tloc);
 		 W_Info.setW_Name("杭州");                           
 		 W_Info.setX_Coor("120.1958370209");

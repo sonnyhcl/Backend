@@ -34,6 +34,7 @@ public class VoyaTaskStartListener implements ExecutionListener, Serializable {
 		
 		//修改某个流程实例中的变量
 		String pid = execution.getProcessInstanceId();
+		
 		try {
 			globalVariables.createOrUpdateVariableByNameAndValue(pid, "State" , "voyaging");
 		} catch (JsonProcessingException e) {

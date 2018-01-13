@@ -55,6 +55,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import supplychain.entity.Location;
+import supplychain.entity.VPort;
 import supplychain.entity.Weagon;
 
 @Configuration
@@ -111,6 +112,7 @@ public class ActivitiEngineConfiguration {
     	List<AbstractFormType> customFormTypes = new ArrayList<AbstractFormType>();
     	customFormTypes.add(new Weagon());
     	customFormTypes.add(new Location());
+    	customFormTypes.add(new VPort());
     	processEngineConfiguration.setCustomFormTypes(customFormTypes);
 
     	String emailHost = environment.getProperty("email.host");

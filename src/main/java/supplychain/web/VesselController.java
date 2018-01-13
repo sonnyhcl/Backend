@@ -209,7 +209,7 @@ public class VesselController extends AbstractController {
 	 * @return
 	 * @throws JsonProcessingException 
 	 */
-	@RequestMapping(value = "/zbq/variables/{processInstanceId}/{variableName}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/zbq/variables/{processInstanceId}/{variableName}", method = RequestMethod.PUT) 
 	public ResponseEntity<RestVariable > updateVariablesByNameToCache(@PathVariable String processInstanceId, @PathVariable String variableName,
 			HttpServletRequest request) throws JsonProcessingException {
 		Execution execution = baseExcutionVariableResource.getProcessInstanceFromRequest(processInstanceId);

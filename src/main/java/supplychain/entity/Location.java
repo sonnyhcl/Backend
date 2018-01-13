@@ -16,6 +16,7 @@ public class Location  extends AbstractFormType implements Serializable {
 	private String timeStamp;
 	private String velocity;
 	private String realTime;
+
 	
 	public String getTimeStamp() {
 		return timeStamp;
@@ -60,11 +61,6 @@ public class Location  extends AbstractFormType implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public String toString() {
-		return "Location [name=" + name + ", Lname=" + Lname + ", X_coor=" + X_coor + ", Y_coor=" + Y_coor
-				+ ", timeStamp=" + timeStamp + ", velocity=" + velocity + ", realTime=" + realTime + "]";
-	}
 	public String getRealTime() {
 		return realTime;
 	}
@@ -100,7 +96,10 @@ public class Location  extends AbstractFormType implements Serializable {
 		this.velocity = velocity;
 		this.realTime = realTime;
 	}
+	@Override
+	public String toString() {
+		return "Location [name=" + name + ", Lname=" + Lname + ", X_coor=" + X_coor + ", Y_coor=" + Y_coor
+				+ ", timeStamp=" + timeStamp + ", velocity=" + velocity + ", realTime=" + realTime + "]";
+	}
 	
-	
-
 }

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import supplychain.entity.Location;
+import supplychain.entity.VPort;
 
 @Service("initListener")
 public class InitListener implements ExecutionListener, Serializable {
@@ -66,6 +67,11 @@ public class InitListener implements ExecutionListener, Serializable {
 		vars.put("PrePort", new Location()); // 上一港口
 		vars.put("State", "voyaging"); // 船的状态
 		vars.put("StartTime", new Date()); // 每段航行的起始时间
+		List<VPort> vports = new ArrayList<VPort>();
+		for (Entry<String, VPort> entry : globalVariables.getPortsInfo().entrySet()) {
+			vports.add(entry.getValue());
+		}
+		vars.put("TargLocList", vports); // 港口清单
 		// runtimeService.setVariables(dExe.getId(), vars);
 
 		try {

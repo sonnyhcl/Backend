@@ -892,9 +892,9 @@ angular.module('activitiApp')
 angular.module('activitiApp')
 .controller('ADTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) { 
-	  $scope.durax = 0.2;  //D/A Task --- /min , 默认1min
+	  $scope.durax = 12;  //D/A Task --- /h , 默认12h
 	  $scope.waitTime =  0;
-	  $scope.countDown = $scope.durax * 60;
+	  $scope.countDown = $scope.durax * 60/24; // 60*1000 ms <=> 24h
 	  if($scope.model.task.name == 'Anchoring-Docking'){
      	 	console.log("Enter into ADTaskCtrl");
        }
@@ -905,13 +905,64 @@ angular.module('activitiApp')
 		} , 1000); 
 	    $scope.setDuration = function(){
 	    	$interval.cancel($scope.duraTimer);
-//	    	console.log("new dura :"+$scope.durax*60)
-	    	$scope.countDown = $scope.durax * 60;
-	    	 $scope.duraTimer = $interval(function(){
-	    		$scope.countDown--;
-	    		$scope.waitTime++;
-	    		//console.log("wait time : "+$scope.waitTime);
-	    	} , 1000);
+	    	var oldDurax =   $scope.countDown;
+	    	$scope.countDown = $scope.durax * 60/24;
+	    	var d_timeStamp = ($scope.countDown + $scope.WaitTime - oldDurax) * 24 * 60*60*1000/ 60; // 想对于上次默认抛毛时间的增量 真实时间毫秒数 /ms 
+	    
+	    	//更新港口时间
+	    	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId)
+	    	.success(function(data){
+	    		$scope.pvars = data;
+        		$scope.pidxs = $scope.createPidxs($scope.pvars);
+        	
+        		//更新港口停靠时间段
+        		var old_TarglocList =$scope.pvars[$scope.pIdxs['TargLocList']];
+                for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value ){
+                	var x = $scope.pvars[$scope.pIdxs['TargLocList']].value[i];
+                	//如果是当前港口及其后面港口， 时间按d_timeStamp顺移
+                	if(x.isArrival == false || x.lname == $scope.pvars[$scope.pIdxs['PrePort']].value.lname){
+                		   var s_ms = Date.parse($scope.pvars[$scope.pIdxs['TargLocList']].value.eStart)+d_timeStamp;
+                		   var e_ms = Date.parse($scope.pvars[$scope.pIdxs['TargLocList']].value.eEnd)+d_timeStamp;
+                           var d = new Date();
+                           d.setTime(s_ms);
+                           if (d != 'Invalid Date') {
+                        	   $scope.pvars[$scope.pIdxs['TargLocList']].value.eStart= $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
+                           }
+                           d.setTime(e_ms);
+                           if (d != 'Invalid Date') {
+                        	 $scope.pvars[$scope.pIdxs['TargLocList']].value.eEnd = $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
+                           }
+                	}
+                }
+                
+	    		$http.put(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId+'/complete' ,$scope.pvars)
+	    			.success(function(data){
+	    				$scope.pvars = data;
+	            		$scope.pidxs = $scope.createPidxs($scope.pvars);
+	            		if($scope.pvars[$scope.pIdxs['W_pid']] != undefined){
+	            			var data2VWC = {
+		    		    			'msgType' : "msg_ADTimeChange" ,
+		    		    			 'V_pid'  : $scope.model.task.processInstanceId ,
+		    		    			 'W_pid' : $scope.pvars[$scope.pIdxs['W_pid']],
+		    		    			 'Old_TagLocList' : old_TarglocList,
+		    		    			 'New_TargLocList' : $scope.pvars[$scope.pIdxs['TargLocList']]
+		    		    	};
+		    		    	$http.post(activityBasepath + "/coord/message/Msg_StartVWC", data2VWC)
+		    	             .success(function (data) {
+		    	                 console.log("Send Message to VMC!", data);
+		    	                 $scope.duraTimer = $interval(function(){
+		    	     	    		$scope.countDown--;
+		    	     	    		$scope.waitTime++;
+		    	     	    		//console.log("wait time : "+$scope.waitTime);
+		    	     	    	} , 1000);
+		    	             })
+	            		}else{
+	            			console.log("Weagon 实例未启动 ， VWC联系无法建立");
+	            		}
+	    			
+	    			})	
+	    	});
+	    
 	    }
 	    $scope.$watch('durax' , function(newVal , oldVal){
 //	    		 console.log("watch dura  : "+newVal+" "+oldVal);
@@ -926,7 +977,7 @@ angular.module('activitiApp')
 	        		$scope.pvars = data;
 //	        		console.log("variables after countDown :"+data);
 	        		$scope.pidxs = $scope.createPidxs($scope.pvars);
-	        		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']]['value'])+$scope.waitTime*60*1000;
+	        		var ms = Date.parse($scope.pvars[$scope.pidxs['StartTime']]['value'])+$scope.waitTime*60*1000 ;
 	    			var d = new Date();
 	    			d.setTime(ms);
 //	    			console.log("d :"+d+"ms : "+ms);
@@ -986,9 +1037,9 @@ angular.module('activitiApp')
     				$http.put(varUrl , $scope.pvars)
         			.success(function(res){
         				console.log("Voyaging Task 结束， 将StartTime上传")
-        				$scope.completeTask();  //call parent controller function;
+        				$scope.completeTask();  //call parent controller function; 交给VW_F 完成
         				$interval.cancel($scope.voyageTaskTimer);
-        			});
+        			});;
     				
     		}
     		//计算展示时间
@@ -1001,7 +1052,7 @@ angular.module('activitiApp')
     			$scope.dispTime = $filter('date')(d, "yyyy-MM-dd HH:mm:ss"); 
     		}
     	})
-    }, 2000);
+    }, 1000);
    
 }]);
 
@@ -1025,7 +1076,6 @@ angular.module('activitiApp')
     		
           	$http.get(varUrl)
         	.success(function(data){
-        		
         		$scope.pvars = data;
         		$scope.pidxs = $scope.createPidxs($scope.pvars);
         		//console.log("Apply voyaging" , $scope.pvars[$scope.pidxs['NowLoc']].value.x_coor , $scope.pvars[$scope.pidxs['NowLoc']].value.y_coor);
@@ -1035,17 +1085,17 @@ angular.module('activitiApp')
         		}
 //        		console.log("Now State : "+$scope.pvars[$scope.pidxs['State']].value);
         		//当前任务是Applying 时 ，如果遇到达下一港口消息，（这里默认在第个区间就会提出申请，不会出现这种情况）
-        		if($scope.pvars[$scope.pidxs['State']].value == 'arrival'){
-        			//******should do nothing
-        			$scope.pvars[$scope.pidxs['StartTime']].value = $scope.dispTime;
-        			$scope.pvars[$scope.pidxs['State']].value = 'voyaging';
-    				$http.put(varUrl , $scope.pvars)
-        			.success(function(res){
-        				console.log("过站了...")
-//        				console.log("Voyaging Task 结束， 将StartTime上传")
-//        				$scope.completeTask();  //call parent controller function;
-        			});
-        		}
+//        		if($scope.pvars[$scope.pidxs['State']].value == 'arrival'){
+//        			//******should do nothing
+//        			$scope.pvars[$scope.pidxs['StartTime']].value = $scope.dispTime;
+//        			$scope.pvars[$scope.pidxs['State']].value = 'voyaging';
+//    				$http.put(varUrl , $scope.pvars)
+//        			.success(function(res){
+//        				console.log("过站了...")
+////        				console.log("Voyaging Task 结束， 将StartTime上传")
+////        				$scope.completeTask();  //call parent controller function;
+//        			});
+//        		}
         		//计算展示时间
 //        		console.log("StartTime : "+$scope.pvars[$scope.pidxs['StartTime']].value);
 //        		console.log("timeStamp : "+$scope.pvars[$scope.pidxs['NowLoc']].value.timeStamp /60000 + " min");
@@ -1058,7 +1108,7 @@ angular.module('activitiApp')
         	})
     	}
 
-    }, 2000);
+    }, 1000);
     $scope.$on('complete-apply' , function(event , data){
     	console.log(data + ""+data.taskId+" --> cancel  $scope.ApplyTimer");
     	console.log(data.taskId == $scope.model.task.id);
@@ -1097,7 +1147,7 @@ angular.module('activitiApp')
 				$scope.w = data;
 			})
 		 }	
-	} , 10000)
+	} , 1000)
 //	 $scope.$on('RW_STOP' , function(event , data){
 //		 //TODO some work when receive 'RW_PLAN'
 //		console.log(" RunController receice RW_STOP " , data) 
