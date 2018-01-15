@@ -56,8 +56,8 @@ import java.util.List;
 @EnableWebMvc
 public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter implements WebSocketConfigurer{
 //
-//	@Autowired
-//    protected ObjectMapper objectMapper;
+	@Autowired
+    protected ObjectMapper objectMapper;
 //    
 //	@Autowired
 //	protected Environment environment;
@@ -116,38 +116,5 @@ public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter
 //                break;
 //            }
 //        }
-//    }
-    
-//    @Bean
-//    public FilterRegistrationBean filterRegistrationBean() {
-//        // 对响应头进行CORS授权
-//        MyCorsRegistration corsRegistration = new MyCorsRegistration("/api/**");
-//        corsRegistration.allowedOrigins(CrossOrigin.DEFAULT_ORIGINS)
-//                .allowedMethods("GET" , "POST" , "OPTIONS")
-//                .allowedHeaders("Authorization")
-//                .exposedHeaders("Authorization")
-//                .allowCredentials(CrossOrigin.DEFAULT_ALLOW_CREDENTIALS)
-//                .maxAge(CrossOrigin.DEFAULT_MAX_AGE);
-//
-//        // 注册CORS过滤器
-//        UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
-//        configurationSource.registerCorsConfiguration("/api/**", corsRegistration.getCorsConfiguration());
-//        CorsFilter corsFilter = new CorsFilter(configurationSource);
-//        return new FilterRegistrationBean(corsFilter);
-//    }
-//	
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        // 配置CorsInterceptor的CORS参数
-//        this._configCorsParams(registry.addMapping("/api/**"));
-//    }
-//
-//    private void _configCorsParams(CorsRegistration corsRegistration) {
-//        corsRegistration.allowedOrigins(CrossOrigin.DEFAULT_ORIGINS)
-//                .allowedMethods(HttpMethod.GET.name(), HttpMethod.HEAD.name(), HttpMethod.POST.name(), HttpMethod.PUT.name())
-//                .allowedHeaders(CrossOrigin.DEFAULT_ALLOWED_HEADERS)
-//                .exposedHeaders(HttpHeaders.SET_COOKIE)
-//                .allowCredentials(CrossOrigin.DEFAULT_ALLOW_CREDENTIALS)
-//                .maxAge(CrossOrigin.DEFAULT_MAX_AGE);
 //    }
 }

@@ -174,7 +174,7 @@ public class CustomBaseVariableCollectionResource extends BaseVariableCollection
 
 					Object actualVariableValue = restResponseFactory.getVariableValue(var);
 					variablesToSet.put(var.getName(), actualVariableValue);
-					resultVariables.add(restResponseFactory.createRestVariable(var.getName(), actualVariableValue, varScope,
+ 					resultVariables.add(restResponseFactory.createRestVariable(var.getName(), actualVariableValue, varScope,
 							execution.getId(), variableType, false));
 				}
 				if (sharedScope == RestVariableScope.LOCAL) {

@@ -14,8 +14,26 @@ public class WPort extends AbstractFormType implements Serializable{
 	private String esTime; //估计到达港口的时间点
 	private double dist;
 	private double supCost;
+	private String x_coor;
+	private String y_coor;
 	public double getSupCost() {
 		return supCost;
+	}
+
+	public String getX_coor() {
+		return x_coor;
+	}
+
+	public void setX_coor(String x_coor) {
+		this.x_coor = x_coor;
+	}
+
+	public String getY_coor() {
+		return y_coor;
+	}
+
+	public void setY_coor(String y_coor) {
+		this.y_coor = y_coor;
 	}
 
 	public void setSupCost(double supCost) {

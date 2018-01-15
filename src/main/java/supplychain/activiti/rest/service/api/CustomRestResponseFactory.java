@@ -1,5 +1,8 @@
 package supplychain.activiti.rest.service.api;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,7 +22,12 @@ import org.activiti.rest.service.api.engine.variable.RestVariable;
 import org.activiti.rest.service.api.engine.variable.RestVariableConverter;
 import org.activiti.rest.service.api.engine.variable.ShortRestVariableConverter;
 import org.activiti.rest.service.api.engine.variable.StringRestVariableConverter;
+
+import supplychain.entity.VPort;
+
 import org.activiti.rest.service.api.engine.variable.RestVariable.RestVariableScope;
+
+import com.mchange.util.ObjectCache;
 
 public class CustomRestResponseFactory extends RestResponseFactory {
 	/**
@@ -29,6 +37,7 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 	protected void initializeVariableConverters() {
 		variableConverters.add(new LocationRestVariableConverter());
 		variableConverters.add(new WeagonRestVariableConverter());
+		variableConverters.add(new VPortRestVariableConverter());
 		variableConverters.add(new StringRestVariableConverter());
 		variableConverters.add(new IntegerRestVariableConverter());
 		variableConverters.add(new LongRestVariableConverter());
@@ -36,6 +45,7 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 		variableConverters.add(new DoubleRestVariableConverter());
 		variableConverters.add(new BooleanRestVariableConverter());
 		variableConverters.add(new CustomDateRestVariableConverter());
+		variableConverters.add(new CustomArrayListRestVariableConverter());
 	}
 
 	public Object getVariableValue(RestVariable restVariable) {
@@ -45,8 +55,8 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 			// Try locating a converter if the type has been specified
 			RestVariableConverter converter = null;
 			for (RestVariableConverter conv : variableConverters) {
-			//	System.out.println("getClass :" + value.getClass());
-				//System.out.println("getVariableType ： "+conv.getVariableType());
+//				System.out.println("getClass :" + value.getClass());
+//				System.out.println("getVariableType ： "+conv.getVariableType());
 				if (conv.getRestTypeName().equals(restVariable.getType())) {
 					converter = conv;
 					break;
@@ -102,6 +112,11 @@ public class CustomRestResponseFactory extends RestResponseFactory {
  						converter = c;
  						break;
  					}
+				}
+				
+				if(value instanceof ArrayList && c.getRestTypeName().equals("ArrayList")) {
+						converter = c;
+						break;
 				}
 //				// 单独判断
 //				if (("Loc".equals(name))|| ("NowLoc".equals(name) || "V_TargLoc".equals(name) || "NextPort".equals(name) || "PrePort".equals(name) )

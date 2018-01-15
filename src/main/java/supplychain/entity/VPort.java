@@ -29,6 +29,33 @@ public class VPort extends AbstractFormType implements Serializable{
 	private boolean isMeetWeightCond;
 	private String State; // BeforeAD , InAD , AfterAD
 	private double cost;
+	private String x_coor;
+	private String y_coor;
+	private double sortFlag;
+
+	public String getX_coor() {
+		return x_coor;
+	}
+
+	public void setX_coor(String x_coor) {
+		this.x_coor = x_coor;
+	}
+
+	public String getY_coor() {
+		return y_coor;
+	}
+
+	public void setY_coor(String y_coor) {
+		this.y_coor = y_coor;
+	}
+
+	public double getSortFlag() {
+		return sortFlag;
+	}
+
+	public void setSortFlag(double sortFlag) {
+		this.sortFlag = sortFlag;
+	}
 
 	public String getPname() {
 		return pname;
@@ -108,17 +135,21 @@ public class VPort extends AbstractFormType implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public VPort(String pname, double quayRate, double weight, boolean isCraneStart) {
+	public VPort(String pname, double quayRate, double weight, String x_coor , String y_coor , boolean isCraneStart , int sortFlag) {
 		super();
 		this.pname = pname;
 		this.quayRate = quayRate;
 		this.weight = weight;
 		this.isCraneStart = isCraneStart;
+		this.x_coor = x_coor;
+		this.y_coor = y_coor;
+		this.sortFlag = sortFlag;
 	}
+	
 
-
-	public VPort(String name, String pname, double quayRate,  double weight, boolean isCraneStart,
-			String eStart, String eEnd, boolean isMeetWeightCond, String state) {
+	public VPort(String name, String pname, double quayRate, double weight, boolean isCraneStart, String eStart,
+			String eEnd, boolean isMeetWeightCond, String state, double cost, String x_coor, String y_coor,
+			double sortFlag) {
 		super();
 		this.name = name;
 		this.pname = pname;
@@ -129,6 +160,10 @@ public class VPort extends AbstractFormType implements Serializable{
 		EEnd = eEnd;
 		this.isMeetWeightCond = isMeetWeightCond;
 		State = state;
+		this.cost = cost;
+		this.x_coor = x_coor;
+		this.y_coor = y_coor;
+		this.sortFlag = sortFlag;
 	}
 
 	public String getState() {

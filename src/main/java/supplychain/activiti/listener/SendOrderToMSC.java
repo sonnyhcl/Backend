@@ -23,14 +23,25 @@ public class SendOrderToMSC implements TaskListener, Serializable {
 	@Override
 	public void notify(DelegateTask dT) {
 		// TODO Auto-generated method stub
-		//TODO : 将当前的Order数据发送给
+		String mpid = dT.getProcessInstanceId();
+		HashMap<String , Object>  msgData= (HashMap<String, Object>) runtimeService.getVariables(mpid);
+		runtimeService.setVariable(mpid, "SparePartWeight", 503.36); //在Order的时候知道spare part weight
+		/*********************************Send to VMC******************************************/
+//		msgData.put("msgType" ,"Msg_FilterVPort");
+//		runtimeService.startProcessInstanceByMessage("Msg_StartVMC" , msgData);
+		
+		
+		/****************************Send to MSC**********************************************/
+		//TODO : 将当前的Order数据发送给msMSC
+		System.out.println("Send Ordder to Msc");
 		UUID orderId = java.util.UUID.randomUUID();
 		System.out.println("orderId : " + orderId);
-		
-		HashMap<String , Object> mp = (HashMap<String, Object>) runtimeService.getVariables(dT.getProcessInstanceId());
-		mp.put("OrderId", orderId.toString());
+		msgData.put("M_pid", mpid);
+		msgData.put("OrderId", orderId.toString());
+		msgData.put("msgType","Msg_StartSupplier");
+		msgData.put("SparePartWeight" , 503.36);
 		//启动Supplier Process
-		runtimeService.startProcessInstanceByMessage("Msg_StartMSC" , mp);
+		runtimeService.startProcessInstanceByMessage("Msg_StartMSC" , msgData);
 		System.out.println("MSC实例已启动");
 	}
 	

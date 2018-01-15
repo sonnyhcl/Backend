@@ -1,7 +1,11 @@
 package supplychain.activiti.coord;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
@@ -9,7 +13,10 @@ import org.activiti.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service("SMCoordinator")
+import supplychain.entity.Weagon;
+import supplychain.util.DateUtil;
+
+@Service("SWCoordinator")
 public class SWCoordinator implements JavaDelegate, Serializable {
 
 	/**
@@ -21,10 +28,38 @@ public class SWCoordinator implements JavaDelegate, Serializable {
 	@Override
 	public void execute(DelegateExecution exec) {
 		// TODO Auto-generated method stubVWCoordinator.java
-		HashMap<String , Object>  mp = (HashMap<String, Object>) runtimeService.getVariables(exec.getId());
-		// 消息启动Supplier流程
-		runtimeService.startProcessInstanceByMessage("Msg_StartWeagon" , mp);
-		System.out.println("Weagon流程实例已启动");
+		HashMap<String , Object>  msgData = (HashMap<String, Object>) runtimeService.getVariables(exec.getProcessInstanceId());
+		String msgType = (String) msgData.get("msgType");
+		if(msgType.equals("Msg_StartWeagon")) {
+			Weagon w = new Weagon();
+			w.setW_Name("weagon_1");
+			w.setX_Coor("120.1958370209");
+			w.setY_Coor("30.2695940578");
+			w.setIsArrival(false);
+			msgData.put("W_Info", w);
+			//TODO : 转换时间
+		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		    SimpleDateFormat sdf1 =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+		    formatter.setTimeZone(TimeZone.getTimeZone("GMT"));  
+		    try {
+				Date dateApply = formatter.parse((String)msgData.get("V_realApplyTime"));
+				Date dateNow = new Date();
+				String actualApplyTime = (String) msgData.get("V_ApplyTime");
+				Long x = sdf1.parse(actualApplyTime).getTime() + dateNow.getTime() - dateApply.getTime();
+				Date wStartTime = DateUtil.transForDate(x);
+				msgData.put("W_StartTime" , wStartTime);
+				msgData.put("W_RealStartTime", dateNow);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    
+			msgData.remove("msgType");
+			msgData.remove("M_pid");
+			runtimeService.startProcessInstanceByMessage("Msg_StartWeagon" , msgData);
+			System.out.println("Weagon流程实例已启动");
+		}
+	
 	}
 
 }

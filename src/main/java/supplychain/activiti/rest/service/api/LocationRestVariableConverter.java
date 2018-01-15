@@ -31,9 +31,6 @@ public class LocationRestVariableConverter implements RestVariableConverter {
 	public Object getVariableValue(RestVariable result) {
 		// TODO Auto-generated method stub
 		if (result.getValue() != null) {
-//			if (!(result.getValue() instanceof Location)) {
-//				throw new ActivitiIllegalArgumentException("Converter can only convert Location Type");
-//			}
 			if(result.getValue() instanceof LinkedHashMap) {
 				@SuppressWarnings("unchecked")
 				HashMap<String, Object> mp = (HashMap<String, Object> ) result.getValue();
@@ -53,9 +50,6 @@ public class LocationRestVariableConverter implements RestVariableConverter {
 	public void convertVariableValue(Object variableValue, RestVariable result) {
 		// TODO Auto-generated method stub
 		if (variableValue != null) {
-//			if (!(variableValue instanceof Location)) {
-//				throw new ActivitiIllegalArgumentException("Converter can only convert Location Type");
-//			}
 			result.setValue(variableValue);
 		} else {
 			result.setValue(null);

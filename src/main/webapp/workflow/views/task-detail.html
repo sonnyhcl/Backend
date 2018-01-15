@@ -347,7 +347,7 @@
 					</tr>
 				</table>
 		</div>
-		<div  class="generic-container container"  ng-if="model.task.name == 'Apply for spare parts'" ng-controller="ApplyTaskController">
+<!-- 		<div  class="generic-container container"  ng-if="model.task.name == 'Apply for spare parts'" ng-controller="ApplyTaskController">
 			<h3>&nbsp;&nbsp;Voyaging Information</h3>
 				<br/>
 				<table  class="table voya-table" >
@@ -372,40 +372,58 @@
 						<td class="td2">{{dispTime}}</td>
 					</tr>
 				</table>
-		</div>
+		</div> -->
 		<hr/>
-		<div  class="generic-container container"  ng-if="model.task.name == 'Anchoring-Docking'" ng-controller="ADTaskController">
+		<div  class="generic-container container"  ng-if="model.task.name == 'Anchoring'" ng-controller="AnchoringTaskController">
 			<h3>&nbsp;&nbsp;Anchoring/Docking Information</h3>
 				<br/>
 				<table  class="table voya-table" >
 					<tr>
-						<td class="td1" >Duration&nbsp;Time(h)&nbsp;：</td>
-						<td class="td2">{{countDown}} S</td>
-						<td class="td2"><input ng-model = "durax" /></td>
+						<td class="td1" >延误&nbsp;(单位：h)&nbsp;：</td>
+						<td class="td2"><input ng-model = "dx" /></td>
+					</tr>
+					<tr>
+						<td class="td1" >延期&nbsp;(单位：h)&nbsp;：</td>
+						<td class="td2"><input ng-model = "dy" /></td>
+					</tr>
+					<tr>
 						<td>
-							<button  ng-click="setDuration()" class="btn btn-success">OK</button>
+							<button  ng-click="setDxy()" class="btn btn-success">OK</button>
 						</td>
 					</tr>
 			</table>
 		</div>
-		<div  class="generic-container container"  ng-if="model.task.name == 'Plan Path'" ng-controller="PlanPathController">
-			<h3>&nbsp;&nbsp;正在规划路径</h3>
+	    <div  class="generic-container container"  ng-if="model.task.name == 'Docking'" ng-controller="DockingTaskController">
+			<h3>&nbsp;&nbsp;Anchoring/Docking Information</h3>
+				<br/>
+				<table  class="table voya-table" >
+					<tr>
+						<td class="td1" >延期&nbsp;Time(h)&nbsp;：</td>
+						<td class="td2"><input ng-model = "dy" /></td>
+					</tr>
+				 	<tr>
+						<td><button  ng-click="setDuration()" class="btn btn-success">OK</button> </td>
+					</tr>
+			</table>
 		</div>
+		<!-- <div  class="generic-container container"  ng-if="model.task.name == 'Plan Path'" ng-controller="PlanPathController">
+			<h3>&nbsp;&nbsp;正在规划路径</h3>
+		</div> -->
 		<div  class="generic-container container"  ng-if="model.task.name == 'Running'"  ng-controller="RunController">
 			<h3>&nbsp;&nbsp;Running Information</h3>
 			<br/>
 				<table  class="table voya-table" >
 					<tr>
 						<td class="td1" >Destination &nbsp;：</td>
-						<td class="td2">{{w.value.w_TargLoc.lname}}</td>
+						<td class="td2">{{w[pidxs['DestPort']].value.pname}}</td>
 					</tr>
 					<tr>
 						<td class="td1">&emsp;&emsp;X_coor &emsp;&emsp;：</td>
-						<td class="td2">{{w.value.x_Coor}}</td>
+						<td class="td2">{{w[pidxs['W_Info']].value.x_Coor}}</td>
 					</tr>
 					<tr>
 						<td class="td1">&emsp;&emsp;Y_coor &emsp;&emsp;：</td>
-						<td class="td2">{{w.value.y_Coor}}</td>
+						<td class="td2">{{w[pidxs['W_Info']].value.y_Coor}}</td>
 					</tr>
 				</table>
 		
