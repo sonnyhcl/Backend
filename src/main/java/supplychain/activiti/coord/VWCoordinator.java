@@ -18,8 +18,16 @@ import org.activiti.engine.runtime.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.zbq.EventType;
+import com.zbq.GlobalEventQueue;
+import com.zbq.GlobalVariables;
+import com.zbq.VWFEvent;
+
+import supplychain.activiti.rest.service.api.CustomArrayListRestVariableConverter;
 import supplychain.entity.VPort;
 import supplychain.entity.WPort;
+import supplychain.entity.Weagon;
 import supplychain.util.DateUtil;
 
 @Service("VWCoordinator")
@@ -37,71 +45,75 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 	
 	 @Autowired  
 	 private RestTemplate restTemplate; 
+	 @Autowired
+	 private GlobalVariables globalVariables;
+	 @Autowired
+	 private GlobalEventQueue globalEventQueue;
 	
 	@Override
 	public void execute(DelegateExecution exec) {
 		// TODO Auto-generated method stubVWCoordinator.java
 		HashMap<String , Object>  msgData= (HashMap<String, Object>) runtimeService.getVariables(exec.getId());
-		String msgType = (String) msgData.get("Msg_Type");
+		String msgType = (String) msgData.get("msgType");
 		HashMap<String , Object> replyData = new HashMap<String , Object>();
 		String vpid = (String) msgData.get("V_pid");
 		String wpid = (String) msgData.get("W_pid");
+		runtimeService.setVariable(vpid, "W_pid" , wpid);		
+		
 		//需要计算目的地
 		if(msgType.equals("msg_UpdateDest")) {
 			//TODO : handle Anchring/Docking duration changes or  handle ET changes
-			@SuppressWarnings("unchecked")
-			List<VPort> newTargLocList = (List<VPort>) msgData.get("V_TagLocList");
-			@SuppressWarnings("unchecked")
-			List<WPort> wportList = (List<WPort>) msgData.get("W_TargPortList");
-			double sp_weight = (double) runtimeService.getVariable(vpid, "SparePartWeight");
+			
+			//获取Vessel , Weagon 两边的港口列表
+			List<VPort> vTargLocList = getVports(vpid ,  "TargLocList");
+			List<WPort> wTargLocList = getWports(wpid ,  "W_TargLocList");
+			double sp_weight = (double) runtimeService.getVariable(wpid, "SparePartWeight");
+			
 			HashMap<String, VPort> vpMap = new HashMap<String , VPort>();
 			//现将newTargLocList转为map
-			for(int i = 0 ; i < newTargLocList.size() ; i++) {
-				VPort nowWport = newTargLocList.get(i);
+			for(int i = 0 ; i < vTargLocList.size() ; i++) {
+				VPort nowWport = vTargLocList.get(i);
 				vpMap.put(nowWport.getPname(), nowWport);
 			}
 			
-			String w_startTime = (String) runtimeService.getVariable(wpid ,"W_StartTime");
-			Date w_realStartTime = (Date) runtimeService.getVariable(wpid, "W_RealStartTime");
-			SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-			Long t_ms = 0L;
-			try {
-				Date w_stDate= sdf.parse(w_startTime);
-				t_ms = w_stDate.getTime();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			Date curDate = new Date();
-			t_ms += (curDate.getTime() - w_realStartTime.getTime());
-			//Date simuCurTime  = DateUtil.transForDate(t_ms);
+			//计算当前时间 ， 以Vessel实例启动时间为基准
+			Date v_start_date = (Date) runtimeService.getVariable(vpid, "StartTime");
+			Date cur_date = new Date();
+			long t_ms = v_start_date.getTime();   
+			t_ms += (cur_date.getTime() - v_start_date.getTime())*globalVariables.getZoominrate();
 			
-			List<VPort> candinateVports = new ArrayList<VPort>();
-			List<WPort>candinateWports = new ArrayList<WPort>();
-			for(int i = 0 ; i < wportList.size() ; i++) {
-				
+			//
+			Weagon w_info= (Weagon) runtimeService.getVariable(wpid, "W_Info");
 			
-				WPort nowWport = wportList.get(i);
+			List<WPort>candinateWports = new ArrayList<WPort>(); //候选港口信息
+			HashMap<String , JSONObject> routeMp = new HashMap<String , JSONObject>();
+			for(int i = 0 ; i < wTargLocList.size() ; i++) {		//计算成本	
+				WPort nowWport = wTargLocList.get(i);
 				VPort nowVport = vpMap.get(nowWport.getPname());
-				if(nowVport.getState().equals("InAD") || nowVport.equals("AfterAD")) {
+				if((nowVport.getState().equals("InAD") || nowVport.getState().equals("AfterAD"))) {//考虑未到达的港口
 					//计算预计到达是时间
-					Date date = DateUtil.transForDate(getEsti_Ms(nowWport.getX_coor(), nowWport.getY_coor(), nowVport.getX_coor(), nowVport.getY_coor())+t_ms);
-					String esti_ms = sdf.format(date);
-					nowWport.setEsTime(esti_ms);
-					double c = Math.max(DateUtil.TimeMinus(nowVport.getEEnd(),nowWport.getEsTime() ), 0)*nowVport.getQuayRate()*sp_weight + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
-					 nowVport .setCost(c);
-					candinateVports.add(nowVport);
-					candinateWports.add(nowWport);
+					JSONObject route = PlanPath(w_info.getX_Coor(),w_info.getY_Coor(), nowVport.getX_coor(), nowVport.getY_coor());
+					Date estiDate = DateUtil.transForDate(getEsti_Ms(route)+t_ms);
+					String estiDateStr= DateUtil.date2str(estiDate);
+					nowWport.setEsTime(estiDateStr);
+					if(DateUtil.TimeMinus(nowVport.getEEnd() ,  nowWport.getEsTime()) >  0) {
+						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime()), 0)*nowVport.getQuayRate()*sp_weight + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
+						nowWport.setSupCost(c); //暂时把总成本记在这
+						nowWport.setSortFlag(nowVport.getSortFlag());
+//						nowWport.setRoute(route);
+						routeMp.put(nowWport.getPname(), route);
+						candinateWports.add(nowWport);
+					}
 				}
 			}
 			
 			double minCost = infinite;
-			VPort destPort = null;
-			//排序
+			WPort destPort = null;
+			//按靠港顺序排序
 			 @SuppressWarnings("rawtypes")
-			Comparator c = new Comparator<VPort>() {  
+			Comparator c = new Comparator<WPort>() {  
 		            @Override  
-		            public int compare(VPort a, VPort b) {  
+		            public int compare(WPort a, WPort b) {  
 		                // TODO Auto-generated method stub  
 		                if(a.getSortFlag() > b.getSortFlag()) {
 		                	 return 1;  
@@ -110,39 +122,40 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 		                }
 		            }
 		        }; 
-			candinateVports.sort(c);
-			for(int i = 0 ; i < candinateVports.size() ; i++) {
-				VPort tvp = candinateVports.get(i);
-				double co = (1 - Math.pow(k, i+1))*tvp.getCost();
-				tvp.setCost(co);
-				candinateVports.set(i, tvp);
+			candinateWports.sort(c);
+			JSONObject pathResult = null;
+			for(int i = 0 ; i < candinateWports.size() ; i++) {
+				WPort twp = candinateWports.get(i);
+				double co = (1 - Math.pow(k, i+1))*twp.getSupCost();
+				twp.setSupCost(co);
+				candinateWports.set(i, twp);
 				if(co < minCost) {
 					minCost =co;
-					destPort = tvp;
+					destPort = twp;
+					pathResult = routeMp.get(twp.getPname());
 				}
 			}
-			runtimeService.setVariable(wpid, "DestPort", destPort);
-			runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
-			String replyMsgType = "Msg_AfterPlan";
-			Execution replyExe = runtimeService.createExecutionQuery().messageEventSubscriptionName(replyMsgType).singleResult();
-			runtimeService.messageEventReceived(replyMsgType, replyExe.getId());
+			//runtimeService.setVariable(wpid, "DestPort", "destPort");
+			//runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
+			
+			//SendMsg to VWF
+			VWFEvent e = new VWFEvent(EventType.W_RUN);
+			e.getData().put("createAt", (new Date()).toString());
+			JSONObject wjson = new JSONObject( w_info);
+			e.getData().put("W_Info", wjson);
+			e.getData().put("DestPort" , new JSONObject(destPort));
+			e.getData().put("pathResult", pathResult);
+			globalEventQueue.sendMsg(e);
 		}
 		
 		if(msgType.equals("msg_CreateVWConn")) {
 			//在Vessel流程中设置W_pid , 建立关联
-			runtimeService.setVariable(vpid, "W_pid" , wpid);		
+//			runtimeService.setVariable(vpid, "W_pid" , wpid);		
 			System.out.println("Vessel 和 Weagon 联系建立");
 		}
 	}
 	
-	
-	
-	public long getEsti_Ms(String x1 ,  String  y1 , String x2 , String y2 ) {
-		 String url = "http://restapi.amap.com/v3/direction/driving?origin="+x1+","+y1+"&"+x2+","+y2+"&output=json&key=ec15fc50687bd2782d7e45de6d08a023";
-	     String s = restTemplate.getForEntity(url, String.class).getBody();
-	     System.out.println(s);
-	     JSONObject res = new JSONObject(s); 
-	     JSONObject route =  (JSONObject) res.get("route");
+	public long getEsti_Ms(JSONObject route) {
 		 @SuppressWarnings("unchecked")
 		 JSONArray paths = (JSONArray) route.get("paths");
 	     @SuppressWarnings("unchecked")
@@ -150,5 +163,43 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 	     long esti = Integer.parseInt((String) path.get("duration"));
 	     return esti;
 	}
+	
+	public JSONObject PlanPath(String x1 ,  String  y1 , String x2 , String y2) {
+		 String url = "http://restapi.amap.com/v3/direction/driving?origin="+x1+","+y1+"&destination="+x2+","+y2+"&output=json&key=ec15fc50687bd2782d7e45de6d08a023";
+	     String s = restTemplate.getForEntity(url, String.class).getBody();
+	    // System.out.println(s);
+	     JSONObject res = new JSONObject(s); 
+	     JSONObject route =  (JSONObject) res.get("route");
+	     return route;
+	}
 
+	public List<VPort> getVports(String vpid , String vname){
+		@SuppressWarnings("unchecked")
+		List<VPort> vtargLocMap = (List<VPort>) runtimeService.getVariable(vpid , vname);
+
+		//@SuppressWarnings("unchecked")
+		//List<HashMap<String, Object>> vtargLocMap = (List<HashMap<String, Object>>) runtimeService.getVariable(vpid , vname);
+//		if( vtargLocMap  != null) {
+//			CustomArrayListRestVariableConverter vpac = new CustomArrayListRestVariableConverter();
+//			List<VPort> vTargLocList = vpac.Map2VPortList(vtargLocMap);
+//			return vTargLocList;
+//		}
+//		return null;
+		return vtargLocMap;
+	}
+	
+	public List<WPort> getWports(String wpid , String vname){
+//		@SuppressWarnings("unchecked")
+//		List<HashMap<String, Object>> wtargLocMap = (List<HashMap<String, Object>>) runtimeService.getVariable(wpid , vname);
+//		if(wtargLocMap  != null) {
+//			CustomArrayListRestVariableConverter wpac = new CustomArrayListRestVariableConverter();
+//			List<WPort> vTargLocList = wpac.Map2WPortList(wtargLocMap);
+//			return vTargLocList;
+//		}
+//		return null;
+		@SuppressWarnings("unchecked")
+		
+		List<WPort> vtargLocMap = (List<WPort>) runtimeService.getVariable(wpid , vname);
+		return vtargLocMap;
+	}
 }

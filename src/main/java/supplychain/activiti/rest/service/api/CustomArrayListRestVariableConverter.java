@@ -11,6 +11,7 @@ import org.activiti.rest.service.api.engine.variable.RestVariable;
 import org.activiti.rest.service.api.engine.variable.RestVariableConverter;
 
 import supplychain.entity.VPort;
+import supplychain.entity.WPort;
 import supplychain.entity.Weagon;
 
 public class CustomArrayListRestVariableConverter implements RestVariableConverter {
@@ -33,7 +34,15 @@ public class CustomArrayListRestVariableConverter implements RestVariableConvert
 		if(result.getValue() != null) {
 			@SuppressWarnings("unchecked")
 			List<HashMap<String, Object>> resList = (List<HashMap<String, Object>>) result.getValue();
-			return Map2VPortList(resList);
+			if(resList.get(0).get("name").equals("VPort")) {
+				return Map2VPortList(resList);
+			}else if(resList.get(0).get("name").equals("WPort")){
+				return Map2WPortList(resList);
+			}else {
+				System.out.println("ArrayList getVariableValur fail!");
+				return null;
+			}
+		
 		}
 		return null;
 	}
@@ -59,6 +68,19 @@ public class CustomArrayListRestVariableConverter implements RestVariableConvert
 			for(int i = 0 ; i < resList.size();i++) {
 				VPort nowVp = vpc.Map2VPort(resList.get(i));
 				list.add(nowVp);
+			}
+			return list;
+		}
+		return null;
+	}
+	public List<WPort> Map2WPortList(List<HashMap<String, Object>> resList){
+		// TODO Auto-generated method stub
+		if (resList != null) {
+			List<WPort> list = new ArrayList<WPort>();
+			WPortRestVariableConverter vpc =  new WPortRestVariableConverter();
+			for(int i = 0 ; i < resList.size();i++) {
+				WPort nowWp = vpc.Map2WPort(resList.get(i));
+				list.add(nowWp);
 			}
 			return list;
 		}

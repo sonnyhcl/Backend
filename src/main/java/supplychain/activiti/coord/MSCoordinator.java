@@ -42,17 +42,18 @@ public class MSCoordinator implements JavaDelegate, Serializable {
 			List<HashMap<String, Object>> targLocMap = (List<HashMap<String, Object>>) msgData.get("V_TargLocList");
 			CustomArrayListRestVariableConverter vpac = new CustomArrayListRestVariableConverter();
 			List<VPort> targLocList = vpac.Map2VPortList(targLocMap);
+			
+			
 			List<VPort> candiVPorts = new ArrayList<VPort>();
 	 		 for(int i = 0 ; i < targLocList.size() ; i++) {	 			 
 	 			 VPort now = targLocList.get(i);
-	 			 VPort portInfo = (VPort) globalVariables.getPortsInfo().get(now.getPname());
-	 			 if(portInfo.getWeight() < w_thre) {
+	 			 if(now.getWeight() >=  w_thre) {
 	 				 now.setIsMeetWeightCond(true);
 	 			 }else {
 	 				 now.setIsMeetWeightCond(false);
 	 			 }
 	 			 
-	 			 if(portInfo.getIsCraneStart() == false) {
+	 			 if(now.getIsCraneStart() == false) {
 	 				now.setIsMeetWeightCond(false);
 	 			 }
 	 			 if(now.getIsMeetWeightCond() == true) {
@@ -73,17 +74,17 @@ public class MSCoordinator implements JavaDelegate, Serializable {
 			for(int i = 0 ; i < candiVPorts.size() ; i++) {
 				VPort vp = candiVPorts.get(i);
 				WPort wp = new WPort();
-				wp.setPname(vp.getName());
+				wp.setPname(vp.getPname());
 				wp.setCarryRate(globalVariables.getCarRateMp().get(vp.getPname()));
 				wp.setX_coor(vp.getX_coor());
 				wp.setY_coor(vp.getY_coor());
-				if(!vp.getIsMeetWeightCond() == true ) {
+				if(vp.getIsMeetWeightCond() == true) {
 					wtarglocs.add(wp);
 				}
 			}
-			msgData.put("W_TargPortList" , candiVPorts);
+			msgData.put("W_TargLocList" , wtarglocs);
 			msgData.remove("msgType");
-			msgData.remove("V_pid");
+		//	msgData.remove("V_pid");
 			runtimeService.startProcessInstanceByMessage("Msg_StartSupplier" , msgData);
 			System.out.println("Supplier流程实例已启动");
 		}	

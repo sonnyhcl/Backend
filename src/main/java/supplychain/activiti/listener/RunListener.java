@@ -3,6 +3,7 @@ package supplychain.activiti.listener;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -29,31 +30,27 @@ public class RunListener implements TaskListener, Serializable {
 
 	@Autowired
 	private RuntimeService runtimeService ;
-    @Autowired
-    private TaskService taskService;
 	@Autowired
 	private GlobalEventQueue globalEventQueue;
 	@Override
 	public void notify(DelegateTask exec) {
 		// TODO Auto-generated method stub
 		String pid = exec.getProcessInstanceId();
-		//String taskId = taskService.createTaskQuery().taskName("Running").singleResult().getId();
-		//System.out.println("Running Task Id : "+taskId);
-		Weagon w = (Weagon) runtimeService.getVariable(pid, "W_Info");
-		VWFEvent e = new VWFEvent(EventType.W_RUN);
-		e.getData().put("createAt", (new Date()).toString());
-		JSONObject wjson = new JSONObject(w);
-		e.getData().put("W_Info", wjson);
-		//e.getData().put("taskId", taskId);
-	
+		System.out.println(pid);
+		//Weagon w = (Weagon) runtimeService.getVariable(pid, "W_Info");
 		
-		try {
-			System.out.println("Send a W_RUN message");
-			globalEventQueue.getSendQueue().put(e);
-		} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-		}
+//		VWFEvent e = new VWFEvent(EventType.W_RUN);
+//		e.getData().put("createAt", (new Date()).toString());
+//		JSONObject wjson = new JSONObject(w);
+//		e.getData().put("W_Info", wjson);	
+//		globalEventQueue.sendMsg(e);
+		
+		HashMap<String, Object> connVMData = (HashMap<String, Object>) runtimeService.getVariables(pid);
+		connVMData.put("msgType" , "msg_UpdateDest");
+		connVMData.put("W_pid" , pid);
+		runtimeService.startProcessInstanceByMessage("Msg_StartVWC" ,connVMData);
+		System.out.println("Send  Msg_StartVWC message to VWC to connect to vessel");
+		
 	}
 }
 

@@ -191,9 +191,6 @@
 						</connectors>
 						<stopKey>stop</stopKey>
 						<stopPort>8082</stopPort>
-						<webAppConfig>
-							<contextPath>/${project.artifactId}</contextPath>
-						</webAppConfig>
 					</configuration>
 				</plugin>
 			</plugins>

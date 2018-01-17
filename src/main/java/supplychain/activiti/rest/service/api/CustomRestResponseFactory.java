@@ -1,7 +1,5 @@
 package supplychain.activiti.rest.service.api;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +36,7 @@ public class CustomRestResponseFactory extends RestResponseFactory {
 		variableConverters.add(new LocationRestVariableConverter());
 		variableConverters.add(new WeagonRestVariableConverter());
 		variableConverters.add(new VPortRestVariableConverter());
+		variableConverters.add(new WPortRestVariableConverter());
 		variableConverters.add(new StringRestVariableConverter());
 		variableConverters.add(new IntegerRestVariableConverter());
 		variableConverters.add(new LongRestVariableConverter());

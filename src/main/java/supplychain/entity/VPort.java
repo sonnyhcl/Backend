@@ -135,9 +135,10 @@ public class VPort extends AbstractFormType implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public VPort(String pname, double quayRate, double weight, String x_coor , String y_coor , boolean isCraneStart , int sortFlag) {
+	public VPort(String pname, String state ,double weight ,  double quayRate , String x_coor , String y_coor , boolean isCraneStart , int sortFlag) {
 		super();
 		this.pname = pname;
+		this.State = state;
 		this.quayRate = quayRate;
 		this.weight = weight;
 		this.isCraneStart = isCraneStart;

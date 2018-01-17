@@ -47,4 +47,28 @@ public class DateUtil {
         }  
         return temp;  
     }  
+    /**
+     * String to Date
+     * @param dateStr
+     * @return
+     */
+    public static Date str2date(String dateStr) {
+    	SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+   		try {
+			Date date = sdf.parse(dateStr);
+			return date;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+   		return null;
+    }
+    
+    public static String date2str(Date date) {
+    	SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+   		if(date != null) {
+   			return sdf.format(date);
+   		}
+   		return null;
+    }
 }

@@ -1,7 +1,9 @@
 package com.zbq;
 
+import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,5 +42,15 @@ public class GlobalEventQueue {
 	}
 	public void setrLastId(Long rLastId) {
 		this.rLastID = rLastId;
+	}
+	
+	public void sendMsg(VWFEvent e) {	
+		try {
+			System.out.println("Send a "+e.getType().toString()+" message");
+			this.sendQueue.put(e);
+		} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+		}
 	}
 }

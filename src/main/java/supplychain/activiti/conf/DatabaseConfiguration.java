@@ -181,7 +181,7 @@ public class DatabaseConfiguration {
     HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setShowSql(env.getProperty("hibernate.show_sql", Boolean.class, false));
     jpaVendorAdapter.setDatabasePlatform(env.getProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect"));
-    jpaVendorAdapter.setGenerateDdl(true);
+  //  jpaVendorAdapter.setGenerateDdl(true);
     return jpaVendorAdapter;
   }
 

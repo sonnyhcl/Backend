@@ -58,6 +58,9 @@ angular.module('activitiApp')
 	};
     $scope.activeTab = 'form';
     /**
+     * 
+     */
+    /**
      * 轮询
      */
    // $scope.lastEventId = 0;
@@ -128,6 +131,23 @@ angular.module('activitiApp')
     	}
     	return pidxs;
     }
+    //dateString to ms
+    $scope.dateStr2ms = function(dateStr){
+    	return Date.parse(dateStr);
+    }
+    
+    //ms to dateString 
+    $scope.ms2dateStr = function(vms){
+    	var d = new Date();
+	    d.setTime(vms);
+		if(d != 'Invalid Date') {
+				return $filter('date')(d, "yyyy-MM-dd HH:mm:ss");	
+		}else{
+			return null;
+		}
+    }
+    
+    
 //    var voyageTaskTimer = $interval(function(){
 //    	if($scope.isVoyagingTask == true || $scope.isApply == true){
 //    	   	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/runtime/process-instances/'+$scope.nowTask['processInstanceId']+'/variables')
@@ -923,49 +943,38 @@ angular.module('activitiApp')
    	 		    $scope.eend = $scope.pvars[$scope.pIdxs['PrePort']].value.eend;
    	 		    $scope.countTime = $interval(function(){ //如果anchoring 滞留
    	   	 		//计算实际时间， 即非压缩时间
-   	 				var d = new Date();
-   	 				d.setTime(Date.parse($scope.curTime)+1000);
-   	 				if (d != 'Invalid Date') {
-   	 					$scope.curTime= $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-   	 					if($scope.dx != 0){ //如果需要延期，anchoring状态滞留dx , 否则将这段时间当作docking时间的一部分
-   	 						if( $scope.compAnchTime == $scope.curTime){
-   	 							$scope.completeTask();
-   	 							$interval.cancel($scope.countTime);
-   	 							console.log("$scope.curTime : " , $scope.curTime);
-   	 						}
-   	 					
-   	 					}
-   	 					
-   	 				}
-   	 			} ,1000/$scope.ZoomInVal);
+   	 		    	var curMs =$scope.dateStr2ms($scope.curTime)
+   	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
+   	 		        $scope.curTime= $scope.ms2dateStr(nextMs);
+   	 		    	if($scope.dx != 0){ //如果需要延期，anchoring状态滞留dx , 否则将这段时间当作docking时间的一部分
+   	 		    		var compMs = $scope.dateStr2ms($scope.compAnchTime);
+   	 		    		if(compMs > curMs && compMs <= nextMs){
+   	 		    			$scope.completeTask();
+   	 		    			$interval.cancel($scope.countTime);
+   	 		    			console.log("延期结束， anchoring 结束 ， $scope.curTime : " , $scope.curTime);
+   	 		    		}
+   	 		    	}
+   	 			} ,1000);
    	 		})
      }
 	
 	$scope.setDxy = function(){ //需要延期靠港
 		
 		if($scope.dx != 0){//有延误或者延期
-				
 				if($scope.dx <= $scope.dy){
-					  d.setTime(Date.parse($scope.estart)+$scope.dx * 60 * 60 * 1000);
-					  if (d != 'Invalid Date') {
-						  $scope.compAnchTime = $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-						 // $scope.compAnchTime =  $scope.estart;//设置 anchoring完成时间为延期后的开始时间
-						  $scope.pvars[$scope.pIdxs['PrePort']].value.estart = $scope.estart; // 不需要在docking状态使用，可以更新
-					  }
-					  d.setTime(Date.parse($scope.eend)+$scope.dy * 60 * 60 * 1000);
-					  if (d != 'Invalid Date') {
-						  $scope.eend_v = $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-						//$scope.pvars[$scope.pIdxs['PrePort']].value.eend = $scope.eend; //延迟修改默认到达时间T2 , 有可能在doking期间修改
-					  }
+					$scope.compAnchTime = $scope.ms2dateStr($scope.dateStr2ms($scope.estart)+$scope.dx * 60 * 60 * 1000)
+					$scope.pvars[$scope.pIdxs['PrePort']].value.estart = $scope.compAnchTime; // 不需要在docking状态使用，可以更新					  
+					$scope.eend_v = $scope.ms2dateStr($scope.dateStr2ms($scope.eend)+$scope.dy * 60 * 60 * 1000)
+					//$scope.pvars[$scope.pIdxs['PrePort']].value.eend = $scope.eend; //延迟修改默认到达时间T2 , 有可能在doking期间修改			  
 				}else{
 					alert("延误时间小于延期时间，无效！")
 				}
 		}
-		  //计算新的靠港时间，离港时间
-		  var d = new Date();
-		  console.log("出现延误或延期 ： 新[T1 , T2] = " , $scope.estart , $scope.eend);
+		//计算新的靠港时间，离港时间
+		var d = new Date();
+		console.log("出现延误或延期 ： 新[T1 , T2] = " , $scope.estart , $scope.eend);
 		//更新当前及其后所有有效港口停靠时间段
-		  for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value ){
+		 for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value ){
 		        var x = $scope.pvars[$scope.pIdxs['TargLocList']].value[i];
 		        //如果是当前港口及其后面港口， 时间按d_timeStamp顺移
 		        if(x.pname == $scope.pvars[$scope.pIdxs['PrePort']].value.pname){
@@ -973,18 +982,11 @@ angular.module('activitiApp')
 		        	$scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend = $scope.eend_v;
 		        }
 		        if(x.State == "AfterAD"){
-		          	var s_ms = Date.parse($scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart)+$scope.dy * 60 * 60 * 1000;
-		            var e_ms = Date.parse($scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend)+ $scope.dy * 60 * 60 * 1000;
-		            var d = new Date();
-		            d.setTime(s_ms);
-		            if (d != 'Invalid Date') {
-		                 $scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart= $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-		            }
-		            d.setTime(e_ms);
-		            if (d != 'Invalid Date') {
-		                 $scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend = $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-		            }
-		          }
+		          	var s_ms = $scope.dateStr2ms($scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart)+$scope.dy * 60 * 60 * 1000;
+		            var e_ms = $scope.dateStr2ms($scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend)+ $scope.dy * 60 * 60 * 1000;
+		            $scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
+		            $scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend =  $scope.ms2dateStr(e_ms);
+		       }
 		   }
 		          
 		  $scope.sendMsgToVWC();
@@ -1023,7 +1025,7 @@ angular.module('activitiApp')
 	$scope.ZoomInVal= 1000; // 1000ms ---> 10ms 时间压缩100倍
 	$scope.countTime = {};
 	$scope.curTime = '1970-01-01'
-//    $scope.estart = {};
+    $scope.estart = {};
 	$scope.eend = {};
 	$scope.compDockTime = {};
 	
@@ -1035,8 +1037,10 @@ angular.module('activitiApp')
    	 		.success(function(data){
    	 			$scope.pvars = data;
    	 			$scope.pIdxs = $scope.createPidxs($scope.pvars);
-   	 		    $scope.curTime = $scope.pvars[$scope.pIdxs['PrePort']].value.estart;//默认靠港离港时间
-//   	 		    $scope.estart = $scope.pvars[$scope.pIdxs['PrePort']].value.estart;
+   	 		    //默认靠港离港时间 ， 如果anchoring 有延期 ， 此时estart = t1 + dx , 如果没有,就是t1 , 此处忽略提交表单时间
+   	 		    //需要及时提交表单
+   	 		    $scope.curTime = $scope.pvars[$scope.pIdxs['PrePort']].value.estart;
+   	 		    $scope.estart = $scope.pvars[$scope.pIdxs['PrePort']].value.estart;
    	 		    for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value ){//在TargLocList 中获取该港口最新离港时间
    	 		    	var x = $scope.pvars[$scope.pIdxs['TargLocList']].value[i];
    	 		    	if(x.pname == $scope.pvars[$scope.pIdxs['PrePort']].value.pname){
@@ -1046,40 +1050,34 @@ angular.module('activitiApp')
    	 		    }
    	 		    $scope.eend = $scope.pvars[$scope.pIdxs['PrePort']].value.eend; //初次估计离港时间
    	 		    
-   	 		    $scope.countTime = $interval(function(){ //如果anchoring 滞留
-   	   	 		//计算实际时间， 即非压缩时间
-   	 				var d = new Date();
-   	 				d.setTime(Date.parse($scope.curTime)+1000);
-   	 				if (d != 'Invalid Date') {
-   	 					$scope.curTime= $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-   	 					console.log($scope.compDockTime , $scope.curTime);
-   	 					if( $scope.compDockTime == $scope.curTime){
-   	 							$scope.completeTask();
-   	 							$interval.cancel($scope.countTime);
-   	 						    console.log("$scope.curTime : " , $scope.curTime);
-   	 					}
-   	 					
-   	 				}
-   	 			} ,1000 / $scope.ZoomInVal);
+   	 		 $scope.countTime = $interval(function(){ //如果anchoring 滞留
+    	   	 		//计算实际时间， 即非压缩时间
+    	 		    	var curMs =$scope.dateStr2ms($scope.curTime)
+    	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
+    	 		        $scope.curTime= $scope.ms2dateStr(nextMs);
+    	 		    	var compMs = $scope.dateStr2ms($scope.compDockTime);
+    	 		    	console.log($scope.curTime ,$scope.compDockTime);
+    	 		    	if(compMs > curMs && compMs <= nextMs){
+    	 		    		$scope.completeTask();
+    	 		    		$interval.cancel($scope.countTime);
+    	 		    		console.log("$scope.curTime : " , $scope.curTime);
+    	 		       }
+    	 			} ,1000);
    	 		})
      }
 	$scope.setDy= function(){ //需要延期靠港
 		
-		if($scope.dy != 0){//有延误或者延期
-				var cur_ms = Date.parse($scope.eend)+$scope.dy;
-				var pre_ms = Date.parse($scope.compDockTime);
+		if($scope.dy != 0){//有延期
+				var cur_ms = $scope.dateStr2ms($scope.eend)+$scope.dy;
+				var pre_ms = $scope.dateStr2ms($scope.compDockTime);
 				if(cur_ms > pre_ms){
 					console.log("延期离港");
 				}else{
-					alert("想对于上次估计时间来说，提前离港！");
+					alert("相对于上次估计时间来说，提前离港！");
 				}
 				  //计算新的离港时间
-				  var d = new Date();
-				  d.setTime(cur_ms);
-				  if (d != 'Invalid Date') {
-					  $scope.compDockTime = $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-				  }
-				  console.log("出现延误或延期 ： 新[T1 , T2] = " , $scope.estart , $scope.eend);
+				  $scope.compDockTime = $scope.ms2dateStr(cur_ms);
+				  console.log("出现延误或延期 ： 新[T1 , T2] = " , $scope.estart ,  $scope.compDockTime);
 				//更新当前及其后所有有效港口停靠时间段
 				  for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value ){
 				        var x = $scope.pvars[$scope.pIdxs['TargLocList']].value[i];
@@ -1090,15 +1088,8 @@ angular.module('activitiApp')
 				        if(x.State == "AfterAD"){
 				          	var s_ms = Date.parse($scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart)+ cur_ms - pre_ms;
 				            var e_ms = Date.parse($scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend)+ cur_ms - pre_ms;
-				            var d = new Date();
-				            d.setTime(s_ms);
-				            if (d != 'Invalid Date') {
-				                 $scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart= $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-				            }
-				            d.setTime(e_ms);
-				            if (d != 'Invalid Date') {
-				                 $scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend = $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
-				            }
+				            $scope.pvars[$scope.pIdxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
+				            $scope.pvars[$scope.pIdxs['TargLocList']].value[i].eend = $scope.ms2dateStr(e_ms);
 				          }
 				   }
 				          

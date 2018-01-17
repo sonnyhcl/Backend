@@ -26,9 +26,6 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
 	private static final long serialVersionUID = -51948726954754158L;
 	@Autowired
 	private RuntimeService runtimeService;
-
-	@Autowired
-	private GlobalEventQueue globalEventQueue;
 	
 	@Autowired
 	private GlobalVariables globalVariables; 
@@ -53,10 +50,14 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		HashMap<String, Object> connVMData = new HashMap<String , Object>();
-		connVMData.put("W_pid" , pid);
-		String vpid = (String) runtimeService.getVariable(pid, "V_pid");
-		connVMData.put("V_pid" , vpid);
-		//runtimeService.startProcessInstanceByMessage("msg_CreateVWConn" ,connVMData);
+		 
+		 //Send message to VWC to connect to vessel
+//		HashMap<String, Object> connVMData = new HashMap<String , Object>();
+//		connVMData.put("W_pid" , pid);
+//		String vpid = (String) runtimeService.getVariable(pid, "V_pid");
+//		connVMData.put("V_pid" , vpid);
+//		connVMData.put("msgType" , "msg_CreateVWConn");
+		//runtimeService.startProcessInstanceByMessage("Msg_StartVWC" ,connVMData);
+//		System.out.println("Send  Msg_StartVWC message to VWC to connect to vessel");
 	}
 }

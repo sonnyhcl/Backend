@@ -3,6 +3,7 @@ package supplychain.entity;
 import java.io.Serializable;
 
 import org.activiti.engine.form.AbstractFormType;
+import org.activiti.engine.impl.util.json.JSONObject;
 
 public class WPort extends AbstractFormType implements Serializable{
 
@@ -16,6 +17,8 @@ public class WPort extends AbstractFormType implements Serializable{
 	private double supCost;
 	private String x_coor;
 	private String y_coor;
+//	private JSONObject route;
+	private double sortFlag;
 	public double getSupCost() {
 		return supCost;
 	}
@@ -100,6 +103,42 @@ public class WPort extends AbstractFormType implements Serializable{
 
 	public void setCarryRate(double carryRate) {
 		this.carryRate = carryRate;
+	}
+
+//	public JSONObject getRoute() {
+//		return route;
+//	}
+//
+//	public void setRoute(JSONObject route) {
+//		this.route = route;
+//	}
+
+	public double getSortFlag() {
+		return sortFlag;
+	}
+
+	public void setSortFlag(double sortFlag) {
+		this.sortFlag = sortFlag;
+	}
+
+	public WPort(String name,String pname, double carryRate, String esTime, double dist, double supCost,
+			String x_coor, String y_coor, double sortFlag) {
+		super();
+		this.name = name;
+		this.pname = pname;
+		this.carryRate = carryRate;
+		this.esTime = esTime;
+		this.dist = dist;
+		this.supCost = supCost;
+		this.x_coor = x_coor;
+		this.y_coor = y_coor;
+//		this.route = route;
+		this.sortFlag = sortFlag;
+	}
+
+	public WPort() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 }
