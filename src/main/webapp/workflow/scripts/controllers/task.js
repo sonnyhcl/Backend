@@ -1024,7 +1024,7 @@ angular.module('activitiApp')
 	$scope.dy = 0; 
 	$scope.ZoomInVal= 1000; // 1000ms ---> 10ms 时间压缩100倍
 	$scope.countTime = {};
-	$scope.curTime = '1970-01-01'
+	$scope.curTime = '1970-01-01 00:00:00'
     $scope.estart = {};
 	$scope.eend = {};
 	$scope.compDockTime = {};
@@ -1039,9 +1039,13 @@ angular.module('activitiApp')
    	 			$scope.pIdxs = $scope.createPidxs($scope.pvars);
    	 		    //默认靠港离港时间 ， 如果anchoring 有延期 ， 此时estart = t1 + dx , 如果没有,就是t1 , 此处忽略提交表单时间
    	 		    //需要及时提交表单
-   	 		    $scope.curTime = $scope.pvars[$scope.pIdxs['PrePort']].value.estart;
+   	 			var curDate = new Date();
+   	 			var stMs = $scope.dateStr2ms($scope.pvars[$scope.pIdxs['StartTime']].value);
+	 		    var cur_ms =  $scope.ms2dateStr(stMs +(curDate.getTime() - stMs)*$scope.ZoomInVal);
+	 		    $scope.curTime = $scope.ms2dateStr(cur_ms);
+	 		    
    	 		    $scope.estart = $scope.pvars[$scope.pIdxs['PrePort']].value.estart;
-   	 		    for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value ){//在TargLocList 中获取该港口最新离港时间
+   	 		    for(var i in  $scope.pvars[$scope.pIdxs['TargLocList']].value){//在TargLocList 中获取该港口最新离港时间
    	 		    	var x = $scope.pvars[$scope.pIdxs['TargLocList']].value[i];
    	 		    	if(x.pname == $scope.pvars[$scope.pIdxs['PrePort']].value.pname){
    	 		    		$scope.compDockTime = x.eend ;
