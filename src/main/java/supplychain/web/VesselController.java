@@ -170,11 +170,6 @@ public class VesselController extends AbstractController {
 	@RequestMapping(value = "/zbq/variables/{processInstanceId}", method = RequestMethod.PUT)
 	public ResponseEntity<List<RestVariable>> updateVariablesToCache(@PathVariable String processInstanceId, HttpServletRequest request , HttpServletResponse response) throws JsonProcessingException {
 
-		// System.out.println("/zbq/variables/ update :"+ body);
-//		JSONArray vars = new JSONArray(body);
-//		globalVariables.getVariableMap().put(pid, vars);
-//
-//		return new ResponseEntity<String>(body, HttpStatus.OK);
 		List<RestVariable> result = null;
 		result = baseVariableCollectionResource.createExecutionVariableToCacheOrEngine(processInstanceId, true, RestResponseFactory.VARIABLE_PROCESS, request, response  ,false);
 		return new ResponseEntity<List<RestVariable>>(result ,HttpStatus.OK);

@@ -56,7 +56,6 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 		// TODO Auto-generated method stubVWCoordinator.java
 		HashMap<String , Object>  msgData= (HashMap<String, Object>) runtimeService.getVariables(exec.getId());
 		String msgType = (String) msgData.get("msgType");
-		HashMap<String , Object> replyData = new HashMap<String , Object>();
 		String vpid = (String) msgData.get("V_pid");
 		String wpid = (String) msgData.get("W_pid");
 		runtimeService.setVariable(vpid, "W_pid" , wpid);	
@@ -85,9 +84,12 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			long t_ms = v_start_date.getTime();   
 			t_ms += (cur_date.getTime() - v_start_date.getTime())*globalVariables.getZoominrate();
 			
-			//
-			Weagon w_info= (Weagon) runtimeService.getVariable(wpid, "W_Info");
+			//获取车的当前位置
 			
+			JSONObject w_info= globalVariables.getVariableByName(wpid, "W_Info");
+			String w_xc = w_info.getJSONObject("value").getString("x_Coor");
+			String w_yc = w_info.getJSONObject("value").getString("y_Coor");
+			System.out.println("车当位置 ： " + w_xc + " : " + w_yc);
 			List<WPort>candinateWports = new ArrayList<WPort>(); //候选港口信息
 			HashMap<String , JSONObject> routeMp = new HashMap<String , JSONObject>();
 			for(int i = 0 ; i < wTargLocList.size() ; i++) {		//计算成本	
@@ -95,14 +97,14 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 				VPort nowVport = vpMap.get(nowWport.getPname());
 				if((nowVport.getState().equals("InAD") || nowVport.getState().equals("AfterAD"))) {//考虑未到达的港口
 					//计算预计到达是时间
-					JSONObject route = PlanPath(w_info.getX_Coor(),w_info.getY_Coor(), nowVport.getX_coor(), nowVport.getY_coor());
+					JSONObject route = PlanPath(w_xc,w_yc, nowVport.getX_coor(), nowVport.getY_coor());
 					Date estiDate = DateUtil.transForDate(getEsti_Ms(route)*1000+t_ms);
 					String estiDateStr= DateUtil.date2str(estiDate);
 					double estiDist = getEsti_dist(route);
 					nowWport.setDist(estiDist);
 					nowWport.setEsTime(estiDateStr);
 					if(DateUtil.TimeMinus(nowVport.getEEnd() ,  nowWport.getEsTime()) >  0) {
-						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime())/(60*60*1000), 0)*nowVport.getQuayRate()*sp_weight + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
+						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime()), 0)*nowVport.getQuayRate()*sp_weight/(60*60*1000) + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
 						nowWport.setSupCost(c); //暂时把总成本记在这
 						nowWport.setSortFlag(nowVport.getSortFlag());
 //						nowWport.setRoute(route);
@@ -147,10 +149,12 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			//SendMsg to VWF
 			VWFEvent e = new VWFEvent(EventType.W_RUN);
 			e.getData().put("createAt", (new Date()).toString());
-			JSONObject wjson = new JSONObject( w_info);
-			e.getData().put("W_Info", wjson);
-			e.getData().put("DestPort" , new JSONObject(destPort));
+			e.getData().put("W_Info", w_info);
+			e.getData().put("wDestPort" , new JSONObject(destPort));
+			e.getData().put("vDestPort",  new JSONObject(vpMap.get(destPort.getPname())));
 			e.getData().put("pathResult", pathResult);
+			e.getData().put("V_pid", vpid);
+			e.getData().put("StartTime",v_start_date);
 			globalEventQueue.sendMsg(e);
 		}
 		
@@ -190,29 +194,12 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 	public List<VPort> getVports(String vpid , String vname){
 		@SuppressWarnings("unchecked")
 		List<VPort> vtargLocMap = (List<VPort>) runtimeService.getVariable(vpid , vname);
-
-		//@SuppressWarnings("unchecked")
-		//List<HashMap<String, Object>> vtargLocMap = (List<HashMap<String, Object>>) runtimeService.getVariable(vpid , vname);
-//		if( vtargLocMap  != null) {
-//			CustomArrayListRestVariableConverter vpac = new CustomArrayListRestVariableConverter();
-//			List<VPort> vTargLocList = vpac.Map2VPortList(vtargLocMap);
-//			return vTargLocList;
-//		}
-//		return null;
 		return vtargLocMap;
 	}
 	
 	public List<WPort> getWports(String wpid , String vname){
-//		@SuppressWarnings("unchecked")
-//		List<HashMap<String, Object>> wtargLocMap = (List<HashMap<String, Object>>) runtimeService.getVariable(wpid , vname);
-//		if(wtargLocMap  != null) {
-//			CustomArrayListRestVariableConverter wpac = new CustomArrayListRestVariableConverter();
-//			List<WPort> vTargLocList = wpac.Map2WPortList(wtargLocMap);
-//			return vTargLocList;
-//		}
-//		return null;
+ 
 		@SuppressWarnings("unchecked")
-		
 		List<WPort> vtargLocMap = (List<WPort>) runtimeService.getVariable(wpid , vname);
 		return vtargLocMap;
 	}

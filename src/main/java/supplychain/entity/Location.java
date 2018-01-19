@@ -13,17 +13,10 @@ public class Location  extends AbstractFormType implements Serializable {
 	private String Lname = "NowLocation";
 	private String X_coor;
 	private String Y_coor;
-	private String timeStamp;
 	private String velocity;
 	private String realTime;
 
-	
-	public String getTimeStamp() {
-		return timeStamp;
-	}
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
-	}
+
 	public String getVelocity() {
 		return velocity;
 	}
@@ -85,21 +78,20 @@ public class Location  extends AbstractFormType implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Location(String name, String lname, String x_coor, String y_coor, String timeStamp, String velocity,
-			String realTime) {
+	@Override
+	public String toString() {
+		return "Location [name=" + name + ", Lname=" + Lname + ", X_coor=" + X_coor + ", Y_coor=" + Y_coor
+				+ ", velocity=" + velocity + ", realTime=" + realTime + "]";
+	}
+	public Location(String name, String lname, String x_coor, String y_coor, String velocity, String realTime) {
 		super();
 		this.name = name;
 		Lname = lname;
 		X_coor = x_coor;
 		Y_coor = y_coor;
-		this.timeStamp = timeStamp;
 		this.velocity = velocity;
 		this.realTime = realTime;
 	}
-	@Override
-	public String toString() {
-		return "Location [name=" + name + ", Lname=" + Lname + ", X_coor=" + X_coor + ", Y_coor=" + Y_coor
-				+ ", timeStamp=" + timeStamp + ", velocity=" + velocity + ", realTime=" + realTime + "]";
-	}
+	
 	
 }

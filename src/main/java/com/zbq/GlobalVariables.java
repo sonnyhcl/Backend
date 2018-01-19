@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.mail.Flags.Flag;
+
+import org.activiti.bpmn.model.ImplementationType;
 import org.activiti.engine.impl.util.json.JSONArray;
 import org.activiti.engine.impl.util.json.JSONException;
 import org.activiti.engine.impl.util.json.JSONObject;
@@ -15,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javassist.compiler.JvstCodeGen;
 import supplychain.entity.VPort;
 
 @Component
@@ -42,37 +47,37 @@ public class GlobalVariables {
 	public GlobalVariables() {
 		super();
 		this.portsInfo = new ConcurrentHashMap<String, VPort>();
-		this.portsInfo.put("黄石", new VPort("黄石", "AfterAD" , 470.0, 2.1,"115.13506", "30.21027", true , 0 ));
-		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 475.0, 2.1,"115.5674", "29.83692" , true ,1));
-		this.portsInfo.put("九江", new VPort("九江", "AfterAD" ,480.0,  2.1,"115.95308", "29.72574",true , 2));
-		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,485.0,   2.1,"117.03104", "30.49944", true , 3));
-		this.portsInfo.put("池州", new VPort("池州", "AfterAD" ,490.0,   2.1, "117.52272", "30.7332",  true , 4));
-		this.portsInfo.put("铜陵", new VPort("铜陵", "AfterAD" ,495.0,   2.1, "117.7291", "30.95259", true , 5));
-		this.portsInfo.put("芜湖", new VPort("芜湖", "AfterAD" ,500.0,   2.1, "118.34633", "31.33907", true ,6));
-		this.portsInfo.put("马鞍山", new VPort("马鞍山","AfterAD" , 505.0,   2.1,  "118.45491", "31.729427", true ,7));
-		this.portsInfo.put("南京", new VPort("南京","AfterAD" , 510.0,  2.1,  "118.800095", "32.146214",  true ,8));
-		this.portsInfo.put("仪征", new VPort("仪征", "AfterAD" ,515.0,  2.1,  "119.17036", "32.24261", true ,9));
-		this.portsInfo.put("镇江", new VPort("镇江","AfterAD" , 520.0,   2.1, "119.37172", "32.21107", true ,10));
-		this.portsInfo.put("泰州", new VPort("泰州", "AfterAD" ,525.0,   2.1,  "119.83584", "32.29552", true ,11));
-		this.portsInfo.put("常州", new VPort("常州","AfterAD" , 470.0,   2.1,   "120.006065", "31.976147", true , 12));
-		this.portsInfo.put("江阴", new VPort("江阴", "AfterAD" ,513.0,   2.1,  "120.250824", "31.93615", true ,13));
+		this.portsInfo.put("黄石", new VPort("黄石", "AfterAD" , 5.6 , 21,"115.13506", "30.21027", true , 0 ));
+		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 4.3,  21,"115.5674", "29.83692" , true ,1));
+		this.portsInfo.put("九江", new VPort("九江", "AfterAD" ,5.6,  21,"115.95308", "29.72574",true , 2));
+		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,3.8,  21,"117.03104", "30.49944", true , 3));
+		this.portsInfo.put("池州", new VPort("池州", "AfterAD" ,4.2,  21, "117.52272", "30.7332",  true , 4));
+		this.portsInfo.put("铜陵", new VPort("铜陵", "AfterAD" ,3.8,  21, "117.7291", "30.95259", true , 5));
+		this.portsInfo.put("芜湖", new VPort("芜湖", "AfterAD" ,4.2,   21, "118.34633", "31.33907", true ,6));
+		this.portsInfo.put("马鞍山", new VPort("马鞍山","AfterAD" , 3.2, 21,  "118.45491", "31.729427", true ,7));
+		this.portsInfo.put("南京", new VPort("南京","AfterAD" , 5.6,  21,  "118.800095", "32.146214",  true ,8));
+		this.portsInfo.put("仪征", new VPort("仪征", "AfterAD" ,3.8,  21,  "119.17036", "32.24261", true ,9));
+		this.portsInfo.put("镇江", new VPort("镇江","AfterAD" , 5.6,  21, "119.37172", "32.21107", true ,10));
+		this.portsInfo.put("泰州", new VPort("泰州", "AfterAD" ,3.8,  21,  "119.83584", "32.29552", true ,11));
+		this.portsInfo.put("常州", new VPort("常州","AfterAD" , 3.2,  21,   "120.006065", "31.976147", true , 12));
+		this.portsInfo.put("江阴", new VPort("江阴", "AfterAD" ,3.8,  21,  "120.250824", "31.93615", true ,13));
 		variableMap = new ConcurrentHashMap<String, JSONArray>();
 		
 		this.carRateMp = new ConcurrentHashMap<String, Double>();
-		this.carRateMp.put("黄石", 2.34);
-		this.carRateMp.put("武穴", 2.34);
-		this.carRateMp.put("九江",2.34);
-		this.carRateMp.put("安庆", 2.34);
-		this.carRateMp.put("池州", 2.34);
-		this.carRateMp.put("铜陵", 2.34);
-		this.carRateMp.put("芜湖", 2.34);
-		this.carRateMp.put("马鞍山", 2.34);
-		this.carRateMp.put("南京", 2.34);
-		this.carRateMp.put("仪征", 2.34);
-		this.carRateMp.put("镇江", 2.34);
-		this.carRateMp.put("泰州", 2.34);
-		this.carRateMp.put("常州",2.34);
-		this.carRateMp.put("江阴", 2.34);
+		this.carRateMp.put("黄石",  0.0021);
+		this.carRateMp.put("武穴",  0.0021);
+		this.carRateMp.put("九江", 0.0021);
+		this.carRateMp.put("安庆",  0.0021);
+		this.carRateMp.put("池州",  0.0021);
+		this.carRateMp.put("铜陵",  0.0021);
+		this.carRateMp.put("芜湖",  0.0021);
+		this.carRateMp.put("马鞍山",  0.0021);
+		this.carRateMp.put("南京",  0.0021);
+		this.carRateMp.put("仪征",  0.0021);
+		this.carRateMp.put("镇江",  0.0021);
+		this.carRateMp.put("泰州",  0.0021);
+		this.carRateMp.put("常州", 0.0021);
+		this.carRateMp.put("江阴",  0.0021);
 	}
 
 	public Map<String, VPort> getPortsInfo() {
@@ -83,7 +88,7 @@ public class GlobalVariables {
 		this.portsInfo = portsInfo;
 	}
 
-	public void createOrUpdateVariablesByValue(String pid, Map<String, Object> vars) {
+	public void createOrUpdateVariablesByValue(String pid, Map<String, Object> vars) { //上传多个变量，确保上传变量均为最新
 		List<RestVariable> restVars = restResponseFactory.createRestVariables(vars, pid,
 				RestResponseFactory.VARIABLE_PROCESS, RestVariableScope.LOCAL);
 		JSONArray jsonVars = new JSONArray();
@@ -98,9 +103,32 @@ public class GlobalVariables {
 				e.printStackTrace();
 			}
 		}
-
-//		JSONArray jvs = variableMap.get(pid);
-		variableMap.put(pid, jsonVars);
+		JSONArray oldjvs = variableMap.get(pid);
+		//检查：对每个变量检查： update or create
+		if(oldjvs != null) { //确保传的变量都为最新值
+			int i = 0 , j = 0;
+			for (i = 0; i < jsonVars.length(); i++) {
+				JSONObject newVar = (JSONObject) jsonVars.get(i);
+				String variableName = newVar.getString("name");
+				boolean createflag = true;
+				for(j = 0 ; j < oldjvs.length() ; j++) {
+					JSONObject oldVar = (JSONObject) oldjvs.get(j);
+					if (oldVar.getString("name").equals(variableName)) {
+						oldjvs.put(j, newVar);
+						createflag = false;
+						break;
+					}
+				}
+				if (createflag == true) {
+					System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
+					oldjvs.put(newVar);
+				}
+			}
+			variableMap.put(pid, oldjvs);
+		}else {
+			variableMap.put(pid, jsonVars);
+		}
+		
 		
 	}
 
@@ -110,7 +138,33 @@ public class GlobalVariables {
 		for (RestVariable var : restVars) {
 			jsonVars.put(new JSONObject(objectMapper.writeValueAsString(var)));
 		}
-		variableMap.put(pid, jsonVars);
+		
+		JSONArray oldjvs = variableMap.get(pid);
+		//检查：对每个变量检查： update or create
+		if(oldjvs != null) { //确保传的变量都为最新值
+			int i = 0 , j = 0;
+			for (i = 0; i < jsonVars.length(); i++) {
+				JSONObject newVar = (JSONObject) jsonVars.get(i);
+				String variableName = newVar.getString("name");
+				boolean createflag = true;
+				for(j = 0 ; j < oldjvs.length() ; j++) {
+					JSONObject oldVar = (JSONObject) oldjvs.get(j);
+					if (oldVar.getString("name").equals(variableName)) {
+						oldjvs.put(j, newVar);
+						createflag = false;
+						break;
+					}
+				}
+				if (createflag == true) {
+					System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
+					oldjvs.put(newVar);
+				}
+			}
+			variableMap.put(pid, oldjvs);
+		}else {
+			variableMap.put(pid, jsonVars);
+		}
+		
 	}
 
 	public JSONObject createOrUpdateVariableByNameAndValue(String pid, String variableName, Object value) {
@@ -127,15 +181,17 @@ public class GlobalVariables {
 		}
 		if (jsonVars != null) {
 			int i = 0;
+			boolean createflag = true;
 			for (i = 0; i < jsonVars.length(); i++) {
 				JSONObject var = (JSONObject) jsonVars.get(i);
 				if (var.getString("name").equals(variableName)) {
 					jsonVars.put(i, result);
+					createflag = false;
 					break;
 				}
 			}
 
-			if (i == jsonVars.length()) {
+			if (createflag == true) {
 				System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
 				jsonVars.put(result);
 			}
@@ -153,16 +209,18 @@ public class GlobalVariables {
 		JSONObject result = new JSONObject(objectMapper.writeValueAsString(restVar));
 		if (jsonVars != null) {
 			int i = 0;
+			boolean createflag = true;
 			for (i = 0; i < jsonVars.length(); i++) {
 				// boolean haveThisVar = false;
 				JSONObject var = (JSONObject) jsonVars.get(i);
 				if (var.getString("name").equals(variableName)) {
 					jsonVars.put(i, result);
+					createflag = false;
 					break;
 				}
 			}
 
-			if (i == jsonVars.length()) {
+			if (createflag == true) {
 				System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
 				jsonVars.put(result);
 			}

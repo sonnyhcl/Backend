@@ -34,18 +34,20 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
 		//runtimeService.setVariable(pid , "State" , "voyaging");
 		HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
 				.getVariables(pid);
-		VPort preport = (VPort) vars.get("PrePort");
+		VPort nextport = (VPort) vars.get("NextPort");
 		@SuppressWarnings("unchecked")
 		List<VPort> targLocList = (List<VPort>) vars.get("TargLocList");
 		for (int i = 0; i < targLocList.size(); i++) {
 			VPort now = targLocList.get(i);
-			if (now.getPname().equals(preport.getPname())) {
+			if (now.getPname().equals(nextport.getPname())) {
 				runtimeService.setVariable(pid, "State", "InAD");
-				System.out.println(preport.getPname()+" 到达，更新TargLocList完毕!");
+				System.out.println(nextport.getPname()+" 到达，更新TargLocList完毕!");
 			}
 		}
 		runtimeService.setVariable(pid ,"TargLocList", targLocList);
+		runtimeService.setVariable(pid, "NextPort", nextport);
 		globalVariables.createOrUpdateVariableByNameAndValue(pid, "TargLocList", targLocList);
+		globalVariables.createOrUpdateVariableByNameAndValue(pid, "NextPort", nextport);
 	//	globalVariables.createOrUpdateVariableByNameAndValue(pid,  "State" , "a");
 		System.out.println("进入anchoring : " + new Date());
 	}

@@ -35,25 +35,10 @@ public class SWCoordinator implements JavaDelegate, Serializable {
 			w.setW_Name("weagon_1");
 			w.setX_Coor("113.2982254028");
 			w.setY_Coor("23.0958388047");
+		//	w.setX_Coor("120.1551500000");
+		//	w.setY_Coor("30.2741500000");
 			w.setIsArrival(false);
 			msgData.put("W_Info", w);
-			//TODO : 转换时间
-//		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//		    SimpleDateFormat sdf1 =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-//		    formatter.setTimeZone(TimeZone.getTimeZone("GMT"));  
-//		    try {
-//				Date dateApply = formatter.parse((String)msgData.get("V_realApplyTime"));
-//				Date dateNow = new Date();
-//				String actualApplyTime = (String) msgData.get("V_ApplyTime");
-//				Long x = sdf1.parse(actualApplyTime).getTime() + dateNow.getTime() - dateApply.getTime();
-//				Date wStartTime = DateUtil.transForDate(x);
-//				msgData.put("W_StartTime" , sdf1.format(wStartTime));
-//				msgData.put("W_RealStartTime", dateNow);
-//			} catch (ParseException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		    
 			msgData.remove("msgType");
 			msgData.remove("M_pid");
 			runtimeService.startProcessInstanceByMessage("Msg_StartWeagon" , msgData);

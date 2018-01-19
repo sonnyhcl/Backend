@@ -10,6 +10,8 @@ import org.activiti.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zbq.GlobalVariables;
+
 import supplychain.entity.Location;
 import supplychain.entity.VPort;
 
@@ -21,6 +23,8 @@ public class DockTaskEndListener implements ExecutionListener, Serializable {
 	private static final long serialVersionUID = 4885656684805353238L;
 	@Autowired
 	private RuntimeService runtimeService;
+	@Autowired
+	private GlobalVariables globalVariables;
 
 	@Override
 	public void notify(DelegateExecution exec) {
@@ -30,17 +34,20 @@ public class DockTaskEndListener implements ExecutionListener, Serializable {
 		String pid = exec.getProcessInstanceId();
 		HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
 				.getVariables(pid);
-		VPort preport = (VPort) vars.get("PrePort");
+		VPort nextport = (VPort) vars.get("NextPort");
 		@SuppressWarnings("unchecked")
 		List<VPort> targLocList = (List<VPort>) vars.get("TargLocList");
 		for (int i = 0; i < targLocList.size(); i++) {
 			VPort now = targLocList.get(i);
-			if (now.getPname().equals(preport.getPname())) {
+			if (now.getPname().equals(nextport.getPname())) {
 				runtimeService.setVariable(pid, "State", "BeforeAD");
-				System.out.println(preport.getPname()+" 到达，更新TargLocList完毕!");
+				System.out.println(nextport.getPname()+" 到达，更新TargLocList完毕!");
 			}
 		}
-		vars.put("TargLocList", targLocList);
+		runtimeService.setVariable(pid ,"TargLocList", targLocList);
+		runtimeService.setVariable(pid, "NextPort", nextport);
+		globalVariables.createOrUpdateVariableByNameAndValue(pid, "TargLocList", targLocList);
+		globalVariables.createOrUpdateVariableByNameAndValue(pid, "NextPort", nextport);
 	}
 
 }
