@@ -1,6 +1,7 @@
 package supplychain.activiti.listener;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
@@ -34,13 +35,9 @@ public class VoyaTaskStartListener implements ExecutionListener, Serializable {
 		
 		//修改某个流程实例中的变量
 		String pid = execution.getProcessInstanceId();
+		globalVariables.createOrUpdateVariableByNameAndValue(pid, "State" , "voyaging");
 		
-		try {
-			globalVariables.createOrUpdateVariableByNameAndValue(pid, "State" , "voyaging");
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println("进入Voyaging: " + new Date());
 	 }
 
 }

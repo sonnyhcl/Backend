@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zbq.EventType;
 import com.zbq.GlobalEventQueue;
 import com.zbq.GlobalVariables;
@@ -58,7 +59,9 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 		HashMap<String , Object> replyData = new HashMap<String , Object>();
 		String vpid = (String) msgData.get("V_pid");
 		String wpid = (String) msgData.get("W_pid");
-		runtimeService.setVariable(vpid, "W_pid" , wpid);		
+		runtimeService.setVariable(vpid, "W_pid" , wpid);	
+		globalVariables.createOrUpdateVariableByNameAndValue(vpid,"W_pid" , wpid);
+
 		
 		//需要计算目的地
 		if(msgType.equals("msg_UpdateDest")) {
@@ -93,11 +96,13 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 				if((nowVport.getState().equals("InAD") || nowVport.getState().equals("AfterAD"))) {//考虑未到达的港口
 					//计算预计到达是时间
 					JSONObject route = PlanPath(w_info.getX_Coor(),w_info.getY_Coor(), nowVport.getX_coor(), nowVport.getY_coor());
-					Date estiDate = DateUtil.transForDate(getEsti_Ms(route)+t_ms);
+					Date estiDate = DateUtil.transForDate(getEsti_Ms(route)*1000+t_ms);
 					String estiDateStr= DateUtil.date2str(estiDate);
+					double estiDist = getEsti_dist(route);
+					nowWport.setDist(estiDist);
 					nowWport.setEsTime(estiDateStr);
 					if(DateUtil.TimeMinus(nowVport.getEEnd() ,  nowWport.getEsTime()) >  0) {
-						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime()), 0)*nowVport.getQuayRate()*sp_weight + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
+						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime())/(60*60*1000), 0)*nowVport.getQuayRate()*sp_weight + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
 						nowWport.setSupCost(c); //暂时把总成本记在这
 						nowWport.setSortFlag(nowVport.getSortFlag());
 //						nowWport.setRoute(route);
@@ -137,7 +142,8 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			}
 			//runtimeService.setVariable(wpid, "DestPort", "destPort");
 			//runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
-			
+			globalVariables.createOrUpdateVariableByNameAndValue(wpid, "DestPort", destPort);
+			globalVariables.createOrUpdateVariableByNameAndValue(wpid,"W_TargPortList" , candinateWports);
 			//SendMsg to VWF
 			VWFEvent e = new VWFEvent(EventType.W_RUN);
 			e.getData().put("createAt", (new Date()).toString());
@@ -161,6 +167,14 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 	     @SuppressWarnings("unchecked")
 	     JSONObject path  = (JSONObject) paths.get(0);
 	     long esti = Integer.parseInt((String) path.get("duration"));
+	     return esti;
+	}
+	public double getEsti_dist(JSONObject route) {
+		 @SuppressWarnings("unchecked")
+		 JSONArray paths = (JSONArray) route.get("paths");
+	     @SuppressWarnings("unchecked")
+	     JSONObject path  = (JSONObject) paths.get(0);
+	     double esti = Double.parseDouble((String) path.get("distance"));
 	     return esti;
 	}
 	

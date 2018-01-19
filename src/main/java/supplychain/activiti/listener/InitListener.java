@@ -88,14 +88,9 @@ public class InitListener implements ExecutionListener, Serializable {
 		vars.put("PrePort", new VPort()); // 上一港口
 		vars.put("State", "voyaging"); // 船的状态
 		vars.put("StartTime", new Date()); // 每段航行的起始时间
-		vars.put("ADRealStartTime", null);//每次抛锚任务开始的真实时间 ， 用于计算真实时间差
+		vars.put("W_pid", null);
 		vars.put("TargLocList", vports); // 港口清单
 		runtimeService.setVariables(pid, vars);
-		try {
-			globalVariables.createOrUpdateVariablesByValue(pid, vars);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		globalVariables.createOrUpdateVariablesByValue(pid, vars);
 	}
 }

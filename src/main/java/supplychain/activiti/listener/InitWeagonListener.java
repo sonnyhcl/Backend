@@ -43,13 +43,7 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
 		 vars.put("DestPort" , new WPort()); 
 		 runtimeService.setVariable(pid, "W_Info" , w);
 		 
-		 //上传变量到全局变量中
-		 try {
-			globalVariables.createOrUpdateVariablesByValue(pid, vars);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		 globalVariables.createOrUpdateVariablesByValue(pid, vars);
 		 
 		 //Send message to VWC to connect to vessel
 //		HashMap<String, Object> connVMData = new HashMap<String , Object>();

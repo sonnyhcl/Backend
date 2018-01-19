@@ -11,6 +11,8 @@ import org.activiti.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zbq.GlobalVariables;
+
 import supplychain.entity.VPort;
 
 @Service("anchStartListener")
@@ -22,12 +24,14 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
 	private static final long serialVersionUID = 4149621500319226872L;
 	@Autowired
 	private RuntimeService runtimeService;
+
+	@Autowired
+	private GlobalVariables globalVariables;
 	@Override
 	public void notify(DelegateExecution exec) {
 		// TODO Auto-generated method stub
 		String pid = exec.getProcessInstanceId();
-		runtimeService.setVariable(pid , "State" , "other");
-		//runtimeService.setVariable(pid, "ADRealStartTime", new Date());
+		//runtimeService.setVariable(pid , "State" , "voyaging");
 		HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
 				.getVariables(pid);
 		VPort preport = (VPort) vars.get("PrePort");
@@ -40,7 +44,10 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
 				System.out.println(preport.getPname()+" 到达，更新TargLocList完毕!");
 			}
 		}
-		vars.put("TargLocList", targLocList);
+		runtimeService.setVariable(pid ,"TargLocList", targLocList);
+		globalVariables.createOrUpdateVariableByNameAndValue(pid, "TargLocList", targLocList);
+	//	globalVariables.createOrUpdateVariableByNameAndValue(pid,  "State" , "a");
+		System.out.println("进入anchoring : " + new Date());
 	}
 
 }
