@@ -142,7 +142,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 					pathResult = routeMp.get(twp.getPname());
 				}
 			}
-			//runtimeService.setVariable(wpid, "DestPort", "destPort");
+			runtimeService.setVariable(vpid, "dpName", destPort.getPname());
 			//runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
 			globalVariables.createOrUpdateVariableByNameAndValue(wpid, "DestPort", destPort);
 			globalVariables.createOrUpdateVariableByNameAndValue(wpid,"W_TargPortList" , candinateWports);

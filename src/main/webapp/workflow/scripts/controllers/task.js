@@ -770,8 +770,8 @@ angular.module('activitiApp')
 	$scope.curTime = '1970-01-01';
     $scope.estart = {};  //存最初的[T1 , T2] , 该状态下的常量
 	$scope.eend = {};
-	$scope.eend_v ={};//存修改后的值 ，
-	$scope.compAnchTime = {};
+	$scope.eend_v =$scope.eend;//存修改后的值 ，
+	$scope.compAnchTime =  $scope.estart ;
 	
 	$scope.pvars = {};  
 	
@@ -901,7 +901,7 @@ angular.module('activitiApp')
 	$scope.curTime = '1970-01-01 00:00:00'
     $scope.estart = {};
 	$scope.eend = {};
-	$scope.compDockTime = {};
+	$scope.compDockTime = $scope.eend;
 	
 	$scope.pvars = {};  
 	

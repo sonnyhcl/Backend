@@ -103,24 +103,24 @@ public class VesselController extends AbstractController {
 		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/revents", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<String> createEvent(@RequestBody HashMap<String, Object> map) throws InterruptedException {
-		System.out.println("Events from frontEnd");
-		System.out.println("Type : " + map.get("type"));
-		ACTFEvent e = new ACTFEvent(translateType((String) map.get("type")));
-		System.out.println(map.get("id").toString());
-		e.setId(Long.parseLong(map.get("id").toString()));
-		HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("data", map.get("data"));
-		JSONObject data = new JSONObject(dataMap);
-		e.setData(data.getJSONObject("data"));
-		LinkedBlockingQueue<ACTFEvent> q = globalEventQueue.getRecQueue();
-		// create receive event
-		q.put(e);
-		JSONArray result = new JSONArray();
-		result.put(e.getJson());
-		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
-	}
+//	@RequestMapping(value = "/revents", method = RequestMethod.POST, produces = "application/json")
+//	public ResponseEntity<String> createEvent(@RequestBody HashMap<String, Object> map) throws InterruptedException {
+//		System.out.println("Events from frontEnd");
+//		System.out.println("Type : " + map.get("type"));
+//		ACTFEvent e = new ACTFEvent(translateType((String) map.get("type")));
+//		System.out.println(map.get("id").toString());
+//		e.setId(Long.parseLong(map.get("id").toString()));
+//		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+//		dataMap.put("data", map.get("data"));
+//		JSONObject data = new JSONObject(dataMap);
+//		e.setData(data.getJSONObject("data"));
+//		LinkedBlockingQueue<ACTFEvent> q = globalEventQueue.getRecQueue();
+//		// create receive event
+//		q.put(e);
+//		JSONArray result = new JSONArray();
+//		result.put(e.getJson());
+//		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
+//	}
 
 	@RequestMapping(value = "/revents", method = RequestMethod.GET)
 	public ResponseEntity<String> queryREvents() throws InterruptedException {
@@ -268,17 +268,6 @@ public class VesselController extends AbstractController {
 		globalVariables.createOrUpdateVariableByRestVar(processInstanceId, variableName, restVariable);
 		
 		return new ResponseEntity<RestVariable>(result ,HttpStatus.OK);
-	}
-
-	private EventType translateType(String eventType) {
-		// TODO Auto-generated method stub
-		if (eventType.equals("RW_PLAN")) {
-			return EventType.RW_PLAN;
-		}
-		if (eventType.equals("RW_STOP")) {
-			return EventType.RW_STOP;
-		}
-		return null;
 	}
 
 }

@@ -2,16 +2,21 @@ package supplychain.activiti.coord;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
+import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zbq.EventType;
+import com.zbq.GlobalEventQueue;
 import com.zbq.GlobalVariables;
+import com.zbq.VWFEvent;
 
 import supplychain.activiti.rest.service.api.CustomArrayListRestVariableConverter;
 import supplychain.entity.VPort;
@@ -29,6 +34,9 @@ public class MSCoordinator implements JavaDelegate, Serializable {
 	private RuntimeService runtimeService;
 	@Autowired 
 	private GlobalVariables globalVariables;
+	@Autowired
+	private GlobalEventQueue globalEventQueue;
+	
 	
 	@Override
 	public void execute(DelegateExecution exec) {
@@ -62,9 +70,14 @@ public class MSCoordinator implements JavaDelegate, Serializable {
 	 			 targLocList.set(i, now);
 	 		 }
 	 		 
-	 		 msgData.remove("V_TargLocList");
+	 		//SendMsg to VWF
+			VWFEvent e = new VWFEvent(EventType.MSC_MeetWeightCond);
+			e.getData().put("createAt", (new Date()).toString());
+			e.getData().put("MSC_TargPorts", targLocList);
+		    globalEventQueue.sendMsg(e);
+	 		msgData.remove("V_TargLocList");
 	 		
-	 		 System.out.println("根据港口起重机启动与否及载重筛选港口完毕！");
+	 		System.out.println("根据港口起重机启动与否及载重筛选港口完毕！");
 	 		 
 	 		 
 			//TODO : Start Manager 获取候选港口列表 ， 并填入运费

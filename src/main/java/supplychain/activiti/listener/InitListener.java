@@ -89,6 +89,8 @@ public class InitListener implements ExecutionListener, Serializable {
 		vars.put("State", "voyaging"); // 船的状态
 		vars.put("StartTime", new Date()); // 每段航行的起始时间
 		vars.put("TargLocList", vports); // 港口清单
+		String dpname = vports.get(vports.size()-1).getPname();
+		vars.put("dpName", dpname);
 		runtimeService.setVariables(pid, vars);
 		globalVariables.createOrUpdateVariablesByValue(pid, vars);
 	}
