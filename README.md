@@ -1,8 +1,11 @@
 # README
-- [Run in Intellij IDEA (recommend)](https://github.com/sonnyhcl/backend#run-in-intellij-idea)
-- [Run in Spring Tool Suite](https://github.com/sonnyhcl/backend#run-in-spring-tool-suite)
-
-## Run in Intellij IDEA
+## Table Of Contents
+-   [Demo](#demo)
+-   [Run in Intellij IDEA (recommend)](#run-in-intellij-idea)
+-   [Run in Spring Tool Suite](#run-in-spring-tool-suite)
+## Demo
+[demo video in dropbox](https://www.dropbox.com/s/gi2rrvfkl17vlng/vessel.mp4?dl=0)
+## Run in `Intellij IDEA`
 1.  Download development tool:
 
     IDE: [Intellij IDEA](https://www.jetbrains.com/idea/download)
@@ -13,7 +16,7 @@
 
 2.  Clone Source Code:
 
-    `git clone git@github.com:sonnyhcl/Backend.git`
+    `git clone -r git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project in IDEA:  
 
@@ -75,7 +78,7 @@
 
 2.  Clone Source Code:
 
-    `git clone git@github.com:sonnyhcl/Backend.git`
+    `git clone -r git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project:  
 
@@ -113,4 +116,6 @@
     After running the project and logging in  the system , upload process models under the root directory `src/main/resources`, such as [Supply_Chain_pool.bpmn20.xml](https://github.com/sonnyhcl/Backend/blob/master/src/main/resources/Supply_Chain_pool.bpmn20.xml), then create app for it  and publish your app, then  go to processes page to start the selected process.
     ![import process](image/import_process.png)
 
-> Attention: In order to perform well, The `Backend` project must be coordinated with the `Frontend` project.
+## Dependencies
+-   [`Vessel Frontend`](https://www.github.com/sonnyhcl/Frontend)
+    > Attention: In order to perform as [demo](#demo) shows, The `Activiti Backend` project must be coordinated with the `Vessel Frontend` project.
