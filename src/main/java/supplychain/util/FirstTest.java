@@ -53,7 +53,8 @@ package supplychain.util;
 //		Collection<KnowledgePackage> pkgs = kbBuilder.getKnowledgePackages(); //会使用PackageRegistry来创建一个知识包集合返回
 //		KnowledgeBase kBase = kbBuilder.newKnowledgeBase();//创建KnowledgeBase实例
 //		kBase.addKnowledgePackages(pkgs);//将知识包部署到KnowledgeBase中 , 保存全部的应用的知识定义，这些知识也包括业务规则定义
-//		StatefulKnowledgeSession kSession = kBase.newStatefulKnowledgeSession();//使用KnowledgeBase创建StatefulKnowledgeSession ， 保存运行时的数据
+//		StatefulKnowledgeSession kSession = kBase.newStatefulKnowledgeSession();//使用KnowledgeBase创建StatefulKnowledgeSession ，
+// 保存运行时的数据
 //		Person person = new Person();
 //		person.setName("Tom");
 //		kSession.insert(person);//向StatefulKnowledgeSession中加入事实
@@ -68,7 +69,8 @@ package supplychain.util;
 //	public void  TestAsm() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 //		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 //		//访问类的头部
-//		cw.visit(Opcodes.V1_5,Opcodes.ACC_PUBLIC, "zbq/base/MyObjruntimeService.setVariable(executionId ,\"circleCnt\", x+1);ect", null , "java/lang/Object", null);
+//		cw.visit(Opcodes.V1_5,Opcodes.ACC_PUBLIC, "zbq/base/MyObjruntimeService.setVariable(executionId ,\"circleCnt\", x+1);
+// ect", null , "java/lang/Object", null);
 //		//访问方法，创造构造器
 //		MethodVisitor construct = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
 //		construct.visitCode();

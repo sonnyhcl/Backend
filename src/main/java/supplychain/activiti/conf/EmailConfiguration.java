@@ -27,36 +27,36 @@ public class EmailConfiguration {
 
     @Inject
     private Environment env;
-    
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        
+
         boolean isEmailEnabled = env.getProperty("email.enabled", Boolean.class, false);
         if (isEmailEnabled) {
             sender.setHost(env.getRequiredProperty("email.host"));
             sender.setPort(env.getRequiredProperty("email.port", Integer.class));
-        } 
-        
+        }
+
         Boolean useCredentials = env.getProperty("email.useCredentials", Boolean.class);
         if (Boolean.TRUE.equals(useCredentials)) {
             sender.setUsername(env.getProperty("email.username"));
             sender.setPassword(env.getProperty("email.password"));
         }
-        
+
         Boolean emailTLS = env.getProperty("email.tls", Boolean.class);
         if (emailTLS != null) {
-          sender.getJavaMailProperties().setProperty("mail.smtp.starttls.enable", emailTLS.toString());
+            sender.getJavaMailProperties().setProperty("mail.smtp.starttls.enable", emailTLS.toString());
         }
-        
+
         return sender;
     }
-    
+
     @Bean
     public FreeMarkerConfigurationFactoryBean freeMarkerConfig() {
         Properties props = new Properties();
-        props.setProperty("number_format","0.##");
-        props.setProperty("locale","en-US");
+        props.setProperty("number_format", "0.##");
+        props.setProperty("locale", "en-US");
 
         FreeMarkerConfigurationFactoryBean factory = new FreeMarkerConfigurationFactoryBean();
         factory.setFreemarkerSettings(props);

@@ -13,52 +13,33 @@
 package supplychain.activiti.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import supplychain.activiti.conf.MyCorsRegistration;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Configuration
 @ComponentScan(value = {
-		"org.activiti.rest",
-		"supplychain.web"
-		})
+        "org.activiti.rest",
+        "supplychain.web"
+})
 @EnableAsync
 @EnableWebMvc
-public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter implements WebSocketConfigurer{
-//
-	@Autowired
+public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
+    //
+    @Autowired
     protected ObjectMapper objectMapper;
-//    
+
+    //
 //	@Autowired
 //	protected Environment environment;
 //
@@ -68,34 +49,37 @@ public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter
     }
 
     // webSocket  
-    private static final String WEBSOCKET_SERVER ="/webSocketServer";  
-    private static final String ECHO ="/echo";  
+    private static final String WEBSOCKET_SERVER = "/webSocketServer";
+    private static final String ECHO = "/echo";
     // 不支持webSocket的话用sockjs  
-    private static final String SOCKJS ="/sockjs/webSocketServer";  
-    @Override  
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {  
+    private static final String SOCKJS = "/sockjs/webSocketServer";
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         //支持websocket 的访问链接  
-        registry.addHandler(systemWebSocketHandler(), WEBSOCKET_SERVER).addInterceptors(handshakeInterceptor());  
-        registry.addHandler(systemWebSocketHandler(), ECHO).addInterceptors(handshakeInterceptor());  
+        registry.addHandler(systemWebSocketHandler(), WEBSOCKET_SERVER).addInterceptors(handshakeInterceptor());
+        registry.addHandler(systemWebSocketHandler(), ECHO).addInterceptors(handshakeInterceptor());
         //不支持websocket的访问链接  
-        registry.addHandler(systemWebSocketHandler(), SOCKJS).addInterceptors(handshakeInterceptor()).withSockJS();  
-    }  
-    @Bean  
-    public WebSocketHandler systemWebSocketHandler(){  
-        return new SystemWebSocketHandler();  
-    }  
-    @Bean  
-    public HandshakeInterceptor handshakeInterceptor(){  
-        return new WebsocketHandshakeInterceptor();  
-    }  
-  
+        registry.addHandler(systemWebSocketHandler(), SOCKJS).addInterceptors(handshakeInterceptor()).withSockJS();
+    }
+
+    @Bean
+    public WebSocketHandler systemWebSocketHandler() {
+        return new SystemWebSocketHandler();
+    }
+
+    @Bean
+    public HandshakeInterceptor handshakeInterceptor() {
+        return new WebsocketHandshakeInterceptor();
+    }
+
     // Allow serving HTML files through the default Servlet  
-  
-    @Override  
-    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {  
-        configurer.enable();  
-    } 
-     
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
 
 //    @Bean
 //    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
@@ -111,7 +95,8 @@ public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter
 //        extendMessageConverters(converters);
 //        for (HttpMessageConverter<?> converter: converters) {
 //            if (converter instanceof MappingJackson2HttpMessageConverter) {
-//                MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = (MappingJackson2HttpMessageConverter) converter;
+//                MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = (MappingJackson2HttpMessageConverter)
+// converter;
 //                jackson2HttpMessageConverter.setObjectMapper(objectMapper);
 //                break;
 //            }

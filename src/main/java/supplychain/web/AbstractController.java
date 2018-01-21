@@ -5,13 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+
 /**
  * 抽象Controller，提供一些基础的方法、属性
- *
  */
 @RestController
-public  class AbstractController {
+public class AbstractController {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -30,71 +30,72 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Responsible for executing all action required after booting up the Spring container.
- * 
+ *
  * @author Joram Barrez
  * @author Tijs Rademakers
  */
 @Component
 public class Bootstrapper implements ApplicationListener<ContextRefreshedEvent> {
 
-  private final Logger log = LoggerFactory.getLogger(Bootstrapper.class);
+    private final Logger log = LoggerFactory.getLogger(Bootstrapper.class);
 
-  @Autowired
-  private TransactionTemplate transactionTemplate;
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
-  @Autowired
-  private IdentityService identityService;
+    @Autowired
+    private IdentityService identityService;
 
-  @Autowired
-  private Environment env;
+    @Autowired
+    private Environment env;
 
-  @Override
-  public void onApplicationEvent(ContextRefreshedEvent event) {
-    if (event.getApplicationContext().getParent() == null) { // Using Spring MVC, there are multiple child contexts. We only care about the root
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() == null) { // Using Spring MVC, there are multiple child contexts. We
+            // only care about the root
 
-      // First create the default IDM entities
-      createDefaultAdmin();
-    }
-  }
-
-  protected void createDefaultAdmin() {
-    // Need to be done in a separate TX, otherwise the LDAP sync won't see the created groups/users
-    // Can't use @Transactional here, cause it seems not to be applied as wanted
-    transactionTemplate.execute(new TransactionCallback<Void>() {
-
-      @Override
-      public Void doInTransaction(TransactionStatus status) {
-        if (identityService.createUserQuery().count() == 0) {
-          log.info("No users found, initializing default entities");
-          User user = initializeSuperUser();
-          initializeSuperUserGroups(user);
+            // First create the default IDM entities
+            createDefaultAdmin();
         }
-        return null;
-      }
+    }
 
-    });
-  }
+    protected void createDefaultAdmin() {
+        // Need to be done in a separate TX, otherwise the LDAP sync won't see the created groups/users
+        // Can't use @Transactional here, cause it seems not to be applied as wanted
+        transactionTemplate.execute(new TransactionCallback<Void>() {
 
-  protected User initializeSuperUser() {
-    String adminPassword = env.getRequiredProperty("admin.password");
-    String adminLastname = env.getRequiredProperty("admin.lastname");
-    String adminEmail = env.getRequiredProperty("admin.email");
+            @Override
+            public Void doInTransaction(TransactionStatus status) {
+                if (identityService.createUserQuery().count() == 0) {
+                    log.info("No users found, initializing default entities");
+                    User user = initializeSuperUser();
+                    initializeSuperUserGroups(user);
+                }
+                return null;
+            }
 
-    User admin = identityService.newUser(adminEmail);
-    admin.setLastName(adminLastname);
-    admin.setEmail(adminEmail);
-    admin.setPassword(adminPassword);
-    identityService.saveUser(admin);
-    return admin;
-  }
+        });
+    }
 
-  protected void initializeSuperUserGroups(User superUser) {
-    String superUserGroupName = env.getRequiredProperty("admin.group");
-    Group group = identityService.newGroup(GroupIds.ROLE_ADMIN);
-    group.setName(superUserGroupName);
-    group.setType(GroupTypes.TYPE_SECURITY_ROLE);
-    identityService.saveGroup(group);
-    identityService.createMembership(superUser.getId(), group.getId());
-  }
-  
+    protected User initializeSuperUser() {
+        String adminPassword = env.getRequiredProperty("admin.password");
+        String adminLastname = env.getRequiredProperty("admin.lastname");
+        String adminEmail = env.getRequiredProperty("admin.email");
+
+        User admin = identityService.newUser(adminEmail);
+        admin.setLastName(adminLastname);
+        admin.setEmail(adminEmail);
+        admin.setPassword(adminPassword);
+        identityService.saveUser(admin);
+        return admin;
+    }
+
+    protected void initializeSuperUserGroups(User superUser) {
+        String superUserGroupName = env.getRequiredProperty("admin.group");
+        Group group = identityService.newGroup(GroupIds.ROLE_ADMIN);
+        group.setName(superUserGroupName);
+        group.setType(GroupTypes.TYPE_SECURITY_ROLE);
+        identityService.saveGroup(group);
+        identityService.createMembership(superUser.getId(), group.getId());
+    }
+
 }

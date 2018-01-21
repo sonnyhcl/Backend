@@ -16,7 +16,7 @@
 
 2.  Clone Source Code:
 
-    `git clone -r git@github.com:sonnyhcl/Backend.git`
+    `git clone --recursive git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project in IDEA:  
 
@@ -78,7 +78,7 @@
 
 2.  Clone Source Code:
 
-    `git clone -r git@github.com:sonnyhcl/Backend.git`
+    `git clone --recursive git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project:  
 

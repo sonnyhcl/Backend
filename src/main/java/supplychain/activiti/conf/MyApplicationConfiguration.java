@@ -17,28 +17,28 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @PropertySources({
-	
-	@PropertySource("classpath:/META-INF/activiti-app/activiti-app.properties"),
-	@PropertySource(value = "classpath:activiti-app.properties", ignoreResourceNotFound = true),
-	@PropertySource(value = "file:activiti-app.properties", ignoreResourceNotFound = true),
+
+        @PropertySource("classpath:/META-INF/activiti-app/activiti-app.properties"),
+        @PropertySource(value = "classpath:activiti-app.properties", ignoreResourceNotFound = true),
+        @PropertySource(value = "file:activiti-app.properties", ignoreResourceNotFound = true),
 
 })
 @ComponentScan(basePackages = {
-		"com.zbq",
-		"supplychain.*",
+        "com.zbq",
+        "supplychain.*",
         "org.activiti.app.repository",
         "org.activiti.app.service",
         "org.activiti.app.security",
         "org.activiti.app.model.component"})
 public class MyApplicationConfiguration {
-	
-	/**
-	 * This is needed to make property resolving work on annotations ...
-	 * (see http://stackoverflow.com/questions/11925952/custom-spring-property-source-does-not-resolve-placeholders-in-value) 
-	 * 
-	 * @Scheduled(cron="${someProperty}")
-	 */
-	@Bean
+
+    /**
+     * This is needed to make property resolving work on annotations ...
+     * (see http://stackoverflow.com/questions/11925952/custom-spring-property-source-does-not-resolve-placeholders-in-value)
+     *
+     * @Scheduled(cron="${someProperty}")
+     */
+    @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
