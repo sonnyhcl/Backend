@@ -17,7 +17,6 @@ import org.activiti.rest.common.application.DefaultContentTypeResolver;
 import org.activiti.rest.service.api.RestResponseFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import supplychain.activiti.rest.service.api.CustomRestResponseFactory;
 
 @Configuration
@@ -25,13 +24,13 @@ public class RestApiConfiguration {
 
     @Bean()
     public RestResponseFactory restResponseFactory() {
-      RestResponseFactory restResponseFactory = new CustomRestResponseFactory();
-      return restResponseFactory;
+        RestResponseFactory restResponseFactory = new CustomRestResponseFactory();
+        return restResponseFactory;
     }
 
     @Bean()
     public ContentTypeResolver contentTypeResolver() {
-      ContentTypeResolver resolver = new DefaultContentTypeResolver();
-      return resolver;
+        ContentTypeResolver resolver = new DefaultContentTypeResolver();
+        return resolver;
     }
 }

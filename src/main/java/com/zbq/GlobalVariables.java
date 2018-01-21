@@ -1,26 +1,20 @@
 package com.zbq;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.mail.Flags.Flag;
-
-import org.activiti.bpmn.model.ImplementationType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.engine.impl.util.json.JSONArray;
 import org.activiti.engine.impl.util.json.JSONException;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.activiti.rest.service.api.RestResponseFactory;
 import org.activiti.rest.service.api.engine.variable.RestVariable;
 import org.activiti.rest.service.api.engine.variable.RestVariable.RestVariableScope;
-import org.mvel2.util.Varargs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javassist.compiler.JvstCodeGen;
 import supplychain.entity.VPort;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class GlobalVariables {
@@ -247,13 +241,7 @@ public class GlobalVariables {
 		return carRateMp;
 	}
 
-	public void setCarRateMp(Map<String, Double> carRateMp) {
-		this.carRateMp = carRateMp;
-	}
-
-	public  int getZoominrate() {
+	public int getZoomInRate() {
 		return zoomInRate;
 	}
-	
-	
 }

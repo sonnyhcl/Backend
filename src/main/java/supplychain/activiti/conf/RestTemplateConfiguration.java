@@ -1,12 +1,7 @@
 package supplychain.activiti.conf;
 
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.http.client.HttpClient;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +15,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Rest Template config
  * Created by lujun.chen on 2017/4/17.
@@ -27,26 +26,26 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @ConditionalOnClass(value = {RestTemplate.class, HttpClient.class})
 public class RestTemplateConfiguration {
-  private ClientHttpRequestFactory createFactory() {
-      SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-      requestFactory.setReadTimeout(5000);
-      requestFactory.setConnectTimeout(5000);
-     return requestFactory ;
-  }
+    private ClientHttpRequestFactory createFactory() {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setReadTimeout(5000);
+        requestFactory.setConnectTimeout(5000);
+        return requestFactory;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean(RestTemplate.class)
-  public RestTemplate getRestTemplate() {
-    List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-    messageConverters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
-    messageConverters.add(new FormHttpMessageConverter());
-    messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
-    messageConverters.add(new MappingJackson2HttpMessageConverter());
-    RestTemplate restTemplate = new RestTemplate(messageConverters);
-    restTemplate.setRequestFactory(createFactory());
-    // 添加转换器
+    @Bean
+    @ConditionalOnMissingBean(RestTemplate.class)
+    public RestTemplate getRestTemplate() {
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        messageConverters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
+        messageConverters.add(new FormHttpMessageConverter());
+        messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+        messageConverters.add(new MappingJackson2HttpMessageConverter());
+        RestTemplate restTemplate = new RestTemplate(messageConverters);
+        restTemplate.setRequestFactory(createFactory());
+        // 添加转换器
 
-    return restTemplate;
-  }
+        return restTemplate;
+    }
 
 }

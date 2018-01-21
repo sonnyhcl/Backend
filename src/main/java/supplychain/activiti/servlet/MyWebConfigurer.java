@@ -12,15 +12,6 @@
  */
 package supplychain.activiti.servlet;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletRegistration;
-
 import org.activiti.app.servlet.AppDispatcherServletConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,22 +20,24 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
-
 import supplychain.activiti.conf.MyApplicationConfiguration;
+
+import javax.servlet.*;
+import java.util.EnumSet;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
  */
 public class MyWebConfigurer implements ServletContextListener {
-	
+
     private final Logger log = LoggerFactory.getLogger(MyWebConfigurer.class);
 
     public AnnotationConfigWebApplicationContext context;
-    
+
     public void setContext(AnnotationConfigWebApplicationContext context) {
         this.context = context;
     }
-    
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         log.debug("Configuring Spring root application context");
@@ -52,26 +45,26 @@ public class MyWebConfigurer implements ServletContextListener {
         ServletContext servletContext = sce.getServletContext();
 
         AnnotationConfigWebApplicationContext rootContext = null;
-        
+
         if (context == null) {
             rootContext = new AnnotationConfigWebApplicationContext();
             //配置MypplicationConfiguration
             rootContext.register(MyApplicationConfiguration.class);
-            
+
             if (rootContext.getServletContext() == null) {
-              rootContext.setServletContext(servletContext);
+                rootContext.setServletContext(servletContext);
             }
-            
+
             rootContext.refresh();
             context = rootContext;
-            
+
         } else {
             rootContext = context;
             if (rootContext.getServletContext() == null) {
-              rootContext.setServletContext(servletContext);
+                rootContext.setServletContext(servletContext);
             }
         }
-        
+
         servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, rootContext);
 
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
@@ -92,7 +85,7 @@ public class MyWebConfigurer implements ServletContextListener {
         appDispatcherServletConfiguration.register(AppDispatcherServletConfiguration.class);
 
         log.debug("Registering Spring MVC Servlet");
-        ServletRegistration.Dynamic appDispatcherServlet = servletContext.addServlet("appDispatcher", 
+        ServletRegistration.Dynamic appDispatcherServlet = servletContext.addServlet("appDispatcher",
                 new DispatcherServlet(appDispatcherServletConfiguration));
         appDispatcherServlet.addMapping("/app/*");
         appDispatcherServlet.setLoadOnStartup(1);
@@ -101,7 +94,7 @@ public class MyWebConfigurer implements ServletContextListener {
         log.debug("Registering Activiti public REST API");
         AnnotationConfigWebApplicationContext apiDispatcherServletConfiguration = new AnnotationConfigWebApplicationContext();
         apiDispatcherServletConfiguration.setParent(rootContext);
-      //配置MyApiDispatcherServletConfiguration
+        //配置MyApiDispatcherServletConfiguration
         apiDispatcherServletConfiguration.register(MyApiDispatcherServletConfiguration.class);
 
         ServletRegistration.Dynamic apiDispatcherServlet = servletContext.addServlet("apiDispatcher",
@@ -121,8 +114,9 @@ public class MyWebConfigurer implements ServletContextListener {
 //
 //        corsFilter.addMappingForUrlPatterns(disps, false, "/api/**");
 //        corsFilter.setAsyncSupported(true);
-        
-        FilterRegistration.Dynamic springSecurityFilter = servletContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy());
+
+        FilterRegistration.Dynamic springSecurityFilter = servletContext.addFilter("springSecurityFilterChain", new
+                DelegatingFilterProxy());
 
         springSecurityFilter.addMappingForUrlPatterns(disps, false, "/*");
         springSecurityFilter.setAsyncSupported(true);

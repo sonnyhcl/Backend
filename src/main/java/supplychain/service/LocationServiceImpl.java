@@ -1,15 +1,7 @@
 package supplychain.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import supplychain.entity.Location;
-import supplychain.repository.LocationRepository;
-
 //@Service("locationService")
-public class  LocationServiceImpl {
+public class LocationServiceImpl {
 
 //	@Autowired
 //	private LocationRepository locRepos;

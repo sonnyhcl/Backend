@@ -35,3 +35,4 @@ settings.xml
 transaction-logs
 .flattened-pom.xml
 secrets.yml
+*.iml

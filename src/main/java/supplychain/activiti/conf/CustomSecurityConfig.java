@@ -12,21 +12,11 @@
  */
 package supplychain.activiti.conf;
 
-import java.util.Arrays;
-
-import javax.inject.Inject;
-
-import org.activiti.app.security.AjaxAuthenticationFailureHandler;
-import org.activiti.app.security.AjaxAuthenticationSuccessHandler;
-import org.activiti.app.security.AjaxLogoutSuccessHandler;
-import org.activiti.app.security.CustomDaoAuthenticationProvider;
-import org.activiti.app.security.CustomPersistentRememberMeServices;
-import org.activiti.app.security.Http401UnauthorizedEntryPoint;
+import org.activiti.app.security.*;
 import org.activiti.app.web.CustomFormLoginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -34,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.RememberMeAuthenticationProvider;
@@ -48,17 +37,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
-import supplychain.activiti.servlet.MyCorsFilter;
+import javax.inject.Inject;
+
 /**
  * Based on http://docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#multiple-httpsecurity
- * 
+ *
  * @author Joram Barrez
  */
 @Configuration
@@ -66,139 +50,139 @@ import supplychain.activiti.servlet.MyCorsFilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
 @Order(0)
 public class CustomSecurityConfig {
-	
-	private static final Logger logger = LoggerFactory.getLogger(CustomSecurityConfig.class);
-	
-	public static final String KEY_LDAP_ENABLED = "ldap.authentication.enabled";
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomSecurityConfig.class);
+
+    public static final String KEY_LDAP_ENABLED = "ldap.authentication.enabled";
 
     //
-	// GLOBAL CONFIG
-	//
+    // GLOBAL CONFIG
+    //
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) {
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) {
 
-		// Default auth (database backed)
-		try {
-			auth.authenticationProvider(dbAuthenticationProvider());
-		} catch (Exception e) {
-			logger.error("Could not configure authentication mechanism:", e);
-		}
-	}
+        // Default auth (database backed)
+        try {
+            auth.authenticationProvider(dbAuthenticationProvider());
+        } catch (Exception e) {
+            logger.error("Could not configure authentication mechanism:", e);
+        }
+    }
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		org.activiti.app.security.UserDetailsService userDetailsService = new org.activiti.app.security.UserDetailsService();
+    @Bean
+    public UserDetailsService userDetailsService() {
+        org.activiti.app.security.UserDetailsService userDetailsService = new org.activiti.app.security.UserDetailsService();
 
-		// Undocumented setting to configure the amount of time user data is cached before a new check for validity is made
-		// Use <= 0 for always do a check
-		userDetailsService.setUserValidityPeriod(env.getProperty("cache.users.recheck.period", Long.class, 30000L));
+        // Undocumented setting to configure the amount of time user data is cached before a new check for validity is made
+        // Use <= 0 for always do a check
+        userDetailsService.setUserValidityPeriod(env.getProperty("cache.users.recheck.period", Long.class, 30000L));
 
-		return userDetailsService;
-	}
+        return userDetailsService;
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return NoOpPasswordEncoder.getInstance();
-	}
-	
-	@Bean(name = "dbAuthenticationProvider")
-	public AuthenticationProvider dbAuthenticationProvider() {
-		CustomDaoAuthenticationProvider daoAuthenticationProvider = new CustomDaoAuthenticationProvider();
-		daoAuthenticationProvider.setUserDetailsService(userDetailsService());
-		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-		return daoAuthenticationProvider;
-	}
-	
-	//
-	// REGULAR WEBAP CONFIG
-	//
-	
-	@Configuration
-	@Order(10) // API config first (has Order(1))
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean(name = "dbAuthenticationProvider")
+    public AuthenticationProvider dbAuthenticationProvider() {
+        CustomDaoAuthenticationProvider daoAuthenticationProvider = new CustomDaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+    }
+
+    //
+    // REGULAR WEBAP CONFIG
+    //
+
+    @Configuration
+    @Order(10) // API config first (has Order(1))
     public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-		private static final Logger logger = LoggerFactory.getLogger(FormLoginWebSecurityConfigurerAdapter.class);
-		
-	    @Inject
-	    private Environment env;
+        private static final Logger logger = LoggerFactory.getLogger(FormLoginWebSecurityConfigurerAdapter.class);
 
-	    @Inject
-	    private AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
+        @Inject
+        private Environment env;
 
-	    @Inject
-	    private AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler;
+        @Inject
+        private AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
 
-	    @Inject
-	    private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
-	    
-	    @Inject
-	    private Http401UnauthorizedEntryPoint authenticationEntryPoint;
-	    
-	    @Override
-	    protected void configure(HttpSecurity http) throws Exception {
-		        http
-		            .exceptionHandling()
-		                .authenticationEntryPoint(authenticationEntryPoint) 
-		                .and()
-		            .sessionManagement()
-		                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		                .and()
-		            .rememberMe()
-		                .rememberMeServices(rememberMeServices())
-		                .key(env.getProperty("security.rememberme.key"))
-		                .and()
-		            .logout()
-		                .logoutUrl("/app/logout")
-		                .logoutSuccessHandler(ajaxLogoutSuccessHandler)
-		                .deleteCookies("JSESSIONID")
-		                .permitAll()
-		                .and()
-		            .csrf()
-		                .disable() // Disabled, cause enabling it will cause sessions
+        @Inject
+        private AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler;
+
+        @Inject
+        private AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler;
+
+        @Inject
+        private Http401UnauthorizedEntryPoint authenticationEntryPoint;
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                    .exceptionHandling()
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .and()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .rememberMe()
+                    .rememberMeServices(rememberMeServices())
+                    .key(env.getProperty("security.rememberme.key"))
+                    .and()
+                    .logout()
+                    .logoutUrl("/app/logout")
+                    .logoutSuccessHandler(ajaxLogoutSuccessHandler)
+                    .deleteCookies("JSESSIONID")
+                    .permitAll()
+                    .and()
+                    .csrf()
+                    .disable() // Disabled, cause enabling it will cause sessions
 //		                .cors()
 //		            .headers()
 //		                .frameOptions()
 //		                	.sameOrigin()
 ////		                	.addHeaderWriter(new XXssProtectionHeaderWriter())
 //		                .and()
-		            .authorizeRequests()
-		                .antMatchers("/*").permitAll()
-		                .antMatchers("/app/rest/authenticate").permitAll()
-		                .antMatchers("/app/rest/integration/login").permitAll()
-		                .antMatchers("/app/rest/temporary/example-options").permitAll()
-		                .antMatchers("/app/rest/idm/email-actions/*").permitAll()
-		                .antMatchers("/app/rest/idm/signups").permitAll()
-		              //  .antMatchers(HttpMethod.OPTIONS).permitAll()
-		                .antMatchers("/app/rest/idm/passwords").permitAll()
-		                .antMatchers("/app/**").authenticated();
+                    .authorizeRequests()
+                    .antMatchers("/*").permitAll()
+                    .antMatchers("/app/rest/authenticate").permitAll()
+                    .antMatchers("/app/rest/integration/login").permitAll()
+                    .antMatchers("/app/rest/temporary/example-options").permitAll()
+                    .antMatchers("/app/rest/idm/email-actions/*").permitAll()
+                    .antMatchers("/app/rest/idm/signups").permitAll()
+                    //  .antMatchers(HttpMethod.OPTIONS).permitAll()
+                    .antMatchers("/app/rest/idm/passwords").permitAll()
+                    .antMatchers("/app/**").authenticated();
 
 
-	        // Custom login form configurer to allow for non-standard HTTP-methods (eg. LOCK)
-	        CustomFormLoginConfig<HttpSecurity> loginConfig = new CustomFormLoginConfig<HttpSecurity>();
-	        loginConfig.loginProcessingUrl("/app/authentication")
-	            .successHandler(ajaxAuthenticationSuccessHandler)
-	            .failureHandler(ajaxAuthenticationFailureHandler)
-	            .usernameParameter("j_username")
-	            .passwordParameter("j_password")
-	            .permitAll();
-	        
-	        http.apply(loginConfig);
-	    }
+            // Custom login form configurer to allow for non-standard HTTP-methods (eg. LOCK)
+            CustomFormLoginConfig<HttpSecurity> loginConfig = new CustomFormLoginConfig<HttpSecurity>();
+            loginConfig.loginProcessingUrl("/app/authentication")
+                    .successHandler(ajaxAuthenticationSuccessHandler)
+                    .failureHandler(ajaxAuthenticationFailureHandler)
+                    .usernameParameter("j_username")
+                    .passwordParameter("j_password")
+                    .permitAll();
 
-	    @Bean
-	    public RememberMeServices rememberMeServices() {
-	      return new CustomPersistentRememberMeServices(env, userDetailsService());
-	    }
-	    
-	    @Bean
-	    public RememberMeAuthenticationProvider rememberMeAuthenticationProvider() {
-	        return new RememberMeAuthenticationProvider(env.getProperty("security.rememberme.key"));
-	    }
-	    
+            http.apply(loginConfig);
+        }
+
+        @Bean
+        public RememberMeServices rememberMeServices() {
+            return new CustomPersistentRememberMeServices(env, userDetailsService());
+        }
+
+        @Bean
+        public RememberMeAuthenticationProvider rememberMeAuthenticationProvider() {
+            return new RememberMeAuthenticationProvider(env.getProperty("security.rememberme.key"));
+        }
+
 //	    @Bean
 //		CorsConfigurationSource corsConfigurationSource() {
 //			CorsConfiguration configuration = new CorsConfiguration();
@@ -209,34 +193,34 @@ public class CustomSecurityConfig {
 //			source.registerCorsConfiguration("/*", configuration);
 //			return source;
 //		}
-	    
-	}
 
-	//
-	// BASIC AUTH
-	//
+    }
 
-	@EnableWebSecurity
-	@Order(1)
-	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    //
+    // BASIC AUTH
+    //
 
-		protected void configure(HttpSecurity http) throws Exception {
+    @EnableWebSecurity
+    @Order(1)
+    public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-			http
-				.sessionManagement()
-					.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.csrf()
-				.disable()
+        protected void configure(HttpSecurity http) throws Exception {
+
+            http
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .csrf()
+                    .disable()
 //				.cors()
 //				.and()
-				.antMatcher("/api" + "/**")
-				.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.antMatchers("/api" + "/**")
-				.authenticated()
-				.and().httpBasic();
-		}
+                    .antMatcher("/api" + "/**")
+                    .authorizeRequests()
+                    .antMatchers(HttpMethod.OPTIONS).permitAll()
+                    .antMatchers("/api" + "/**")
+                    .authenticated()
+                    .and().httpBasic();
+        }
 //		@Bean
 //		CorsConfigurationSource corsConfigurationSource() {
 //			CorsConfiguration configuration = new CorsConfiguration();
@@ -252,15 +236,15 @@ public class CustomSecurityConfig {
 //			return new MyCorsFilter(corsConfigurationSource);
 //		}
 
-	}
+    }
 
-	public static class LdapAuthenticationEnabledCondition implements Condition {
+    public static class LdapAuthenticationEnabledCondition implements Condition {
 
-		@Override
-		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-			return context.getEnvironment().getProperty(KEY_LDAP_ENABLED, Boolean.class, false);
-		}
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return context.getEnvironment().getProperty(KEY_LDAP_ENABLED, Boolean.class, false);
+        }
 
-	}
+    }
 
 }

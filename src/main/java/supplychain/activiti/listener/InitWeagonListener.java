@@ -1,27 +1,22 @@
 package supplychain.activiti.listener;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.zbq.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.zbq.GlobalEventQueue;
-import com.zbq.GlobalVariables;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import supplychain.entity.Location;
 import supplychain.entity.WPort;
 import supplychain.entity.Weagon;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 @Service("initWeagonListener")
 public class InitWeagonListener implements ExecutionListener, Serializable {
+
 
 	private static final long serialVersionUID = -51948726954754158L;
 	@Autowired
@@ -45,4 +40,5 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
 		 
 		 globalVariables.createOrUpdateVariablesByValue(pid, vars);
 	}
+
 }

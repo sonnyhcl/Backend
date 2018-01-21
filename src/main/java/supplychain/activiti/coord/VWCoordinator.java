@@ -1,35 +1,23 @@
 package supplychain.activiti.coord;
 
-import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
+import com.zbq.EventType;
+import com.zbq.GlobalEventQueue;
+import com.zbq.GlobalVariables;
+import com.zbq.VWFEvent;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.activiti.engine.impl.util.json.JSONArray;
 import org.activiti.engine.impl.util.json.JSONObject;
-import org.activiti.engine.runtime.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.zbq.EventType;
-import com.zbq.GlobalEventQueue;
-import com.zbq.GlobalVariables;
-import com.zbq.VWFEvent;
-
-import supplychain.activiti.rest.service.api.CustomArrayListRestVariableConverter;
 import supplychain.entity.VPort;
 import supplychain.entity.WPort;
-import supplychain.entity.Weagon;
 import supplychain.util.DateUtil;
+
+import java.io.Serializable;
+import java.util.*;
 
 @Service("VWCoordinator")
 public class VWCoordinator implements JavaDelegate, Serializable {
@@ -83,7 +71,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			Date v_start_date = (Date) runtimeService.getVariable(vpid, "StartTime");
 			Date cur_date = new Date();
 			long t_ms = v_start_date.getTime();   
-			t_ms += (cur_date.getTime() - v_start_date.getTime())*globalVariables.getZoominrate();
+			t_ms += (cur_date.getTime() - v_start_date.getTime())*globalVariables.getZoomInRate();
 			
 			//获取车的当前位置
 			
@@ -171,46 +159,47 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 		if(msgType.equals("msg_CreateVWConn")) {
 			//在Vessel流程中设置W_pid , 建立关联
 //			runtimeService.setVariable(vpid, "W_pid" , wpid);		
-			System.out.println("Vessel 和 Weagon 联系建立");
-		}
-	}
-	
-	public long getEsti_Ms(JSONObject route) {
-		 @SuppressWarnings("unchecked")
-		 JSONArray paths = (JSONArray) route.get("paths");
-	     @SuppressWarnings("unchecked")
-	     JSONObject path  = (JSONObject) paths.get(0);
-	     long esti = Integer.parseInt((String) path.get("duration"));
-	     return esti;
-	}
-	public double getEsti_dist(JSONObject route) {
-		 @SuppressWarnings("unchecked")
-		 JSONArray paths = (JSONArray) route.get("paths");
-	     @SuppressWarnings("unchecked")
-	     JSONObject path  = (JSONObject) paths.get(0);
-	     double esti = Double.parseDouble((String) path.get("distance"));
-	     return esti;
-	}
-	
-	public JSONObject PlanPath(String x1 ,  String  y1 , String x2 , String y2) {
-		 String url = "http://restapi.amap.com/v3/direction/driving?origin="+x1+","+y1+"&destination="+x2+","+y2+"&output=json&key=ec15fc50687bd2782d7e45de6d08a023";
-	     String s = restTemplate.getForEntity(url, String.class).getBody();
-	    // System.out.println(s);
-	     JSONObject res = new JSONObject(s); 
-	     JSONObject route =  (JSONObject) res.get("route");
-	     return route;
-	}
+            System.out.println("Vessel 和 Weagon 联系建立");
+        }
+    }
 
-	public List<VPort> getVports(String vpid , String vname){
-		@SuppressWarnings("unchecked")
-		List<VPort> vtargLocMap = (List<VPort>) runtimeService.getVariable(vpid , vname);
-		return vtargLocMap;
-	}
-	
-	public List<WPort> getWports(String wpid , String vname){
- 
-		@SuppressWarnings("unchecked")
-		List<WPort> vtargLocMap = (List<WPort>) runtimeService.getVariable(wpid , vname);
-		return vtargLocMap;
-	}
+    public long getEsti_Ms(JSONObject route) {
+        @SuppressWarnings("unchecked")
+        JSONArray paths = (JSONArray) route.get("paths");
+        @SuppressWarnings("unchecked")
+        JSONObject path = (JSONObject) paths.get(0);
+        long esti = Integer.parseInt((String) path.get("duration"));
+        return esti;
+    }
+
+    public double getEsti_dist(JSONObject route) {
+        @SuppressWarnings("unchecked")
+        JSONArray paths = (JSONArray) route.get("paths");
+        @SuppressWarnings("unchecked")
+        JSONObject path = (JSONObject) paths.get(0);
+        double esti = Double.parseDouble((String) path.get("distance"));
+        return esti;
+    }
+
+    public JSONObject PlanPath(String x1, String y1, String x2, String y2) {
+        String url = "http://restapi.amap.com/v3/direction/driving?origin=" + x1 + "," + y1 + "&destination=" + x2 + "," + y2 + "&output=json&key=ec15fc50687bd2782d7e45de6d08a023";
+        String s = restTemplate.getForEntity(url, String.class).getBody();
+        // System.out.println(s);
+        JSONObject res = new JSONObject(s);
+        JSONObject route = (JSONObject) res.get("route");
+        return route;
+    }
+
+    public List<VPort> getVports(String vpid, String vname) {
+        @SuppressWarnings("unchecked")
+        List<VPort> vtargLocMap = (List<VPort>) runtimeService.getVariable(vpid, vname);
+        return vtargLocMap;
+    }
+
+    public List<WPort> getWports(String wpid, String vname) {
+
+        @SuppressWarnings("unchecked")
+        List<WPort> vtargLocMap = (List<WPort>) runtimeService.getVariable(wpid, vname);
+        return vtargLocMap;
+    }
 }

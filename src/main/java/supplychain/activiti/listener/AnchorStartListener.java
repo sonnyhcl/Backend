@@ -1,10 +1,6 @@
 package supplychain.activiti.listener;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
+import com.zbq.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -17,6 +13,11 @@ import com.zbq.GlobalVariables;
 import com.zbq.VWFEvent;
 
 import supplychain.entity.VPort;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Service("anchStartListener")
 public class AnchorStartListener implements ExecutionListener, Serializable {
@@ -58,5 +59,6 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
 //		globalEventQueue.sendMsg(e);
 		System.out.println("进入anchoring : " + new Date());
 	}
+
 
 }

@@ -1,24 +1,15 @@
 package supplychain.activiti.listener;
 
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-
+import com.zbq.GlobalEventQueue;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
-import org.activiti.engine.impl.util.json.JSONObject;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zbq.GlobalEventQueue;
-import com.zbq.VWFEvent;
-import com.zbq.EventType;
-
-import supplychain.entity.Weagon;
+import java.io.Serializable;
+import java.util.HashMap;
 
 @Service("runListener")
 public class RunListener implements TaskListener, Serializable {
@@ -46,5 +37,6 @@ public class RunListener implements TaskListener, Serializable {
 		System.out.println("Send  Msg_StartVWC message to VWC to connect to vessel");
 		
 	}
+
 }
 
