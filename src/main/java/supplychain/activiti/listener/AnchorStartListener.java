@@ -8,10 +8,13 @@ import java.util.List;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
+import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zbq.EventType;
 import com.zbq.GlobalVariables;
+import com.zbq.VWFEvent;
 
 import supplychain.entity.VPort;
 
@@ -49,6 +52,10 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
 		globalVariables.createOrUpdateVariableByNameAndValue(pid, "TargLocList", targLocList);
 		globalVariables.createOrUpdateVariableByNameAndValue(pid, "NextPort", nextport);
 	//	globalVariables.createOrUpdateVariableByNameAndValue(pid,  "State" , "a");
+//		VWFEvent e = new VWFEvent(EventType.V_AnchorStart);
+//		e.getData().put("createAt", (new Date()).toString());
+//		e.getData().put("achorSta", );
+//		globalEventQueue.sendMsg(e);
 		System.out.println("进入anchoring : " + new Date());
 	}
 

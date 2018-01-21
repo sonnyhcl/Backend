@@ -37,17 +37,11 @@ public class RunListener implements TaskListener, Serializable {
 		// TODO Auto-generated method stub
 		String pid = exec.getProcessInstanceId();
 		System.out.println(pid);
-		//Weagon w = (Weagon) runtimeService.getVariable(pid, "W_Info");
-		
-//		VWFEvent e = new VWFEvent(EventType.W_RUN);
-//		e.getData().put("createAt", (new Date()).toString());
-//		JSONObject wjson = new JSONObject(w);
-//		e.getData().put("W_Info", wjson);	
-//		globalEventQueue.sendMsg(e);
 		
 		HashMap<String, Object> connVMData = (HashMap<String, Object>) runtimeService.getVariables(pid);
 		connVMData.put("msgType" , "msg_UpdateDest");
 		connVMData.put("W_pid" , pid);
+		connVMData.put("reason" , "货车出发， 规划路径");
 		runtimeService.startProcessInstanceByMessage("Msg_StartVWC" ,connVMData);
 		System.out.println("Send  Msg_StartVWC message to VWC to connect to vessel");
 		

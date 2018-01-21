@@ -360,7 +360,7 @@
 						<td class="td1" >预计[T1 , T2]&nbsp;&nbsp;：</td>
 						<td class="td2">{{estart}}--->{{eend}}</td>
 					</tr>
-					<tr ng-if = "dx != 0">
+					<tr ng-if = "compAnchTime != null &&  eend_v != null">
 					    <td class="td1" >延误(期)[T1 , T2]&nbsp;&nbsp;：</td>
 						<td class="td2">{{compAnchTime}}--->{{eend_v}}</td>
 					</tr>
@@ -391,7 +391,7 @@
 						<td class="td1" >预计[T1 , T2]&nbsp;&nbsp;：</td>
 						<td class="td2">{{estart}}--->{{eend}}</td>
 					</tr>
-					<tr  ng-if = "dy != 0">
+					<tr  ng-if = "compDockTime != eend">
 					    <td class="td1" >延误(期)[T1 , T2]&nbsp;&nbsp;：</td>
 						<td class="td2">{{estart}}--->{{compDockTime}}</td>
 					</tr>

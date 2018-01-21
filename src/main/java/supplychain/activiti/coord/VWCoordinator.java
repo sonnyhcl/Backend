@@ -51,6 +51,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 	 @Autowired
 	 private GlobalEventQueue globalEventQueue;
 	
+	@SuppressWarnings("unused")
 	@Override
 	public void execute(DelegateExecution exec) {
 		// TODO Auto-generated method stubVWCoordinator.java
@@ -125,7 +126,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 		                if(a.getSortFlag() > b.getSortFlag()) {
 		                	 return 1;  
 		                }else {
-		                	  return -1;  
+		                	 return -1;  
 		                }
 		            }
 		        }; 
@@ -142,19 +143,28 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 					pathResult = routeMp.get(twp.getPname());
 				}
 			}
-			runtimeService.setVariable(vpid, "dpName", destPort.getPname());
-			//runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
-			globalVariables.createOrUpdateVariableByNameAndValue(wpid, "DestPort", destPort);
-			globalVariables.createOrUpdateVariableByNameAndValue(wpid,"W_TargPortList" , candinateWports);
-			//SendMsg to VWF
+			
+		
 			VWFEvent e = new VWFEvent(EventType.W_RUN);
 			e.getData().put("createAt", (new Date()).toString());
-			e.getData().put("W_Info", w_info);
-			e.getData().put("wDestPort" , new JSONObject(destPort));
-			e.getData().put("vDestPort",  new JSONObject(vpMap.get(destPort.getPname())));
-			e.getData().put("pathResult", pathResult);
-			e.getData().put("V_pid", vpid);
-			e.getData().put("StartTime",v_start_date);
+			if(destPort != null){
+				runtimeService.setVariable(vpid, "dpName", destPort.getPname());
+				//runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
+				globalVariables.createOrUpdateVariableByNameAndValue(wpid, "DestPort", destPort);
+				globalVariables.createOrUpdateVariableByNameAndValue(wpid,"W_TargPortList" , candinateWports);
+				//SendMsg to VWF
+				e.getData().put("W_Info", w_info);
+				e.getData().put("wDestPort" , new JSONObject(destPort));
+				e.getData().put("vDestPort",  new JSONObject(vpMap.get(destPort.getPname())));
+				e.getData().put("pathResult", pathResult);
+				e.getData().put("V_pid", vpid);
+				e.getData().put("StartTime",v_start_date);
+				e.getData().put("State", "success");
+				String rea = (String) msgData.get("reason");
+				e.getData().put("Reason", rea);
+			}else{
+				e.getData().put("State", "fail");
+			}
 			globalEventQueue.sendMsg(e);
 		}
 		
