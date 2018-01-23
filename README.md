@@ -31,11 +31,11 @@
     -   `Finish`
     -   Wait for IDEA to download maven dependencies
 
-6.  Configure Mysql
+4.  Configure Mysql
 
-    First make sure you have installed `mysql`. 
+    First make sure you have installed `mysql` and your mysql has a empty database called `act6`
     
-    You can edit your own mysql `databasename/username/password` in [activiti-app.properties](https://github.com/sonnyhcl/Backend/blob/master/src/main/resources/META-INF/activiti-app/activiti-app.properties)
+    Or you can edit your own mysql `databasename/username/password` in [activiti-app.properties](https://github.com/sonnyhcl/Backend/blob/master/src/main/resources/META-INF/activiti-app/activiti-app.properties)
 
 5.  Configure Tomcat:
     -   Click `Run`
