@@ -5,6 +5,9 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.zbq.GlobalVariables;
+
 import supplychain.entity.Weagon;
 
 import java.io.Serializable;
@@ -19,6 +22,8 @@ public class SWCoordinator implements JavaDelegate, Serializable {
     private static final long serialVersionUID = 5334846840309131394L;
     @Autowired
     private RuntimeService runtimeService;
+    @Autowired
+	 private GlobalVariables globalVariables;
 
     @Override
     public void execute(DelegateExecution exec) {
@@ -28,8 +33,8 @@ public class SWCoordinator implements JavaDelegate, Serializable {
         if (msgType.equals("Msg_StartWeagon")) {
             Weagon w = new Weagon();
             w.setW_Name("weagon_1");
-            w.setX_Coor("113.2982254028");
-            w.setY_Coor("23.0958388047");
+            w.setX_Coor(globalVariables.getSupLoc().getX_coor());
+            w.setY_Coor(globalVariables.getSupLoc().getY_coor());
             //	w.setX_Coor("120.1551500000");
             //	w.setY_Coor("30.2741500000");
             w.setIsArrival(false);

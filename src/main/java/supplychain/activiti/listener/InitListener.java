@@ -70,6 +70,7 @@ public class InitListener implements ExecutionListener, Serializable {
 		vports.sort(c);
 		vars.put("pid", pid);
 		vars.put("isMeet", false);
+		vars.put("isMissing", false);
 		VPort nextPort = vports.get(0);
 		vars.put("NextPort", nextPort);
 		vars.put("NowLoc", new Location());
@@ -79,8 +80,10 @@ public class InitListener implements ExecutionListener, Serializable {
 		vars.put("State", "voyaging"); // 船的状态
 		vars.put("StartTime", new Date()); // 每段航行的起始时间
 		vars.put("TargLocList", vports); // 港口清单
-		String dpname = vports.get(vports.size()-1).getPname();
-		vars.put("dpName", dpname);
+//		VPort endVPort= vports.get(vports.size()-1);
+//		vars.put("EndVPort", endVPort);
+//		VPort destVport = new VPort();
+//		vars.put("DestVPort", destVport);
 		runtimeService.setVariables(pid, vars);
 		globalVariables.createOrUpdateVariablesByValue(pid, vars);
 	}

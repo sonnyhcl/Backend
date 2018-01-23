@@ -342,29 +342,40 @@
 						<td class="td2">{{pvars[pidxs['NowLoc']]['value']['velocity']}} 海里/h</td>
 					</tr>
 					<tr>
-						<td class="td1" >&emsp;&emsp;Time : &emsp;&nbsp;&nbsp;&nbsp;：</td>
+						<td class="td1" >&emsp;&emsp;Time  &emsp;&nbsp;&nbsp;&nbsp;：</td>
 						<td class="td2">{{dispTime}}</td>
 					</tr>
 				</table>
 		</div>
 		<hr/>
-		<div  class="generic-container container"  ng-if="model.task.name == 'Anchoring'" ng-controller="AnchoringTaskController">
-			<h3>&nbsp;&nbsp;Anchoring Information</h3>
+		<div  class="generic-container container"  ng-if="model.task.name == 'Anchoring-Docking'" ng-controller="ADTaskController">
+			<h3>&nbsp;&nbsp;港口 : {{pname}} / 状态 : {{vstate}} </h3>
 				<br/>
 				<table  class="table voya-table" >
+					<tr ng-if="disableSetDefaultState == false" >
+						<td >
+							<button  ng-click="setDefaultState()" class="btn btn-success">延误</button>
+						</td>
+					</tr>
 					<tr>
-						<td class="td1" >当前时间&nbsp;&nbsp;：</td>
+						<td class="td1" >距离离港剩余 &nbsp;&nbsp;:</td>
+						<td class="td2">{{leftTime}}h</td>
+					</tr>
+					
+					<tr>
+						<td class="td1" >当前时间&nbsp;&nbsp;:</td>
 						<td class="td2">{{curTime}}</td>
 					</tr>
+					
 					<tr>
-						<td class="td1" >预计[T1 , T2]&nbsp;&nbsp;：</td>
+						<td class="td1" >预计[T1,T2]&nbsp;&nbsp;:</td>
 						<td class="td2">{{estart}}--->{{eend}}</td>
 					</tr>
-					<tr ng-if = "compAnchTime != null &&  eend_v != null">
-					    <td class="td1" >延误(期)[T1 , T2]&nbsp;&nbsp;：</td>
-						<td class="td2">{{compAnchTime}}--->{{eend_v}}</td>
+					<tr >
+					    <td class="td1" >延误(期)[T1,T2]&nbsp;&nbsp;：</td>
+						<td class="td2">{{newST}}--->{{newED}}</td>
 					</tr>
-					<tr>
+					<tr  ng-show = "vstate == 'anchoring'" >
 						<td class="td1" >延误&nbsp;(单位：h)&nbsp;：</td>
 						<td class="td2"><input ng-model = "dx" /></td>
 					</tr>
@@ -379,7 +390,7 @@
 					</tr>
 			</table>
 		</div>
-	    <div  class="generic-container container"  ng-if="model.task.name == 'Docking'" ng-controller="DockingTaskController">
+	  <!--   <div  class="generic-container container"  ng-if="model.task.name == 'Docking'" ng-controller="DockingTaskController">
 			<h3>&nbsp;&nbsp;Docking Information</h3>
 				<br/>
 				<table  class="table voya-table" >
@@ -390,20 +401,20 @@
 					<tr>
 						<td class="td1" >预计[T1 , T2]&nbsp;&nbsp;：</td>
 						<td class="td2">{{estart}}--->{{eend}}</td>
-					</tr>
+					<!-- </tr>
 					<tr  ng-if = "compDockTime != eend">
 					    <td class="td1" >延误(期)[T1 , T2]&nbsp;&nbsp;：</td>
 						<td class="td2">{{estart}}--->{{compDockTime}}</td>
-					</tr>
+					<!-- </tr>
 					<tr>
 						<td class="td1" >延期&nbsp;Time(h)&nbsp;：</td>
 						<td class="td2"><input ng-model = "dy" /></td>
 					</tr>
 				 	<tr>
 						<td><button  ng-click="setDy()" class="btn btn-success">OK</button> </td>
-					</tr>
-			</table>
-		</div>
+					</tr> -->
+			<!--</table> 
+		</div> -->
 		<!-- <div  class="generic-container container"  ng-if="model.task.name == 'Plan Path'" ng-controller="PlanPathController">
 			<h3>&nbsp;&nbsp;正在规划路径</h3>
 		</div> -->

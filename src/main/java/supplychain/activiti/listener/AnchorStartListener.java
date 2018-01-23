@@ -38,25 +38,22 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
 		//runtimeService.setVariable(pid , "State" , "voyaging");
 		HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
 				.getVariables(pid);
-		VPort nextport = (VPort) vars.get("NextPort");
+		VPort preport = (VPort) vars.get("PrePort");
+		System.out.println(preport.toString());
 		@SuppressWarnings("unchecked")
 		List<VPort> targLocList = (List<VPort>) vars.get("TargLocList");
 		for (int i = 0; i < targLocList.size(); i++) {
 			VPort now = targLocList.get(i);
-			if (now.getPname().equals(nextport.getPname())) {
-				runtimeService.setVariable(pid, "State", "InAD");
-				System.out.println(nextport.getPname()+" 到达，更新TargLocList完毕!");
+			if (now.getPname().equals(preport.getPname())) {
+				now.setState("InAD");
+				targLocList.set(i, now);
+				System.out.println(preport.getPname()+" 到达，更新TargLocList完毕!");
 			}
 		}
 		runtimeService.setVariable(pid ,"TargLocList", targLocList);
-		runtimeService.setVariable(pid, "NextPort", nextport);
+		runtimeService.setVariable(pid, "PrePort", preport);
 		globalVariables.createOrUpdateVariableByNameAndValue(pid, "TargLocList", targLocList);
-		globalVariables.createOrUpdateVariableByNameAndValue(pid, "NextPort", nextport);
-	//	globalVariables.createOrUpdateVariableByNameAndValue(pid,  "State" , "a");
-//		VWFEvent e = new VWFEvent(EventType.V_AnchorStart);
-//		e.getData().put("createAt", (new Date()).toString());
-//		e.getData().put("achorSta", );
-//		globalEventQueue.sendMsg(e);
+		globalVariables.createOrUpdateVariableByNameAndValue(pid, "PrePort", preport);
 		System.out.println("进入anchoring : " + new Date());
 	}
 

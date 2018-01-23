@@ -22,7 +22,7 @@ public class VPort extends AbstractFormType implements Serializable {
     private boolean isCraneStart;
     private String EStart;
     private String EEnd;
-    private boolean isMeetWeightCond;
+    private boolean isMeetWeightCond = true; // 默认都满足载重
     private String State; // BeforeAD , InAD , AfterAD
     private double cost;
     private String x_coor;
@@ -186,6 +186,14 @@ public class VPort extends AbstractFormType implements Serializable {
     public void setCost(double cost) {
         this.cost = cost;
     }
+
+	@Override
+	public String toString() {
+		return "VPort [name=" + name + ", pname=" + pname + ", quayRate=" + quayRate + ", weight=" + weight
+				+ ", isCraneStart=" + isCraneStart + ", EStart=" + EStart + ", EEnd=" + EEnd + ", isMeetWeightCond="
+				+ isMeetWeightCond + ", State=" + State + ", cost=" + cost + ", x_coor=" + x_coor + ", y_coor=" + y_coor
+				+ ", sortFlag=" + sortFlag + "]";
+	}
 
 
 }

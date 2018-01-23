@@ -10,11 +10,15 @@ import org.activiti.rest.service.api.engine.variable.RestVariable;
 import org.activiti.rest.service.api.engine.variable.RestVariable.RestVariableScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import supplychain.entity.Location;
 import supplychain.entity.VPort;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.management.loading.PrivateClassLoader;
 
 @Component
 public class GlobalVariables {
@@ -28,6 +32,8 @@ public class GlobalVariables {
 	private Map<String, JSONArray> variableMap;
 	private Map<String , Double> carRateMp;
 	private final int zoomInRate = 500;
+	private Map<String , Double>  spwMap;
+	private Location supLoc;
 
 	public Map<String, JSONArray> getVariableMap() {
 		return variableMap;
@@ -44,14 +50,14 @@ public class GlobalVariables {
 		this.portsInfo.put("黄石", new VPort("黄石", "AfterAD" , 3.8 , 2.1,"115.13506", "30.21027", true , 0 ));
 		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 5.6,  2.1,"115.5674", "29.83692" , true ,1));
 		this.portsInfo.put("九江", new VPort("九江", "AfterAD" ,3.8,  2.1,"115.95308", "29.72574",true , 2));
-		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,3.8,  2.1,"117.03104", "30.49944", true , 3));
+		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,4.2,  2.1,"117.03104", "30.49944", true , 3));
 		this.portsInfo.put("池州", new VPort("池州", "AfterAD" ,3.8,  2.1, "117.52272", "30.7332",  true , 4));
-		this.portsInfo.put("铜陵", new VPort("铜陵", "AfterAD" ,3.2,  2.1, "117.7291", "30.95259", true , 5));
+		this.portsInfo.put("铜陵", new VPort("铜陵", "AfterAD" ,5.6,  2.1, "117.7291", "30.95259", true , 5));
 		this.portsInfo.put("芜湖", new VPort("芜湖", "AfterAD" ,3.8,   2.1, "118.34633", "31.33907", true ,6));
 		this.portsInfo.put("马鞍山", new VPort("马鞍山","AfterAD" , 3.2, 2.1,  "118.45491", "31.729427", true ,7));
-		this.portsInfo.put("南京", new VPort("南京","AfterAD" ,3.8,  2.1,  "118.800095", "32.146214",  true ,8));
+		this.portsInfo.put("南京", new VPort("南京","AfterAD" ,4.3,  2.1,  "118.800095", "32.146214",  true ,8));
 		this.portsInfo.put("仪征", new VPort("仪征", "AfterAD" ,3.8,  2.1,  "119.17036", "32.24261", true ,9));
-		this.portsInfo.put("镇江", new VPort("镇江","AfterAD" , 3.2,  2.1, "119.37172", "32.21107", true ,10));
+		this.portsInfo.put("镇江", new VPort("镇江","AfterAD" , 5.6,  2.1, "119.37172", "32.21107", true ,10));
 		this.portsInfo.put("泰州", new VPort("泰州", "AfterAD" ,3.8,  2.1,  "119.83584", "32.29552", true ,11));
 		this.portsInfo.put("常州", new VPort("常州","AfterAD" , 3.2,  2.1,   "120.006065", "31.976147", true , 12));
 		this.portsInfo.put("江阴", new VPort("江阴", "AfterAD" ,3.8,  2.1,  "120.250824", "31.93615", true ,13));
@@ -72,6 +78,10 @@ public class GlobalVariables {
 		this.carRateMp.put("泰州",  0.0021);
 		this.carRateMp.put("常州", 0.0021);
 		this.carRateMp.put("江阴",  0.0021);
+		this.spwMap = new ConcurrentHashMap<String, Double>();
+		this.spwMap.put("缸盖", 3.9);
+		this.spwMap.put("螺丝", 3.7);
+		this.spwMap.put("钢筋", 4.4);
 	}
 
 	public Map<String, VPort> getPortsInfo() {
@@ -243,5 +253,20 @@ public class GlobalVariables {
 
 	public int getZoomInRate() {
 		return zoomInRate;
+	}
+	public Location getSupLoc() {
+		return supLoc;
+	}
+
+	public void setSupLoc(Location supLoc) {
+		this.supLoc = supLoc;
+	}
+
+	public Map<String , Double> getSpwMap() {
+		return spwMap;
+	}
+
+	public void setSpwMap(Map<String , Double> spwMap) {
+		this.spwMap = spwMap;
 	}
 }

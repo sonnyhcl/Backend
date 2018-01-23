@@ -756,7 +756,7 @@ angular.module('activitiApp')
  * 改写
  */
 angular.module('activitiApp')
-.controller('AnchoringTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+.controller('ADTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) { 
 	 
 	/******************************************************************************
@@ -767,88 +767,125 @@ angular.module('activitiApp')
 	$scope.dx = 0; // /h 
 	$scope.dy = $scope.dx; //默认dx == dy
 	$scope.countTime = {};
-	$scope.curTime = '1970-01-01';
-    $scope.estart = {};  //存最初的[T1 , T2] , 该状态下的常量
-	$scope.eend = {};
-	$scope.eend_v = null;//存修改后的值 ，
-	$scope.compAnchTime = null;
+	$scope.curTime = '';
+    $scope.estart = null;  //存最初的[T1 , T2] , 该状态下的常量
+	$scope.eend = null;
+	$scope.newST = null;
+	$scope.newED = null;//存修改后的值 ，
+	$scope.vstate = "docking"; // vstate : anchring / docking , 默认是docking
+	$scope.leftTime = null;
+	$scope.pname = null;
 	$scope.pidxs = {}
 	
 	$scope.pvars = {};  
 	
-	if($scope.model.task.name == 'Anchoring'){
-   	 	console.log("Enter into Anchoring'");
+	if($scope.model.task.name == 'Anchoring-Docking'){
+   	 	console.log("Enter into Anchoring-Docking'");
    	 	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId)
    	 		.success(function(data){
    	 			$scope.pvars = data;
    	 			$scope.pidxs = $scope.createPidxs($scope.pvars);
    	 			var curDate = new Date();
 	 			var stMs = $scope.dateStr2ms($scope.pvars[$scope.pidxs['StartTime']].value);
+	 			$scope.pname = $scope.pvars[$scope.pidxs['PrePort']].value.pname;
+	 			console.log($scope.pname ,$scope.pvars[$scope.pidxs['PrePort']].value)
 	 		    $scope.curTime=  $scope.ms2dateStr(stMs + (curDate.getTime() - stMs)*$scope.ZoomInVal);
+	 		    $scope.model.completeButtonDisabled = true; //设置自动完成
+	 		   
+   	 		    $scope.estart = $scope.pvars[$scope.pidxs['PrePort']].value.estart;//设置最初的靠港时间
+   	 		    $scope.eend = $scope.pvars[$scope.pidxs['PrePort']].value.eend;//设置最初的离港时间
    	 		    
-	 		    //设置最初的靠港时间
-   	 		    $scope.estart = $scope.pvars[$scope.pidxs['PrePort']].value.estart;
-   	 		    $scope.eend = $scope.pvars[$scope.pidxs['PrePort']].value.eend;
+   	 		    $scope.newED =  $scope.eend;
+   	 		    $scope.newST =   $scope.estart;
    	 		    $scope.countTime = $interval(function(){ //如果anchoring 滞留
    	   	 		//计算实际时间， 即非压缩时间
    	 		    	var curMs =$scope.dateStr2ms($scope.curTime)
+   	 		    	var st = ($scope.dateStr2ms($scope.newED) - curMs)/(1000*60*60);
+   	 		        $scope.leftTime = st.toFixed(2);
    	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
-   	 		        $scope.curTime= $scope.ms2dateStr(nextMs);
-   	 		    	if($scope.dx != 0){ //如果需要延期，anchoring状态滞留dx , 否则将这段时间当作docking时间的一部分
-   	 		    		var compMs = $scope.dateStr2ms($scope.compAnchTime);
-   	 		    		if(compMs > curMs && compMs <= nextMs){
-   	 		    		    $scope.dx = 0; // /h 
-	 		    			$scope.dy = $scope.dx; //默认dx == dy	
-   	 		    			$scope.completeTask();
-   	 		    			$interval.cancel($scope.countTime);
-   	 		    			console.log("延期结束， anchoring 结束 ， $scope.curTime : " , $scope.curTime);
-   	 		    		}
+   	 		        $scope.curTime= $scope.ms2dateStr(nextMs); 
+   		 		    console.log(" $scope.curTime : " , $scope.curTime);
+   	 		        if($scope.vstate == 'anchoring' && $scope.newST != null){ //出现延误
+   	 		        	if($scope.dateStr2ms($scope.newST) > curMs && $scope.dateStr2ms($scope.newST) <= nextMs){
+   	 		        		console.log("anchoring 结束 ， $scope.curTime : " , $scope.curTime);
+   	 		        	    $scope.vstate = "docking";
+   	 		        	}
+   	 		        } 
+   	 		    	var compMs = $scope.dateStr2ms($scope.newED);
+   	 		    	if(compMs > curMs && compMs <= nextMs){
+   	 		    		$scope.dx = 0; // /h 
+	 		    		$scope.dy = $scope.dx; //默认dx == dy	
+   	 		    		$scope.completeTask();
+   	 		    		$interval.cancel($scope.countTime);
+   	 		    		console.log("docking结束 ， $scope.curTime : " , $scope.curTime);
    	 		    	}
    	 			} ,1000);
    	 		})
      }
-	
+	$scope.disableSetDefaultState = false;
+	$scope.setDefaultState = function(){
+		$scope.vstate = "anchoring";
+		$scope.disableSetDefaultState = true;
+	}
 	$scope.setDxy = function(){ //需要延期靠港
-		
-		if($scope.dx != 0){//有延误或者延期
-				if($scope.dx <= $scope.dy){
-					var comp = $scope.ms2dateStr($scope.dateStr2ms($scope.estart)+$scope.dx * 60 * 60 * 1000);
-					if($scope.dateStr2ms(comp) < $scope.dateStr2ms($scope.curTime)){
-						alert("设置延误时间不合理， 竟然延误后靠港时间比现在还早！")
-						//return null;
-					}else{
-						$scope.compAnchTime = comp
-						$scope.pvars[$scope.pidxs['PrePort']].value.estart = $scope.compAnchTime; // 不需要在docking状态使用，可以更新					  
-						$scope.eend_v = $scope.ms2dateStr($scope.dateStr2ms($scope.eend)+$scope.dy * 60 * 60 * 1000)
-						
-						//计算新的靠港时间，离港时间
-						console.log($scope.estart , $scope.eend , "出现延误或延期 ： 新[T1 , T2] = " , $scope.compAnchTime  , $scope.eend_v);
-						//更新当前及其后所有有效港口停靠时间段
-						 for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value ){
-						        var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
-						        //如果是当前港口及其后面港口， 时间按d_timeStamp顺移
-						        if(x.pname == $scope.pvars[$scope.pidxs['PrePort']].value.pname){
-						        	$scope.pvars[$scope.pidxs['TargLocList']].value[i].estart = $scope.compAnchTime ; 
-						        	$scope.pvars[$scope.pidxs['TargLocList']].value[i].eend = $scope.eend_v;
-						        	console.log("PrePort state : " , $scope.pvars[$scope.pidxs['PrePort']].value)
-						        }else{
-						        	 if(x.state == "AfterAD"){
-								          	var s_ms = $scope.dateStr2ms($scope.pvars[$scope.pidxs['TargLocList']].value[i].estart)+$scope.dy * 60 * 60 * 1000;
-								            var e_ms = $scope.dateStr2ms($scope.pvars[$scope.pidxs['TargLocList']].value[i].eend)+ $scope.dy * 60 * 60 * 1000;
-								            $scope.pvars[$scope.pidxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
-								            $scope.pvars[$scope.pidxs['TargLocList']].value[i].eend =  $scope.ms2dateStr(e_ms);
-								       }
-						        }
-						       
-						   }
-						 $scope.sendMsgToVWC();
-					}
+		var adxy = 0;//后续港口后移时间
+		var validFlag = false;
+		if($scope.vstate == "anchoring"){ // 如果是anchring状态 , 能延误也能延期
+			var t_newSt = $scope.ms2dateStr($scope.dateStr2ms($scope.estart)+$scope.dx * 60 * 60 * 1000); //新的靠港时间
+			var t_newEd = $scope.ms2dateStr($scope.dateStr2ms($scope.eend)+$scope.dx * 60 * 60 * 1000+$scope.dy*60*60*1000); // 新的离港时间
+			console.log("t_newSt : " , t_newSt, "t_newEd : " , t_newEd);
+			console.log("$scope.estart : " , $scope.estart, "$scope.eend : " , $scope.eend);
+			console.log("$scope.dx : " , $scope.dx, "$scope.dy: " , $scope.dy);
+			console.log("$scope.newED : " , $scope.newED);
+			if($scope.dateStr2ms(t_newEd) > $scope.dateStr2ms(t_newSt)){ //首先保证新的新港时间大于新的靠港时间
+				if($scope.dateStr2ms(t_newSt) > $scope.dateStr2ms($scope.curTime)){//新的靠港时间应该大于当前时间
+				  if($scope.dateStr2ms(t_newEd) < $scope.dateStr2ms($scope.newED)){
+					  console.log("相对于上一次离港时间提前");
+				  }else{
+					  console.log("相对于上一次离港时间延期");
+					  adxy = $scope.dateStr2ms(t_newEd) - $scope.dateStr2ms($scope.newED);
+				  }
+				  $scope.newST = t_newSt;
+				  $scope.newED = t_newEd;
+				  validFlag = true;
 				}else{
-					alert("延误时间小于延期时间，无效！")
-					return null;
+					//alert("设置延误时间不合理， 竟然新的靠港时间比当前还早！"+t_newSt +":"+$scope.curTime);
+					console.log("$scope.curTime" , $scope.curTime);
 				}
+			}else{
+				alert("无效， 新的离港时间应该晚于靠港时间！"+t_newSt+":"+t_newEd);
+			}
+		}else{// 如果是docking状态 ， 只考虑延期
+			var t_newEd =   $scope.ms2dateStr($scope.dateStr2ms($scope.eend)+$scope.dy*60*60*1000); // 新的离港时间
+			if($scope.dateStr2ms(t_newEd) > $scope.dateStr2ms($scope.curTime)){//新的靠港时间应该大于当前时间
+				if($scope.dateStr2ms(t_newEd) < $scope.dateStr2ms($scope.newED)){
+				  console.log("相对于上一次离港时间提前");			 
+				}else{
+				  console.log("相对于上一次离港时间延期");
+				  adxy = $scope.dateStr2ms(t_newEd) - $scope.dateStr2ms($scope.newED);
+				}
+				$scope.newED = t_newEd;
+				validFlag = true;
+				console.log("$scope.newED : " , $scope.newED );
+			}else{
+				alert("设置延期时间不合理， 竟然新的靠港时间比当前还早！");
+			}
 		}
-	
+		if(validFlag == true){
+			//更新当前及其后所有有效港口停靠时间段
+			for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value ){
+			        var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
+			        //如果是当前港口及其后面港口， 时间按d_timeStamp顺移
+			        if(x.state == 'AfterAD' || x.state == 'InAD'){
+					      var s_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].estart)+ adxy;
+					      var e_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].eend)+ adxy;
+					      $scope.pvars[$scope.pidxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
+					      $scope.pvars[$scope.pidxs['TargLocList']].value[i].eend = $scope.ms2dateStr(e_ms);
+			        }       
+			 }
+			console.log("TargLoc test : " ,  $scope.pvars[$scope.pidxs['TargLocList']])  ;   
+			$scope.sendMsgToVWC();
+		}
 	  }  
 	 $scope.sendMsgToVWC = function(){  
 			//通知VWC 
@@ -870,7 +907,7 @@ angular.module('activitiApp')
 		    		    			 'msgType' : "msg_UpdateDest" ,
 		    		    			 'V_pid'  : $scope.model.task.processInstanceId ,
 		    		    			 'W_pid' : $scope.pvars[$scope.pidxs['W_pid']].value ,
-		    		    			 'reason' : $scope.pvars[$scope.pidxs['PrePort']].value.pname+"港 ： 延误 ： "+$scope.dx+"h"
+		    		    			 'reason' : $scope.pvars[$scope.pidxs['PrePort']].value.pname+"港 ： 延误 ： "+$scope.dy+"h"
 		    		    	};
 		    		    	$http.post(ACTIVITI.CONFIG.contextRoot + "/api/coord/messages/Msg_StartVWC", data2VWC)
 		    	             .success(function (data) {
@@ -883,136 +920,136 @@ angular.module('activitiApp')
 			 });
 		  }
 }]);
-angular.module('activitiApp')
-.controller('DockingTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) { 
-	 
-	/***************************Anchoring***************************************************
-	 * 区分延误dx和 延期dy
-	 */
-	$scope.dy = 0; 
-	$scope.countTime = {};
-	$scope.curTime = '1970-01-01 00:00:00'
-    $scope.estart = {};
-	$scope.eend = {};
-	$scope.compDockTime = {};
-	
-	$scope.pvars = {};  
-	
-	if($scope.model.task.name == 'Docking'){
-   	 	console.log("Enter into Docking");
-   	 	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId)
-   	 		.success(function(data){
-   	 			$scope.pvars = data;
-   	 			$scope.pidxs = $scope.createPidxs($scope.pvars);
-   	 		    //默认靠港离港时间 ， 如果anchoring 有延期 ， 此时estart = t1 + dx , 如果没有,就是t1 , 此处忽略提交表单时间
-   	 		    //需要及时提交表单
-   	 			var curDate = new Date();
-   	 			var stMs = $scope.dateStr2ms($scope.pvars[$scope.pidxs['StartTime']].value);
-   	 		    $scope.curTime =  $scope.ms2dateStr(stMs + (curDate.getTime() - stMs)*$scope.ZoomInVal);
-   	 		    console.log("stMs: " ,stMs , "curTime " , $scope.curTime , "StartTime " ,  $scope.pvars[$scope.pidxs['StartTime']].value , "pvars " ,$scope.pvars);
-   	 		    $scope.estart = $scope.pvars[$scope.pidxs['PrePort']].value.estart;
-   	 		   
-   	 		    $scope.eend = $scope.pvars[$scope.pidxs['PrePort']].value.eend;
-   	 		    for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value){//在TargLocList 中获取该港口最新离港时间
-   	 		    	var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
-   	 		    	if(x.pname == $scope.pvars[$scope.pidxs['PrePort']].value.pname){
-   	 		    		$scope.compDockTime = x.eend ;
-   	 		    	}
-   	 		    }
-   	 		   //初次估计离港时间
-   	 		 $scope.countTime = $interval(function(){ //如果anchoring 滞留
-    	   	 		//计算实际时间， 即非压缩时间
-    	 		    	var curMs =$scope.dateStr2ms($scope.curTime)
-    	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
-    	 		        $scope.curTime = $scope.ms2dateStr(nextMs);
-    	 		    	var compMs = $scope.dateStr2ms($scope.compDockTime);
-    	 		    	if(compMs > curMs && compMs <= nextMs){
-    	 		    		$scope.completeTask();
-    	 		    		$interval.cancel($scope.countTime);
-    	 		       }
-    	 			} ,1000);
-   	 		})
-     }
-	$scope.setDy= function(){ //需要延期靠港
-		
-		if($scope.dy != 0){//有延期
-		        console.log("$scope.eend : " , $scope.eend);
-				var cur_ms = $scope.dateStr2ms($scope.eend)+$scope.dy*60*60*1000;
-				var pre_ms = $scope.dateStr2ms($scope.compDockTime);
-				var now_ms = $scope.dateStr2ms($scope.curTime);
-				if(now_ms < cur_ms){
-					if(cur_ms > pre_ms){
-						console.log("延期离港");
-					}else{
-						console.log("相对于上次估计时间来说，提前离港！");
-					}
-					 //计算新的离港时间
-					  $scope.compDockTime = $scope.ms2dateStr(cur_ms);
-					  console.log("出现延期 ： 新[T1 , T2] = " , $scope.estart ,  $scope.compDockTime);
-					//更新当前及其后所有有效港口停靠时间段
-					  for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value ){
-					        var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
-					        //如果是当前港口及其后面港口， 时间按d_timeStamp顺移
-					        if(x.pname == $scope.pvars[$scope.pidxs['PrePort']].value.pname){
-					        	$scope.pvars[$scope.pidxs['TargLocList']].value.eend = $scope.compDockTime;
-					        	console.log("PrePort state : " , $scope.pvars[$scope.pidxs['PrePort']].value)
-					        }else{
-					        	 if(x.state == "AfterAD"){
-							          	var s_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].estart)+ cur_ms - pre_ms;
-							            var e_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].eend)+ cur_ms - pre_ms;
-							            $scope.pvars[$scope.pidxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
-							            $scope.pvars[$scope.pidxs['TargLocList']].value[i].eend = $scope.ms2dateStr(e_ms);
-							       }
-					        }
-					       
-					   }
-					          
-					  $scope.sendMsgToVWC();
-				}else{
-					alert("设置无效 ， 竟然离港时间早于当前时间！");
-				}
-				
-				 
-		}else{
-			alter("暂不允许负值！")
-		}
-
-	  }  
-	  $scope.sendMsgToVWC = function(){  
-		//通知VWC 
-		 $http.get(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId)
-		 .success(function(pdata){
-			 var pvs = pdata; 
-			 var pds = $scope.createPidxs(pvs);
-			 //修改新值
-			 console.log("pvs : " , pvs);
-			 pvs[pds['TargLocList']] = $scope.pvars[$scope.pidxs['TargLocList']];
-			 pvs[pds['PrePort']] =  $scope.pvars[$scope.pidxs['PrePort']];
-			 $http.put(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId+'/complete' ,pvs)
-				.success(function(data){
-					$scope.pvars = data;
-	        		$scope.pidxs = $scope.createPidxs($scope.pvars);
-	        		console.log("Docking sendMsgVWC ",$scope.pvars[$scope.pidxs['W_pid']]);
-	        		if($scope.pvars[$scope.pidxs['W_pid']].value != null){
-	        			var data2VWC = {
-	    		    			 'msgType' : "msg_UpdateDest" ,
-	    		    			 'V_pid'  : $scope.model.task.processInstanceId ,
-	    		    			 'W_pid' : $scope.pvars[$scope.pidxs['W_pid']].value,
-	    		    			 'reason' : "延期"+$scope.dy+"h"
-	    		    			// 'V_TargLocList' : $scope.pvars[$scope.pidxs['TargLocList']]
-	    		    	};
-	    		    	$http.post(ACTIVITI.CONFIG.contextRoot + "/api/coord/messages/Msg_StartVWC", data2VWC)
-	    	             .success(function (data) {
-	    	                 console.log("Send Message to VMC!", data);
-	    	             })
-	        		}else{
-	        			console.log("Weagon 实例未启动 ， VWC联系无法建立");
-	        		}
-				});
-		 });
-	  }
-}]);
+//angular.module('activitiApp')
+//.controller('DockingTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+//      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) { 
+//	 
+//	/***************************Anchoring***************************************************
+//	 * 区分延误dx和 延期dy
+//	 */
+//	$scope.dy = 0; 
+//	$scope.countTime = {};
+//	$scope.curTime = '1970-01-01 00:00:00'
+//    $scope.estart = {};
+//	$scope.eend = {};
+//	$scope.compDockTime = {};
+//	
+//	$scope.pvars = {};  
+//	
+//	if($scope.model.task.name == 'Docking'){
+//   	 	console.log("Enter into Docking");
+//   	    $scope.model.completeButtonDisabled = true;
+//   	 	$http.get(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId)
+//   	 		.success(function(data){
+//   	 			$scope.pvars = data;
+//   	 			$scope.pidxs = $scope.createPidxs($scope.pvars);
+//   	 		    //默认靠港离港时间 ， 如果anchoring 有延期 ， 此时estart = t1 + dx , 如果没有,就是t1 , 此处忽略提交表单时间
+//   	 		    //需要及时提交表单
+//   	 			var curDate = new Date();
+//   	 			var stMs = $scope.dateStr2ms($scope.pvars[$scope.pidxs['StartTime']].value);
+//   	 		    $scope.curTime =  $scope.ms2dateStr(stMs + (curDate.getTime() - stMs)*$scope.ZoomInVal);
+//   	 		    console.log("stMs: " ,stMs , "curTime " , $scope.curTime , "StartTime " ,  $scope.pvars[$scope.pidxs['StartTime']].value , "pvars " ,$scope.pvars);
+//   	 		    $scope.estart = $scope.pvars[$scope.pidxs['PrePort']].value.estart;
+//   	 		   
+//   	 		    $scope.eend = $scope.pvars[$scope.pidxs['PrePort']].value.eend;
+//   	 		    for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value){//在TargLocList 中获取该港口最新离港时间
+//   	 		    	var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
+//   	 		    	if(x.pname == $scope.pvars[$scope.pidxs['PrePort']].value.pname){
+//   	 		    		$scope.compDockTime = x.eend;
+//   	 		    	}
+//   	 		    }
+//   	 		   //初次估计离港时间
+//   	 		 $scope.countTime = $interval(function(){ //如果anchoring 滞留
+//    	   	 		//计算实际时间， 即非压缩时间
+//    	 		    	var curMs =$scope.dateStr2ms($scope.curTime)
+//    	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
+//    	 		        $scope.curTime = $scope.ms2dateStr(nextMs);
+//    	 		    	var compMs = $scope.dateStr2ms($scope.compDockTime);
+//    	 		    	if(compMs > curMs && compMs <= nextMs){
+//    	 		    		$scope.completeTask();
+//    	 		    		$interval.cancel($scope.countTime);
+//    	 		       }
+//    	 			} ,1000);
+//   	 		})
+//     }
+//	$scope.setDy= function(){ //需要延期靠港
+//		
+//		if($scope.dy != 0){//有延期
+//		        console.log("$scope.eend : " , $scope.eend);
+//				var cur_ms = $scope.dateStr2ms($scope.eend)+$scope.dy*60*60*1000;
+//				var pre_ms = $scope.dateStr2ms($scope.compDockTime);
+//				var now_ms = $scope.dateStr2ms($scope.curTime);
+//				if(now_ms < cur_ms){
+//					if(cur_ms > $scope.dateStr2ms($scope.eend)){
+//						console.log("延期离港");
+//					}else{
+//						console.log("相对于默认了离港时间提前！");
+//					}
+//					 //计算新的离港时间
+//					  $scope.compDockTime = $scope.ms2dateStr(cur_ms);
+//					  console.log("出现延期 ： 新[T1 , T2] = " , $scope.estart ,  $scope.compDockTime);
+//					//更新当前及其后所有有效港口停靠时间段
+//					  for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value ){
+//					        var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
+//					        //如果是当前港口及其后面港口， 时间按d_timeStamp顺移
+//					        if(x.pname == $scope.pvars[$scope.pidxs['PrePort']].value.pname){
+//					        	$scope.pvars[$scope.pidxs['TargLocList']].value[i].eend = $scope.compDockTime;
+//					        	console.log("PrePort state : " , $scope.pvars[$scope.pidxs['PrePort']].value)
+//					        }else{
+//					        	 if(x.state == "AfterAD"){
+//							          	var s_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].estart)+ cur_ms - pre_ms;
+//							            var e_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].eend)+ cur_ms - pre_ms;
+//							            $scope.pvars[$scope.pidxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
+//							            $scope.pvars[$scope.pidxs['TargLocList']].value[i].eend = $scope.ms2dateStr(e_ms);
+//							       }
+//					        }
+//					       
+//					   }
+//					   console.log("TargLoc test : " ,  $scope.pvars[$scope.pidxs['TargLocList']])  ;     
+//					  $scope.sendMsgToVWC();
+//				}else{
+//					alert("设置无效 ， 竟然离港时间早于当前时间！");
+//				}
+//				
+//				 
+//		}
+//
+//	  }  
+//	  $scope.sendMsgToVWC = function(){  
+//		//通知VWC 
+//		 $http.get(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId)
+//		 .success(function(pdata){
+//			 var pvs = pdata; 
+//			 var pds = $scope.createPidxs(pvs);
+//			 //修改新值
+//			 console.log("pvs : " , pvs);
+//			 pvs[pds['TargLocList']] = $scope.pvars[$scope.pidxs['TargLocList']];
+//			 console.log("TargLoc test1 : " ,  $scope.pvars[$scope.pidxs['TargLocList']]);   
+//			 pvs[pds['PrePort']] =  $scope.pvars[$scope.pidxs['PrePort']];
+//			 $http.put(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId+'/complete' ,pvs)
+//				.success(function(data){
+//					$scope.pvars = data;
+//	        		$scope.pidxs = $scope.createPidxs($scope.pvars);
+//	        		console.log("Docking sendMsgVWC ",$scope.pvars[$scope.pidxs['W_pid']]);
+//	        		if($scope.pvars[$scope.pidxs['W_pid']].value != null){
+//	        			var data2VWC = {
+//	    		    			 'msgType' : "msg_UpdateDest" ,
+//	    		    			 'V_pid'  : $scope.model.task.processInstanceId ,
+//	    		    			 'W_pid' : $scope.pvars[$scope.pidxs['W_pid']].value,
+//	    		    			 'reason' : "延期"+$scope.dy+"h"
+//	    		    			// 'V_TargLocList' : $scope.pvars[$scope.pidxs['TargLocList']]
+//	    		    	};
+//	    		    	$http.post(ACTIVITI.CONFIG.contextRoot + "/api/coord/messages/Msg_StartVWC", data2VWC)
+//	    	             .success(function (data) {
+//	    	                 console.log("Send Message to VMC!", data);
+//	    	             })
+//	        		}else{
+//	        			console.log("Weagon 实例未启动 ， VWC联系无法建立");
+//	        		}
+//				});
+//		 });
+//	  }
+//}]);
 angular.module('activitiApp')
 .controller('VoyaTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {

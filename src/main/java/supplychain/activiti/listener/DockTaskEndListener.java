@@ -1,14 +1,17 @@
 package supplychain.activiti.listener;
 
+import com.zbq.EventType;
 import com.zbq.GlobalVariables;
+import com.zbq.VWFEvent;
+
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import supplychain.entity.VPort;
-
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,20 +34,35 @@ public class DockTaskEndListener implements ExecutionListener, Serializable {
         String pid = exec.getProcessInstanceId();
         HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
                 .getVariables(pid);
-        VPort nextport = (VPort) vars.get("NextPort");
+        VPort preport = (VPort) vars.get("PrePort");
+      
         @SuppressWarnings("unchecked")
         List<VPort> targLocList = (List<VPort>) vars.get("TargLocList");
+        boolean isMissing = true;
         for (int i = 0; i < targLocList.size(); i++) {
             VPort now = targLocList.get(i);
-            if (now.getPname().equals(nextport.getPname())) {
-                runtimeService.setVariable(pid, "State", "BeforeAD");
-                System.out.println(nextport.getPname() + " 到达，更新TargLocList完毕!");
+            if (now.getPname().equals(preport.getPname())) {
+                now.setState("BeforeAD");
+				targLocList.set(i, now);
+                System.out.println(preport.getPname() + " 到达，更新TargLocList完毕!");
+            }
+            
+            if(now.getState().equals("AfterAD")) {
+            	if(now.getIsMeetWeightCond() == true) {
+            		isMissing = false;
+            	}
             }
         }
         runtimeService.setVariable(pid, "TargLocList", targLocList);
-        runtimeService.setVariable(pid, "NextPort", nextport);
+        runtimeService.setVariable(pid, "PrePort",preport);
         globalVariables.createOrUpdateVariableByNameAndValue(pid, "TargLocList", targLocList);
-        globalVariables.createOrUpdateVariableByNameAndValue(pid, "NextPort", nextport);
+        globalVariables.createOrUpdateVariableByNameAndValue(pid, "PrePort", preport);
+        if(isMissing == true) {
+        	VWFEvent e = new VWFEvent(EventType.W_RUN);
+			e.getData().put("createAt", (new Date()).toString());
+    		runtimeService.setVariable(pid,"isMissing", true);
+			e.getData().put("State", "Missing");
+        }
     }
 
 }

@@ -79,8 +79,9 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			String w_xc = w_info.getJSONObject("value").getString("x_Coor");
 			String w_yc = w_info.getJSONObject("value").getString("y_Coor");
 			System.out.println("车当位置 ： " + w_xc + " : " + w_yc);
-			List<WPort>candinateWports = new ArrayList<WPort>(); //候选港口信息
+			List<WPort> candinateWports = new ArrayList<WPort>(); //候选港口信息
 			HashMap<String , JSONObject> routeMp = new HashMap<String , JSONObject>();
+//			List<WPort> validPorts =  new ArrayList<WPort>();
 			for(int i = 0 ; i < wTargLocList.size() ; i++) {		//计算成本	
 				WPort nowWport = wTargLocList.get(i);
 				VPort nowVport = vpMap.get(nowWport.getPname());
@@ -100,6 +101,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 						routeMp.put(nowWport.getPname(), route);
 						candinateWports.add(nowWport);
 					}
+//					validPorts.add(nowWport);
 				}
 			}
 			
@@ -151,7 +153,13 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 				String rea = (String) msgData.get("reason");
 				e.getData().put("Reason", rea);
 			}else{
+				e.getData().put("W_Info", w_info);
 				e.getData().put("State", "fail");
+				//if(validPorts.isEmpty()) {
+					//runtimeService.setVariable(vpid,"isMissing", true);
+					//e.getData().put("State", "Missing");
+			//	}
+				
 			}
 			globalEventQueue.sendMsg(e);
 		}
