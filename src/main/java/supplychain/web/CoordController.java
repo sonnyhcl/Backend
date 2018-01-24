@@ -25,13 +25,14 @@ public class CoordController extends AbstractController {
     public ResponseEntity<HashMap<String, Object>> startProcessInstanceByMessage(@PathVariable("MsgName") String Msg_Name,
                                                                                  @RequestBody HashMap<String, Object> mp)
             throws InterruptedException {
-        String useLambda = environment.getProperty("lambda");
+        System.out.println("这里判断用不用");
+        System.out.println(Msg_Name);
+        String useLambda = environment.getProperty("lambda.use");
         if (useLambda.equals("no")) {
-            //流程引擎发送消息
+            System.out.println("不用lambda");
             runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
-        }
-        else{
-            System.out.println("!!!use lambda");
+        } else {
+            System.out.println("用lambda");
             runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
         }
         return new ResponseEntity<HashMap<String, Object>>(mp, HttpStatus.OK);
