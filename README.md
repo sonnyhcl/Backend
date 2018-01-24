@@ -21,7 +21,6 @@
 3.  Import Project in IDEA:  
     -   Choose `Import Project`.
         ![import](image/idea_import_project.png)
-
     -   Choose the `directory path` which you clone the source code
     -   Choose import project from external model `maven`
     -   Pass `select profiles`
