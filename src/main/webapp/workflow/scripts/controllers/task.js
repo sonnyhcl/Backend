@@ -776,7 +776,8 @@ angular.module('activitiApp')
 	$scope.leftTime = null;
 	$scope.pname = null;
 	$scope.pidxs = {}
-	
+	$scope.oldPortList = {};
+	$scope.newPortList = {};
 	$scope.pvars = {};  
 	
 	if($scope.model.task.name == 'Anchoring-Docking'){
@@ -787,8 +788,10 @@ angular.module('activitiApp')
    	 			$scope.pidxs = $scope.createPidxs($scope.pvars);
    	 			var curDate = new Date();
 	 			var stMs = $scope.dateStr2ms($scope.pvars[$scope.pidxs['StartTime']].value);
+	 			$scope.oldPortList = angular.copy($scope.pvars[$scope.pidxs['TargLocList']]);
 	 			$scope.pname = $scope.pvars[$scope.pidxs['PrePort']].value.pname;
-	 			console.log($scope.pname ,$scope.pvars[$scope.pidxs['PrePort']].value)
+	 			console.log($scope.pname ,$scope.pvars);
+	 			console.log("OldPortList",$scope.oldPortList);
 	 		    $scope.curTime=  $scope.ms2dateStr(stMs + (curDate.getTime() - stMs)*$scope.ZoomInVal);
 	 		    $scope.model.completeButtonDisabled = true; //设置自动完成
 	 		   
@@ -804,7 +807,7 @@ angular.module('activitiApp')
    	 		        $scope.leftTime = st.toFixed(2);
    	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
    	 		        $scope.curTime= $scope.ms2dateStr(nextMs); 
-   		 		    console.log(" $scope.curTime : " , $scope.curTime);
+//   		 		    console.log(" $scope.curTime : " , $scope.curTime);
    	 		        if($scope.vstate == 'anchoring' && $scope.newST != null){ //出现延误
    	 		        	if($scope.dateStr2ms($scope.newST) > curMs && $scope.dateStr2ms($scope.newST) <= nextMs){
    	 		        		console.log("anchoring 结束 ， $scope.curTime : " , $scope.curTime);
@@ -828,11 +831,12 @@ angular.module('activitiApp')
 		$scope.disableSetDefaultState = true;
 	}
 	$scope.setDxy = function(){ //需要延期靠港
+		console.log("$scope.estart" , $scope.estart,"$scope.eend", $scope.eend);
 		var adxy = 0;//后续港口后移时间
 		var validFlag = false;
 		if($scope.vstate == "anchoring"){ // 如果是anchring状态 , 能延误也能延期
-			var t_newSt = $scope.ms2dateStr($scope.dateStr2ms($scope.estart)+$scope.dx * 60 * 60 * 1000); //新的靠港时间
-			var t_newEd = $scope.ms2dateStr($scope.dateStr2ms($scope.eend)+$scope.dx * 60 * 60 * 1000+$scope.dy*60*60*1000); // 新的离港时间
+			var t_newSt = $scope.ms2dateStr($scope.dateStr2ms($scope.estart)+$scope.dx*60*60*1000); //新的靠港时间
+			var t_newEd = $scope.ms2dateStr($scope.dateStr2ms($scope.eend)+$scope.dx*60*60*1000+$scope.dy*60*60*1000); // 新的离港时间
 			console.log("t_newSt : " , t_newSt, "t_newEd : " , t_newEd);
 			console.log("$scope.estart : " , $scope.estart, "$scope.eend : " , $scope.eend);
 			console.log("$scope.dx : " , $scope.dx, "$scope.dy: " , $scope.dy);
@@ -843,8 +847,13 @@ angular.module('activitiApp')
 					  console.log("相对于上一次离港时间提前");
 				  }else{
 					  console.log("相对于上一次离港时间延期");
-					  adxy = $scope.dateStr2ms(t_newEd) - $scope.dateStr2ms($scope.newED);
 				  }
+				  if($scope.dx+$scope.dy < 0 ){
+					  adxy = 0;
+				  }else{
+					  adxy = ($scope.dx+$scope.dy)*60*60*1000;
+				  }
+				  
 				  $scope.newST = t_newSt;
 				  $scope.newED = t_newEd;
 				  validFlag = true;
@@ -862,28 +871,41 @@ angular.module('activitiApp')
 				  console.log("相对于上一次离港时间提前");			 
 				}else{
 				  console.log("相对于上一次离港时间延期");
-				  adxy = $scope.dateStr2ms(t_newEd) - $scope.dateStr2ms($scope.newED);
 				}
+				 adxy = $scope.dy*60*60*1000;
+				console.log("t_newEd =" , t_newEd , "$scope.eend" , $scope.eend);
 				$scope.newED = t_newEd;
 				validFlag = true;
-				console.log("$scope.newED : " , $scope.newED );
+				console.log("$scope.newST: " , $scope.newST, "$scope.newED" , $scope.newED );
 			}else{
 				alert("设置延期时间不合理， 竟然新的靠港时间比当前还早！");
 			}
 		}
 		if(validFlag == true){
 			//更新当前及其后所有有效港口停靠时间段
-			for(var i in  $scope.pvars[$scope.pidxs['TargLocList']].value ){
-			        var x = $scope.pvars[$scope.pidxs['TargLocList']].value[i];
+ 			$scope.newPortList = angular.copy($scope.oldPortList);
+			for(var i in  $scope.oldPortList.value ){
+			        var x = $scope.oldPortList.value[i];
 			        //如果是当前港口及其后面港口， 时间按d_timeStamp顺移
-			        if(x.state == 'AfterAD' || x.state == 'InAD'){
-					      var s_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].estart)+ adxy;
-					      var e_ms = Date.parse($scope.pvars[$scope.pidxs['TargLocList']].value[i].eend)+ adxy;
-					      $scope.pvars[$scope.pidxs['TargLocList']].value[i].estart = $scope.ms2dateStr(s_ms);
-					      $scope.pvars[$scope.pidxs['TargLocList']].value[i].eend = $scope.ms2dateStr(e_ms);
-			        }       
+			        if(x.state == 'InAD'){
+			        	$scope.newPortList.value[i].estart = $scope.newST;
+			        	$scope.newPortList.value[i].eend =  $scope.newED;
+			        	console.log("InAD , $scope.newED" , $scope.newED , $scope.newPortList.value[i]);
+			        	$scope.pvars[$scope.pidxs['PrePort']].value = angular.copy($scope.newPortList.value[i]);
+			        }
+			        if(x.state == 'AfterAD'){
+					      var s_ms = Date.parse($scope.oldPortList.value[i].estart)+adxy;
+					      var e_ms = Date.parse($scope.oldPortList.value[i].eend)+adxy;
+					      $scope.newPortList.value[i].estart = $scope.ms2dateStr(s_ms);
+					      $scope.newPortList.value[i].eend = $scope.ms2dateStr(e_ms);
+			        }
+			        
+			        if(x.pname == $scope.pvars[$scope.pidxs['NextPort']].value.pname){
+			        	$scope.pvars[$scope.pidxs['NextPort']].value.estart = $scope.newPortList.value[i].estart;
+			        	$scope.pvars[$scope.pidxs['NextPort']].value.eend = $scope.newPortList.value[i].eend;
+			        }
 			 }
-			console.log("TargLoc test : " ,  $scope.pvars[$scope.pidxs['TargLocList']])  ;   
+			console.log("$scope.newPortList : " , $scope.newPortList);   
 			$scope.sendMsgToVWC();
 		}
 	  }  
@@ -893,10 +915,12 @@ angular.module('activitiApp')
 			 .success(function(pdata){
 				 var pvs = pdata; 
 				 var pds = $scope.createPidxs(pvs);
-				 console.log("pvs : " , pvs);
+				 console.log("old pvs : " , angular.copy(pvs));
 				 //修改新值
-				 pvs[pds['TargLocList']] = $scope.pvars[$scope.pidxs['TargLocList']];
-				 pvs[pds['PrePort']] =  $scope.pvars[$scope.pidxs['PrePort']];
+				 pvs[pds['TargLocList']] = angular.copy($scope.newPortList);
+				 pvs[pds['PrePort']] =  angular.copy($scope.pvars[$scope.pidxs['PrePort']]);
+				 pvs[pds['NextPort']] = angular.copy($scope.pvars[$scope.pidxs['NextPort']]);
+				 console.log("new pvs : " , pvs);
 				 $http.put(ACTIVITI.CONFIG.contextRoot+'/api/zbq/variables/'+$scope.model.task.processInstanceId+'/complete' ,pvs)
 					.success(function(data){
 						$scope.pvars = data;

@@ -33,9 +33,9 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
 		 String pid = dExe.getProcessInstanceId();
 		 Weagon w = (Weagon) runtimeService.getVariable(pid, "W_Info");
 		 w.setPid(pid);
-		 w.setW_TargLoc(new Location("南京", "118.800095", "32.146214"));
 		 vars.put("W_Info", w);
 		 vars.put("DestPort" , new WPort()); 
+		 runtimeService.setVariable(pid, "isArriving", false);
 		 runtimeService.setVariable(pid, "W_Info" , w);
 		 
 		 globalVariables.createOrUpdateVariablesByValue(pid, vars);

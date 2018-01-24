@@ -48,7 +48,7 @@ public class GlobalVariables {
 		super();
 		this.portsInfo = new ConcurrentHashMap<String, VPort>();
 		this.portsInfo.put("黄石", new VPort("黄石", "AfterAD" , 3.8 , 2.1,"115.13506", "30.21027", true , 0 ));
-		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 5.6,  2.1,"115.5674", "29.83692" , true ,1));
+		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 5.8,  2.1,"115.5674", "29.83692" , true ,1));
 		this.portsInfo.put("九江", new VPort("九江", "AfterAD" ,3.8,  2.1,"115.95308", "29.72574",true , 2));
 		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,4.2,  2.1,"117.03104", "30.49944", true , 3));
 		this.portsInfo.put("池州", new VPort("池州", "AfterAD" ,3.8,  2.1, "117.52272", "30.7332",  true , 4));
@@ -81,7 +81,7 @@ public class GlobalVariables {
 		this.spwMap = new ConcurrentHashMap<String, Double>();
 		this.spwMap.put("缸盖", 3.9);
 		this.spwMap.put("螺丝", 3.7);
-		this.spwMap.put("钢筋", 4.4);
+		this.spwMap.put("钢筋", 5.8);
 	}
 
 	public Map<String, VPort> getPortsInfo() {

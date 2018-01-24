@@ -70,6 +70,7 @@ public class InitListener implements ExecutionListener, Serializable {
 		vports.sort(c);
 		vars.put("pid", pid);
 		vars.put("isMeet", false);
+		//vars.put("lastValidId", -1);
 		vars.put("isMissing", false);
 		VPort nextPort = vports.get(0);
 		vars.put("NextPort", nextPort);

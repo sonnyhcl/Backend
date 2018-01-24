@@ -154,6 +154,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 				e.getData().put("Reason", rea);
 			}else{
 				e.getData().put("W_Info", w_info);
+				runtimeService.setVariable(vpid, "dpName", null);
 				e.getData().put("State", "fail");
 				//if(validPorts.isEmpty()) {
 					//runtimeService.setVariable(vpid,"isMissing", true);

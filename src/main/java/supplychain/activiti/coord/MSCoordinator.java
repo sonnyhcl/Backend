@@ -49,6 +49,7 @@ public class MSCoordinator implements JavaDelegate, Serializable {
 
 
             List<VPort> candiVPorts = new ArrayList<VPort>();
+            int lastId = -1; // 最后一个港口序号
             for (int i = 0; i < targLocList.size(); i++) {
                 VPort now = targLocList.get(i);
                 if (now.getWeight() >= w_thre) {
@@ -62,9 +63,14 @@ public class MSCoordinator implements JavaDelegate, Serializable {
                 }
                 if (now.getIsMeetWeightCond() == true) {
                     candiVPorts.add(now);
+                    lastId  = i;
+                    
                 }
-                targLocList.set(i, now);
+                targLocList.set(i, now);  
             }
+            String vpid = (String) msgData.get("V_pid");
+            System.out.println("last valid port : " + lastId+" : vpid "+vpid);
+            runtimeService.setVariable(vpid, "lastValidId", lastId);
 
             //SendMsg to VWF
             VWFEvent e = new VWFEvent(EventType.MSC_MeetWeightCond);
@@ -74,7 +80,6 @@ public class MSCoordinator implements JavaDelegate, Serializable {
             msgData.remove("V_TargLocList");
 
             System.out.println("根据港口起重机启动与否及载重筛选港口完毕！");
-
 
             //TODO : Start Manager 获取候选港口列表 ， 并填入运费
             // 消息启动Supplier流程
