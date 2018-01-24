@@ -19,7 +19,6 @@
     `git clone --recursive git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project in IDEA:  
-
     -   Choose `Import Project`.
         ![import](image/idea_import_project.png)
 
