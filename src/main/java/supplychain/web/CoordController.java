@@ -60,9 +60,11 @@ public class CoordController extends AbstractController {
         int esti = Integer.parseInt((String) path.get("duration"));
         return esti;
     }
-    @RequestMapping(value = "/supplier/location/{x_coor}/{y_coor}", method = RequestMethod.POST, produces = "application/json")
-    public  ResponseEntity<Location> postSupLoc(@PathVariable("x_coor") String x_coor , @PathVariable("y_coor") String y_coor , @RequestBody HashMap<String, Object> mp) {
-    	
+    @RequestMapping(value = "/supplier/location", method = RequestMethod.POST, produces = "application/json")
+    public  ResponseEntity<Location> postSupLoc(@RequestBody HashMap<String, Object> mp) {
+    	String x_coor = mp.get("x_coor").toString();
+    	String y_coor = mp.get("y_coor").toString();
+    	System.out.println(x_coor + " "+y_coor);
     	String lname = (String) mp.get("slname");
     	Location sloc = new Location(lname, x_coor, y_coor);
     	System.out.println(sloc.toString());
