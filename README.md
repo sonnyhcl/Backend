@@ -3,17 +3,18 @@
 -   [Demo](#demo)
 -   [Run in Intellij IDEA (recommend)](#run-in-intellij-idea)
 -   [Run in Spring Tool Suite](#run-in-spring-tool-suite)
+
 ## Repo tree
 ```bash
-com/zbq/                 # Implementation of global cache and message queue
+com/zbq/                                            # Implementation of global cache and message queue
 ├── ACTFEvent.java
 ├── EventType.java
 ├── GlobalEventQueue.java
 ├── GlobalVariables.java
 └── VWFEvent.java
 
-supplychain/activiti     # Closely related to the activiti engine our bussiness process execution.
-├── conf                 # Java configuration files including configuring activiti engine and web context.
+supplychain/activiti                                # Closely related to the activiti engine our bussiness process execution.
+├── conf                                            # Java configuration files including configuring activiti engine and web context.
 │   ├── ActivitiEngineConfiguration.java
 │   ├── AsyncConfiguration.java
 │   ├── Bootstrapper.java
@@ -27,12 +28,12 @@ supplychain/activiti     # Closely related to the activiti engine our bussiness 
 │   ├── RestApiConfiguration.java
 │   ├── RestTemplateConfiguration.java
 │   └── SchedulingConfiguration.java
-├── coord              # Impletation of 4 Coordinator Service , among them , VWC is the most complex one.
+├── coord                                           # Impletation of 4 Coordinator Service , among them , VWC is the most complex one.
 │   ├── MSCoordinator.java
 │   ├── SWCoordinator.java
 │   ├── VMCoordinator.java
 │   └── VWCoordinator.java
-├── listener           # Some of the exection/task listeners set in process model.
+├── listener                                        # Some of the exection/task listeners set in process model.
 │   ├── AnchorStartListener.java
 │   ├── DockTaskEndListener.java
 │   ├── FlowIntoVoyaListener.java
@@ -47,7 +48,7 @@ supplychain/activiti     # Closely related to the activiti engine our bussiness 
 │   └── VoyaTaskStartListener.java
 ├── rest
 │   └── service
-│       └── api       # Some convertors between custom type defined by myself and RestVariable Type build in engine.
+│       └── api                                     # Some convertors between custom type defined by myself and RestVariable Type build in engine.
 │           ├── CustomActivitiTaskActionService.java
 │           ├── CustomArrayListRestVariableConverter.java
 │           ├── CustomBaseExcutionVariableResource.java
@@ -58,21 +59,21 @@ supplychain/activiti     # Closely related to the activiti engine our bussiness 
 │           ├── VPortRestVariableConverter.java
 │           ├── WeagonRestVariableConverter.java
 │           └── WPortRestVariableConverter.java
-├── service          # Some JavaDelegate Class bound to Service Task in process.
+├── service                                         # Some JavaDelegate Class bound to Service Task in process.
 │   ├── CustomActivitiTaskFormService.java
 │   ├── SendApplyToVMCService.java
 │   ├── SendMsgToAWSService.java
 │   ├── SendMsgToWVCService.java
 │   ├── UpdateVesselInfoService.java
 │   └── UpdateWeagonInfoService.java
-└── servlet         # About other web configuration 
-    ├── MyApiDispatcherServletConfiguration.java   #servlet dispatcher for url pattern /api/*
-    ├── MyCorsFilter.java        # used to solve CORS problem.
-    ├── MyWebConfigurer.java     # configure two servlet dispatcher , respectively for '/api/*' and '/app/*'.
-    ├── SystemWebSocketHandler.java     # websocket haven't been used , you can ignore them.
+└── servlet                                         # About other web configuration 
+    ├── MyApiDispatcherServletConfiguration.java    # servlet dispatcher for url pattern /api/*
+    ├── MyCorsFilter.java                           # used to solve CORS problem.
+    ├── MyWebConfigurer.java                        # configure two servlet dispatcher , respectively for '/api/*' and '/app/*'.
+    ├── SystemWebSocketHandler.java                 # websocket haven't been used , you can ignore them.
     └── WebsocketHandshakeInterceptor.java
 
-supplychain/web/        # Implementation of REST interfaces to provide endpoints to front-end or AWS to access.
+supplychain/web/                                    # Implementation of REST interfaces to provide endpoints to front-end or AWS to access.
 ├── AbstractController.java
 ├── CoordController.java
 ├── ProcessInstancesResource.java
@@ -81,7 +82,7 @@ supplychain/web/        # Implementation of REST interfaces to provide endpoints
 ├── VesselController.java
 └── VesselProcessInstanceVariableDataResource.java
 
-supplychain/entity/     # Some custom Types for process model.
+supplychain/entity/                                 # Some custom Types for process model.
 ├── IotVessel.java
 ├── Location.java
 ├── Path.java
@@ -89,9 +90,6 @@ supplychain/entity/     # Some custom Types for process model.
 ├── VPort.java
 ├── Weagon.java
 └── WPort.java
-
-
-
 ```
 
 ## Demo
@@ -107,13 +105,11 @@ supplychain/entity/     # Some custom Types for process model.
 
 2.  Clone Source Code:
 
-    `git clone --recursive git@github.com:sonnyhcl/Backend.git`
+    `git clone git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project in IDEA:  
-
     -   Choose `Import Project`.
         ![import](image/idea_import_project.png)
-
     -   Choose the `directory path` which you clone the source code
     -   Choose import project from external model `maven`
     -   Pass `select profiles`
@@ -137,10 +133,8 @@ supplychain/entity/     # Some custom Types for process model.
     -   Choose `local`
     -   Configure tomcat in idea
         ![tomcat_idea](image/tomcat_idea.png)
-
     -   Configure artifact
         ![artifact](image/artifact.png)
-
     -   Configure application-context: `/activiti-app`
         ![application-context](image/application-context.png)
 
@@ -169,7 +163,7 @@ supplychain/entity/     # Some custom Types for process model.
 
 2.  Clone Source Code:
 
-    `git clone --recursive git@github.com:sonnyhcl/Backend.git`
+    `git clone git@github.com:sonnyhcl/Backend.git`
 
 3.  Import Project:  
 
