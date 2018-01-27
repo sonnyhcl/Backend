@@ -6,7 +6,7 @@ import org.activiti.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zbq.GlobalVariables;
+import supplychain.global.GlobalVariables;
 
 import supplychain.entity.Weagon;
 

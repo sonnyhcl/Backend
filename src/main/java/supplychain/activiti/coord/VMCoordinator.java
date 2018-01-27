@@ -1,6 +1,6 @@
 package supplychain.activiti.coord;
 
-import com.zbq.GlobalVariables;
+import supplychain.global.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;

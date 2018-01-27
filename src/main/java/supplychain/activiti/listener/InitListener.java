@@ -1,8 +1,8 @@
 package supplychain.activiti.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zbq.GlobalEventQueue;
-import com.zbq.GlobalVariables;
+import supplychain.global.GlobalEventQueue;
+import supplychain.global.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;

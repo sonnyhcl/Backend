@@ -1,4 +1,4 @@
-package com.zbq;
+package supplychain.event;
 
 import org.activiti.engine.impl.util.json.JSONObject;
 

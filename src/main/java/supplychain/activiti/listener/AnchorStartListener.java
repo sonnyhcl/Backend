@@ -1,16 +1,11 @@
 package supplychain.activiti.listener;
 
-import com.zbq.GlobalVariables;
+import supplychain.global.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
-import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.zbq.EventType;
-import com.zbq.GlobalVariables;
-import com.zbq.VWFEvent;
 
 import supplychain.entity.VPort;
 

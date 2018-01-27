@@ -1,7 +1,7 @@
 package supplychain.activiti.listener;
 
 
-import com.zbq.GlobalEventQueue;
+import supplychain.global.GlobalEventQueue;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;

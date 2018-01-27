@@ -1,5 +1,7 @@
-package com.zbq;
+package supplychain.global;
 
+import supplychain.event.ACTFEvent;
+import supplychain.event.VWFEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.LinkedBlockingQueue;

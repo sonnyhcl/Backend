@@ -1,4 +1,4 @@
-package com.zbq;
+package supplychain.event;
 
 public enum EventType {
 	W_START, W_UPDATE, W_ARRIVAL ,

@@ -1,7 +1,7 @@
 package supplychain.activiti.rest.service.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.zbq.GlobalVariables;
+import supplychain.global.GlobalVariables;
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.rest.exception.ActivitiConflictException;
