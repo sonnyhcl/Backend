@@ -26,6 +26,26 @@ public class VesselVariablesResponse implements Serializable {
     //当前目的地（u一般是下一港口）
     private Location V_TargetLocation;
 
+    public VesselVariablesResponse(String v_id, String v_Name, String x_Coor, String y_Coor, String v_Velocity, Date start,
+                                   Date end,
+                                   String v_HeadOrie, String v_EarthOrie) {
+        super();
+        V_id = v_id;
+        V_Name = v_Name;
+        X_Coor = x_Coor;
+        Y_Coor = y_Coor;
+        V_Velocity = v_Velocity;
+        Start = start;
+        End = end;
+        V_HeadOrie = v_HeadOrie;
+        V_EarthOrie = v_EarthOrie;
+    }
+
+    public VesselVariablesResponse() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
     public Location getV_TargetLocation() {
         return V_TargetLocation;
     }
@@ -111,25 +131,6 @@ public class VesselVariablesResponse implements Serializable {
         return "Vessel [V_id=" + V_id + ", V_Name=" + V_Name + ", X_Coor=" + X_Coor + ", Y_Coor=" + Y_Coor
                 + ", V_Velocity=" + V_Velocity + ", Start=" + Start + ", End=" + End + ", V_HeadOrie=" + V_HeadOrie
                 + ", V_EarthOrie=" + V_EarthOrie + "]";
-    }
-
-    public VesselVariablesResponse(String v_id, String v_Name, String x_Coor, String y_Coor, String v_Velocity, Date start, Date end,
-                                   String v_HeadOrie, String v_EarthOrie) {
-        super();
-        V_id = v_id;
-        V_Name = v_Name;
-        X_Coor = x_Coor;
-        Y_Coor = y_Coor;
-        V_Velocity = v_Velocity;
-        Start = start;
-        End = end;
-        V_HeadOrie = v_HeadOrie;
-        V_EarthOrie = v_EarthOrie;
-    }
-
-    public VesselVariablesResponse() {
-        super();
-        // TODO Auto-generated constructor stub
     }
 
 

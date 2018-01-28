@@ -51,10 +51,8 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class DatabaseConfiguration {
 
-    private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
-
     protected static final String LIQUIBASE_CHANGELOG_PREFIX = "ACT_DE_";
-
+    private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
     @Inject
     private Environment env;
 
@@ -206,7 +204,8 @@ public class DatabaseConfiguration {
             database.setDatabaseChangeLogTableName(LIQUIBASE_CHANGELOG_PREFIX + database.getDatabaseChangeLogTableName());
             database.setDatabaseChangeLogLockTableName(LIQUIBASE_CHANGELOG_PREFIX + database.getDatabaseChangeLogLockTableName());
 
-            Liquibase liquibase = new Liquibase("META-INF/liquibase/activiti-app-db-changelog.xml", new ClassLoaderResourceAccessor(), database);
+            Liquibase liquibase = new Liquibase("META-INF/liquibase/activiti-app-db-changelog.xml", new
+                    ClassLoaderResourceAccessor(), database);
             liquibase.update("activiti");
             return liquibase;
 

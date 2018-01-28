@@ -2,10 +2,6 @@ package supplychain.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import supplychain.event.ACTFEvent;
-import supplychain.global.GlobalEventQueue;
-import supplychain.global.GlobalVariables;
-import supplychain.event.VWFEvent;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.impl.util.json.JSONArray;
@@ -20,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import supplychain.activiti.rest.service.api.CustomActivitiTaskActionService;
 import supplychain.activiti.rest.service.api.CustomBaseExcutionVariableResource;
 import supplychain.activiti.rest.service.api.CustomBaseVariableCollectionResource;
+import supplychain.event.ACTFEvent;
+import supplychain.event.VWFEvent;
+import supplychain.global.GlobalEventQueue;
+import supplychain.global.GlobalVariables;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,17 +31,14 @@ public class VesselController extends AbstractController {
 
     @Autowired
     protected CustomActivitiTaskActionService taskActionService;
-
+    @Autowired
+    protected RestResponseFactory restResponseFactory;
     @Autowired
     private GlobalEventQueue globalEventQueue;
-
     @Autowired
     private GlobalVariables globalVariables;
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    protected RestResponseFactory restResponseFactory;
     @Autowired
     private CustomBaseExcutionVariableResource baseExcutionVariableResource;
     @Autowired
@@ -96,70 +93,76 @@ public class VesselController extends AbstractController {
 //		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
 //	}
 
-	@RequestMapping(value = "/revents", method = RequestMethod.GET)
-	public ResponseEntity<String> queryREvents() throws InterruptedException {
-		// System.out.println("GET sevents");
-		JSONArray result = new JSONArray();
-		LinkedBlockingQueue<ACTFEvent> q = globalEventQueue.getRecQueue();
-		while (!q.isEmpty()) {// 取空队列里面的所有事件
-			ACTFEvent e = q.take();
-			result.put(e.getJson());
-		}
-		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
-	}
+    @RequestMapping(value = "/revents", method = RequestMethod.GET)
+    public ResponseEntity<String> queryREvents() throws InterruptedException {
+        // System.out.println("GET sevents");
+        JSONArray result = new JSONArray();
+        LinkedBlockingQueue<ACTFEvent> q = globalEventQueue.getRecQueue();
+        while (!q.isEmpty()) {// 取空队列里面的所有事件
+            ACTFEvent e = q.take();
+            result.put(e.getJson());
+        }
+        return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
+    }
 
-	// @RequestMapping(value = "/process-instances", method = RequestMethod.POST)
-	// public ProcessInstanceRepresentation startNewProcessInstance(@RequestBody
-	// CreateProcessInstanceRepresentation startRequest) {
-	// return super.startNewProcessInstance(startRequest);
-	// }
+    // @RequestMapping(value = "/process-instances", method = RequestMethod.POST)
+    // public ProcessInstanceRepresentation startNewProcessInstance(@RequestBody
+    // CreateProcessInstanceRepresentation startRequest) {
+    // return super.startNewProcessInstance(startRequest);
+    // }
 
-	/**
-	 * Custom GET/PUT Variables
-	 */
-	@RequestMapping(value = "/zbq/variables/{pid}", method = RequestMethod.GET)
-	public ResponseEntity<String> queryVariables(@PathVariable String pid) {
-		JSONArray result = new JSONArray();
+    /**
+     * Custom GET/PUT Variables
+     */
+    @RequestMapping(value = "/zbq/variables/{pid}", method = RequestMethod.GET)
+    public ResponseEntity<String> queryVariables(@PathVariable String pid) {
+        JSONArray result = new JSONArray();
 
-		if (globalVariables.getVariableMap().containsKey(pid)) {
-			result = globalVariables.getVariableMap().get(pid);
-		}
-		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
-	}
+        if (globalVariables.getVariableMap().containsKey(pid)) {
+            result = globalVariables.getVariableMap().get(pid);
+        }
+        return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
+    }
 
-	@RequestMapping(value = "/zbq/variables/{pid}/{variableName}", method = RequestMethod.GET)
-	public ResponseEntity<String> queryVariablesByName(@PathVariable String pid, @PathVariable String variableName) {
-		JSONObject result = globalVariables.getVariableByName(pid, variableName);
-		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
-	}
-	
-	/**
-	 * PUT to global variables cache
-	 * 传入RestObject
-	 * @param processInstanceId
-	 * @param request
-	 * @return
-	 * @throws JsonProcessingException 
-	 */
-	@RequestMapping(value = "/zbq/variables/{processInstanceId}", method = RequestMethod.PUT)
-	public ResponseEntity<List<RestVariable>> updateVariablesToCache(@PathVariable String processInstanceId, HttpServletRequest request , HttpServletResponse response) throws JsonProcessingException {
-		
-		List<RestVariable> result = null;
-		result = baseVariableCollectionResource.createExecutionVariableToCacheOrEngine(processInstanceId, true, RestResponseFactory.VARIABLE_PROCESS, request, response  ,false);
-		return new ResponseEntity<List<RestVariable>>(result ,HttpStatus.OK);
-	}
+    @RequestMapping(value = "/zbq/variables/{pid}/{variableName}", method = RequestMethod.GET)
+    public ResponseEntity<String> queryVariablesByName(@PathVariable String pid, @PathVariable String variableName) {
+        JSONObject result = globalVariables.getVariableByName(pid, variableName);
+        return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
+    }
 
-	/**
-	 * PUT to global variables cache and process engine
-	 * @param pid
-	 * @param body
-	 * @return
-	 * @throws JsonProcessingException 
-	 */
-	@RequestMapping(value = "/zbq/variables/{processInstanceId}/complete", method = RequestMethod.PUT)
-	public ResponseEntity<List<RestVariable>> updateVariablesCacheAndEngine(@PathVariable String processInstanceId, HttpServletRequest request , HttpServletResponse response) throws JsonProcessingException {
+    /**
+     * PUT to global variables cache
+     * 传入RestObject
+     *
+     * @param processInstanceId
+     * @param request
+     * @return
+     * @throws JsonProcessingException
+     */
+    @RequestMapping(value = "/zbq/variables/{processInstanceId}", method = RequestMethod.PUT)
+    public ResponseEntity<List<RestVariable>> updateVariablesToCache(@PathVariable String processInstanceId, HttpServletRequest
+            request, HttpServletResponse response) throws JsonProcessingException {
 
-		// System.out.println("/zbq/variables/ update :"+ body);
+        List<RestVariable> result = null;
+        result = baseVariableCollectionResource.createExecutionVariableToCacheOrEngine(processInstanceId, true,
+                RestResponseFactory.VARIABLE_PROCESS, request, response, false);
+        return new ResponseEntity<List<RestVariable>>(result, HttpStatus.OK);
+    }
+
+    /**
+     * PUT to global variables cache and process engine
+     *
+     * @param pid
+     * @param body
+     * @return
+     * @throws JsonProcessingException
+     */
+    @RequestMapping(value = "/zbq/variables/{processInstanceId}/complete", method = RequestMethod.PUT)
+    public ResponseEntity<List<RestVariable>> updateVariablesCacheAndEngine(@PathVariable String processInstanceId,
+                                                                            HttpServletRequest request, HttpServletResponse
+                                                                                        response) throws JsonProcessingException {
+
+        // System.out.println("/zbq/variables/ update :"+ body);
 
 //		JSONArray vars = new JSONArray(body);
 //		globalVariables.getVariableMap().put(pid, vars);
@@ -168,7 +171,7 @@ public class VesselController extends AbstractController {
         //PUT to cache if isComplete == true  , then  PUT to Engine
         HttpServletRequest requestCopy = request;
         result = baseVariableCollectionResource.createExecutionVariableToCacheOrEngine(processInstanceId, true,
-				RestResponseFactory.VARIABLE_PROCESS, request, response, true);
+                RestResponseFactory.VARIABLE_PROCESS, request, response, true);
         return new ResponseEntity<List<RestVariable>>(result, HttpStatus.OK);
     }
 
@@ -183,7 +186,7 @@ public class VesselController extends AbstractController {
      */
     @RequestMapping(value = "/zbq/variables/{processInstanceId}/{variableName}", method = RequestMethod.PUT)
     public ResponseEntity<RestVariable> updateVariablesByNameToCache(@PathVariable String processInstanceId, @PathVariable
-			String variableName,
+            String variableName,
                                                                      HttpServletRequest request) throws JsonProcessingException {
         Execution execution = baseExcutionVariableResource.getProcessInstanceFromRequest(processInstanceId);
         RestVariable restVariable = null;
@@ -216,9 +219,9 @@ public class VesselController extends AbstractController {
      */
     @RequestMapping(value = "/zbq/variables/{processInstanceId}/{variableName}/complete", method = RequestMethod.PUT)
     public ResponseEntity<RestVariable> updateVariableByNameToCacheAndEngine(@PathVariable String processInstanceId,
-																			 @PathVariable String variableName,
+                                                                             @PathVariable String variableName,
                                                                              HttpServletRequest request) throws
-			JsonProcessingException {
+            JsonProcessingException {
 
         // System.out.println("/zbq/variables/ update :"+ body);
 

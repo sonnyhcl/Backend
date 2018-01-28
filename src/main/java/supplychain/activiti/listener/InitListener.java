@@ -1,8 +1,6 @@
 package supplychain.activiti.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import supplychain.global.GlobalEventQueue;
-import supplychain.global.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -11,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import supplychain.entity.Location;
 import supplychain.entity.VPort;
+import supplychain.global.GlobalEventQueue;
+import supplychain.global.GlobalVariables;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -66,27 +66,27 @@ public class InitListener implements ExecutionListener, Serializable {
                     return -1;
                 }
             }
-        }; 
-		vports.sort(c);
-		vars.put("pid", pid);
-		vars.put("isMeet", false);
-		//vars.put("lastValidId", -1);
-		vars.put("isMissing", false);
-		VPort nextPort = vports.get(0);
-		vars.put("NextPort", nextPort);
-		vars.put("NowLoc", new Location());
-		VPort startVport = new VPort();
-		startVport.setPname("起点");
-		vars.put("PrePort", startVport); // 上一港口
-		vars.put("State", "voyaging"); // 船的状态
-		vars.put("StartTime", new Date()); // 每段航行的起始时间
-		vars.put("TargLocList", vports); // 港口清单
+        };
+        vports.sort(c);
+        vars.put("pid", pid);
+        vars.put("isMeet", false);
+        //vars.put("lastValidId", -1);
+        vars.put("isMissing", false);
+        VPort nextPort = vports.get(0);
+        vars.put("NextPort", nextPort);
+        vars.put("NowLoc", new Location());
+        VPort startVport = new VPort();
+        startVport.setPname("起点");
+        vars.put("PrePort", startVport); // 上一港口
+        vars.put("State", "voyaging"); // 船的状态
+        vars.put("StartTime", new Date()); // 每段航行的起始时间
+        vars.put("TargLocList", vports); // 港口清单
 //		VPort endVPort= vports.get(vports.size()-1);
 //		vars.put("EndVPort", endVPort);
 //		VPort destVport = new VPort();
 //		vars.put("DestVPort", destVport);
-		runtimeService.setVariables(pid, vars);
-		globalVariables.createOrUpdateVariablesByValue(pid, vars);
-	}
+        runtimeService.setVariables(pid, vars);
+        globalVariables.createOrUpdateVariablesByValue(pid, vars);
+    }
 
 }

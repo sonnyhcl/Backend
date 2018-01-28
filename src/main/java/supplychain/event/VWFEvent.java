@@ -12,6 +12,13 @@ public class VWFEvent {
     private JSONObject data;
     private Long id;
 
+    public VWFEvent(EventType type) {
+        super();
+        this.type = type;
+        this.data = new JSONObject();
+        this.id = count.incrementAndGet();
+    }
+
     public EventType getType() {
         return type;
     }
@@ -26,13 +33,6 @@ public class VWFEvent {
 
     public void setData(JSONObject data) {
         this.data = data;
-    }
-
-    public VWFEvent(EventType type) {
-        super();
-        this.type = type;
-        this.data = new JSONObject();
-        this.id = count.incrementAndGet();
     }
 
     public Long getId() {

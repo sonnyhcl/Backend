@@ -1,9 +1,5 @@
 package supplychain.activiti.coord;
 
-import supplychain.event.EventType;
-import supplychain.global.GlobalEventQueue;
-import supplychain.global.GlobalVariables;
-import supplychain.event.VWFEvent;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
@@ -12,6 +8,10 @@ import org.springframework.stereotype.Service;
 import supplychain.activiti.rest.service.api.CustomArrayListRestVariableConverter;
 import supplychain.entity.VPort;
 import supplychain.entity.WPort;
+import supplychain.event.EventType;
+import supplychain.event.VWFEvent;
+import supplychain.global.GlobalEventQueue;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,13 +63,13 @@ public class MSCoordinator implements JavaDelegate, Serializable {
                 }
                 if (now.getIsMeetWeightCond() == true) {
                     candiVPorts.add(now);
-                    lastId  = i;
-                    
+                    lastId = i;
+
                 }
-                targLocList.set(i, now);  
+                targLocList.set(i, now);
             }
             String vpid = (String) msgData.get("V_pid");
-            System.out.println("last valid port : " + lastId+" : vpid "+vpid);
+            System.out.println("last valid port : " + lastId + " : vpid " + vpid);
             runtimeService.setVariable(vpid, "lastValidId", lastId);
 
             //SendMsg to VWF

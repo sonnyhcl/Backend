@@ -8,10 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import supplychain.global.GlobalVariables;
-
 import supplychain.entity.Location;
+import supplychain.global.GlobalVariables;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -24,7 +22,7 @@ public class CoordController extends AbstractController {
 
     @Inject
     private Environment environment;
-    
+
     @Autowired
     private GlobalVariables globalVariables;
 
@@ -61,17 +59,18 @@ public class CoordController extends AbstractController {
         int esti = Integer.parseInt((String) path.get("duration"));
         return esti;
     }
+
     @RequestMapping(value = "/supplier/location", method = RequestMethod.POST, produces = "application/json")
-    public  ResponseEntity<Location> postSupLoc(@RequestBody HashMap<String, Object> mp) {
-    	String x_coor = mp.get("x_coor").toString();
-    	String y_coor = mp.get("y_coor").toString();
-    	System.out.println(x_coor + " "+y_coor);
-    	String lname = (String) mp.get("slname");
-    	Location sloc = new Location(lname, x_coor, y_coor);
-    	System.out.println(sloc.toString());
-    	globalVariables.setSupLoc(sloc);
-    	//JSONObject sljson = new JSONObject(sloc);
-     	return new ResponseEntity<Location>(sloc, HttpStatus.OK);
+    public ResponseEntity<Location> postSupLoc(@RequestBody HashMap<String, Object> mp) {
+        String x_coor = mp.get("x_coor").toString();
+        String y_coor = mp.get("y_coor").toString();
+        System.out.println(x_coor + " " + y_coor);
+        String lname = (String) mp.get("slname");
+        Location sloc = new Location(lname, x_coor, y_coor);
+        System.out.println(sloc.toString());
+        globalVariables.setSupLoc(sloc);
+        //JSONObject sljson = new JSONObject(sloc);
+        return new ResponseEntity<Location>(sloc, HttpStatus.OK);
     }
 
 }

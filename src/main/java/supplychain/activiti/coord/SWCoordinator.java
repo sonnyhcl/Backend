@@ -5,10 +5,8 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import supplychain.global.GlobalVariables;
-
 import supplychain.entity.Weagon;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ public class SWCoordinator implements JavaDelegate, Serializable {
     @Autowired
     private RuntimeService runtimeService;
     @Autowired
-	 private GlobalVariables globalVariables;
+    private GlobalVariables globalVariables;
 
     @Override
     public void execute(DelegateExecution exec) {

@@ -79,7 +79,8 @@ public class WeagonRestVariableConverter implements RestVariableConverter {
         @SuppressWarnings("unchecked")
         HashMap<String, Object> lmap = (HashMap<String, Object>) map.get("w_TargLoc");
         Location w_TargLoc = c.Map2Location(lmap);
-        Weagon w = new Weagon("Weagon", pid, w_id, w_Name, x_Coor, y_Coor, w_Velocity, start, end, pArri, needPlan, planRes, w_TargLoc, isArrival);
+        Weagon w = new Weagon("Weagon", pid, w_id, w_Name, x_Coor, y_Coor, w_Velocity, start, end, pArri, needPlan, planRes,
+                w_TargLoc, isArrival);
         return w;
     }
 }

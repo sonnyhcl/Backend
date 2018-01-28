@@ -51,14 +51,12 @@ import javax.inject.Inject;
 @Order(0)
 public class CustomSecurityConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomSecurityConfig.class);
-
     public static final String KEY_LDAP_ENABLED = "ldap.authentication.enabled";
+    private static final Logger logger = LoggerFactory.getLogger(CustomSecurityConfig.class);
 
     //
     // GLOBAL CONFIG
     //
-
     @Autowired
     private Environment env;
 

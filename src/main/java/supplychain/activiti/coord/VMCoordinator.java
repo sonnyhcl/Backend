@@ -1,11 +1,11 @@
 package supplychain.activiti.coord;
 
-import supplychain.global.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -13,16 +13,14 @@ import java.util.HashMap;
 @Service("VMCoordinator")
 public class VMCoordinator implements JavaDelegate, Serializable {
 
-    @Autowired
-    private RuntimeService runtimeService;
-
-    @Autowired
-    private GlobalVariables globalVariables;
-
     /**
      *
      */
     private static final long serialVersionUID = 5334846840309131394L;
+    @Autowired
+    private RuntimeService runtimeService;
+    @Autowired
+    private GlobalVariables globalVariables;
 
     @Override
     public void execute(DelegateExecution exec) {

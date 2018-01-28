@@ -26,16 +26,13 @@ import java.io.File;
 @Configuration
 public class ContentStorageConfiguration {
 
-    private final Logger log = LoggerFactory.getLogger(ContentStorageConfiguration.class);
-
     private static final String PROP_FS_ROOT = "contentstorage.fs.rootFolder";
     private static final String PROP_FS_DEPTH = "contentstorage.fs.depth";
     private static final String PROP_FS_BLOCK_SIZE = "contentstorage.fs.blockSize";
     private static final String PROP_FS_CREATE_ROOT = "contentstorage.fs.createRoot";
-
     private static final Integer DEFAULT_FS_DEPTH = 4;
     private static final Integer DEFAULT_FS_BLOCK_SIZE = 1024;
-
+    private final Logger log = LoggerFactory.getLogger(ContentStorageConfiguration.class);
     @Inject
     private Environment env;
 

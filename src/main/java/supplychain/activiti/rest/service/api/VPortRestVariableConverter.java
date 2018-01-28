@@ -61,7 +61,8 @@ public class VPortRestVariableConverter implements RestVariableConverter {
         String x_coor = map.get("x_coor") == null ? null : map.get("x_coor").toString();
         String y_coor = map.get("y_coor") == null ? null : map.get("y_coor").toString();
         double sortFlag = map.get("sortFlag") == null ? null : Double.parseDouble(map.get("sortFlag").toString());
-        VPort vp = new VPort("VPort", pname, quayRate, weight, isCraneStart, eStart, eEnd, isMeetWeightCond, state, cost, x_coor, y_coor, sortFlag);
+        VPort vp = new VPort("VPort", pname, quayRate, weight, isCraneStart, eStart, eEnd, isMeetWeightCond, state, cost,
+                x_coor, y_coor, sortFlag);
         return vp;
     }
 

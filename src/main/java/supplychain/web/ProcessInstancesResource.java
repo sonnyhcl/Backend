@@ -66,7 +66,7 @@ public class ProcessInstancesResource extends AbstractProcessInstancesResource {
 
         // Mark any content created as part of the form-submission connected to the process instance
             /*if (formSubmission != null) {
-		      if (formSubmission.hasContent()) {
+              if (formSubmission.hasContent()) {
 		        ObjectNode contentNode = objectMapper.createObjectNode();
 		        submittedFormValuesJson.put("content", contentNode);
 		        for (Entry<String, List<RelatedContent>> entry : formSubmission.getVariableContent().entrySet()) {
@@ -93,7 +93,8 @@ public class ProcessInstancesResource extends AbstractProcessInstancesResource {
                 user = cachedUser.getUser();
             }
         }
-        return new ProcessInstanceRepresentation(historicProcess, processDefinition, ((ProcessDefinitionEntity) processDefinition).isGraphicalNotationDefined(), user);
+        return new ProcessInstanceRepresentation(historicProcess, processDefinition, ((ProcessDefinitionEntity)
+                processDefinition).isGraphicalNotationDefined(), user);
 
     }
 }

@@ -1,6 +1,5 @@
 package supplychain.activiti.listener;
 
-import supplychain.global.GlobalVariables;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -280,7 +280,8 @@ public class CustomBaseExcutionVariableResource extends BaseExecutionVariableRes
     protected Execution getExecutionFromRequest(String executionId) {
         Execution execution = runtimeService.createExecutionQuery().executionId(executionId).singleResult();
         if (execution == null) {
-            throw new ActivitiObjectNotFoundException("Could not find an execution with id '" + executionId + "'.", Execution.class);
+            throw new ActivitiObjectNotFoundException("Could not find an execution with id '" + executionId + "'.", Execution
+                    .class);
         }
         return execution;
     }
@@ -288,7 +289,8 @@ public class CustomBaseExcutionVariableResource extends BaseExecutionVariableRes
     public Execution getProcessInstanceFromRequest(String processInstanceId) {
         Execution execution = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         if (execution == null) {
-            throw new ActivitiObjectNotFoundException("Could not find a process instance with id '" + processInstanceId + "'.", ProcessInstance.class);
+            throw new ActivitiObjectNotFoundException("Could not find a process instance with id '" + processInstanceId + "'.",
+                    ProcessInstance.class);
         }
         return execution;
     }

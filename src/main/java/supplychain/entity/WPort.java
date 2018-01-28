@@ -19,8 +19,32 @@ public class WPort extends AbstractFormType implements Serializable {
     //	private JSONObject route;
     private double sortFlag;
 
+    public WPort(String name, String pname, double carryRate, String esTime, double dist, double supCost,
+                 String x_coor, String y_coor, double sortFlag) {
+        super();
+        this.name = name;
+        this.pname = pname;
+        this.carryRate = carryRate;
+        this.esTime = esTime;
+        this.dist = dist;
+        this.supCost = supCost;
+        this.x_coor = x_coor;
+        this.y_coor = y_coor;
+//		this.route = route;
+        this.sortFlag = sortFlag;
+    }
+
+    public WPort() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
     public double getSupCost() {
         return supCost;
+    }
+
+    public void setSupCost(double supCost) {
+        this.supCost = supCost;
     }
 
     public String getX_coor() {
@@ -37,10 +61,6 @@ public class WPort extends AbstractFormType implements Serializable {
 
     public void setY_coor(String y_coor) {
         this.y_coor = y_coor;
-    }
-
-    public void setSupCost(double supCost) {
-        this.supCost = supCost;
     }
 
     public String getWpid() {
@@ -67,14 +87,14 @@ public class WPort extends AbstractFormType implements Serializable {
         this.esTime = esTime;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String getName() {
         // TODO Auto-generated method stub
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -97,14 +117,6 @@ public class WPort extends AbstractFormType implements Serializable {
         this.dist = dist;
     }
 
-    public double getCarryRate() {
-        return carryRate;
-    }
-
-    public void setCarryRate(double carryRate) {
-        this.carryRate = carryRate;
-    }
-
 //	public JSONObject getRoute() {
 //		return route;
 //	}
@@ -113,32 +125,20 @@ public class WPort extends AbstractFormType implements Serializable {
 //		this.route = route;
 //	}
 
+    public double getCarryRate() {
+        return carryRate;
+    }
+
+    public void setCarryRate(double carryRate) {
+        this.carryRate = carryRate;
+    }
+
     public double getSortFlag() {
         return sortFlag;
     }
 
     public void setSortFlag(double sortFlag) {
         this.sortFlag = sortFlag;
-    }
-
-    public WPort(String name, String pname, double carryRate, String esTime, double dist, double supCost,
-                 String x_coor, String y_coor, double sortFlag) {
-        super();
-        this.name = name;
-        this.pname = pname;
-        this.carryRate = carryRate;
-        this.esTime = esTime;
-        this.dist = dist;
-        this.supCost = supCost;
-        this.x_coor = x_coor;
-        this.y_coor = y_coor;
-//		this.route = route;
-        this.sortFlag = sortFlag;
-    }
-
-    public WPort() {
-        super();
-        // TODO Auto-generated constructor stub
     }
 
 }

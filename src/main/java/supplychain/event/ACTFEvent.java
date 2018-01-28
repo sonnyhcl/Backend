@@ -12,6 +12,13 @@ public class ACTFEvent {
     private JSONObject data;
     private Long id;
 
+    public ACTFEvent(EventType type) {
+        super();
+        this.type = type;
+        this.data = new JSONObject();
+        this.id = count.incrementAndGet();
+    }
+
     public EventType getType() {
         return type;
     }
@@ -26,13 +33,6 @@ public class ACTFEvent {
 
     public void setData(JSONObject data) {
         this.data = data;
-    }
-
-    public ACTFEvent(EventType type) {
-        super();
-        this.type = type;
-        this.data = new JSONObject();
-        this.id = count.incrementAndGet();
     }
 
     public Long getId() {

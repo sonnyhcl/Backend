@@ -29,6 +29,43 @@ public class VPort extends AbstractFormType implements Serializable {
     private String y_coor;
     private double sortFlag;
 
+    public VPort() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+    public VPort(String pname, String state, double weight, double quayRate, String x_coor, String y_coor, boolean
+            isCraneStart, int sortFlag) {
+        super();
+        this.pname = pname;
+        this.State = state;
+        this.quayRate = quayRate;
+        this.weight = weight;
+        this.isCraneStart = isCraneStart;
+        this.x_coor = x_coor;
+        this.y_coor = y_coor;
+        this.sortFlag = sortFlag;
+    }
+
+    public VPort(String name, String pname, double quayRate, double weight, boolean isCraneStart, String eStart,
+                 String eEnd, boolean isMeetWeightCond, String state, double cost, String x_coor, String y_coor,
+                 double sortFlag) {
+        super();
+        this.name = name;
+        this.pname = pname;
+        this.quayRate = quayRate;
+        this.weight = weight;
+        this.isCraneStart = isCraneStart;
+        EStart = eStart;
+        EEnd = eEnd;
+        this.isMeetWeightCond = isMeetWeightCond;
+        State = state;
+        this.cost = cost;
+        this.x_coor = x_coor;
+        this.y_coor = y_coor;
+        this.sortFlag = sortFlag;
+    }
+
     public String getX_coor() {
         return x_coor;
     }
@@ -77,15 +114,15 @@ public class VPort extends AbstractFormType implements Serializable {
         this.isCraneStart = isCraneStart;
     }
 
-    /****************************************************/
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String getName() {
         // TODO Auto-generated method stub
         return name;
+    }
+
+    /****************************************************/
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -133,44 +170,6 @@ public class VPort extends AbstractFormType implements Serializable {
         this.isMeetWeightCond = isMeetWeightCond;
     }
 
-    public VPort() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-    public VPort(String pname, String state, double weight, double quayRate, String x_coor, String y_coor, boolean
-            isCraneStart, int sortFlag) {
-        super();
-        this.pname = pname;
-        this.State = state;
-        this.quayRate = quayRate;
-        this.weight = weight;
-        this.isCraneStart = isCraneStart;
-        this.x_coor = x_coor;
-        this.y_coor = y_coor;
-        this.sortFlag = sortFlag;
-    }
-
-
-    public VPort(String name, String pname, double quayRate, double weight, boolean isCraneStart, String eStart,
-                 String eEnd, boolean isMeetWeightCond, String state, double cost, String x_coor, String y_coor,
-                 double sortFlag) {
-        super();
-        this.name = name;
-        this.pname = pname;
-        this.quayRate = quayRate;
-        this.weight = weight;
-        this.isCraneStart = isCraneStart;
-        EStart = eStart;
-        EEnd = eEnd;
-        this.isMeetWeightCond = isMeetWeightCond;
-        State = state;
-        this.cost = cost;
-        this.x_coor = x_coor;
-        this.y_coor = y_coor;
-        this.sortFlag = sortFlag;
-    }
-
     public String getState() {
         return State;
     }
@@ -187,13 +186,13 @@ public class VPort extends AbstractFormType implements Serializable {
         this.cost = cost;
     }
 
-	@Override
-	public String toString() {
-		return "VPort [name=" + name + ", pname=" + pname + ", quayRate=" + quayRate + ", weight=" + weight
-				+ ", isCraneStart=" + isCraneStart + ", EStart=" + EStart + ", EEnd=" + EEnd + ", isMeetWeightCond="
-				+ isMeetWeightCond + ", State=" + State + ", cost=" + cost + ", x_coor=" + x_coor + ", y_coor=" + y_coor
-				+ ", sortFlag=" + sortFlag + "]";
-	}
+    @Override
+    public String toString() {
+        return "VPort [name=" + name + ", pname=" + pname + ", quayRate=" + quayRate + ", weight=" + weight
+                + ", isCraneStart=" + isCraneStart + ", EStart=" + EStart + ", EEnd=" + EEnd + ", isMeetWeightCond="
+                + isMeetWeightCond + ", State=" + State + ", cost=" + cost + ", x_coor=" + x_coor + ", y_coor=" + y_coor
+                + ", sortFlag=" + sortFlag + "]";
+    }
 
 
 }

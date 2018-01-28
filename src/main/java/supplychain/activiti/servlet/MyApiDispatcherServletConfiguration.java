@@ -35,6 +35,11 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @EnableAsync
 @EnableWebMvc
 public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
+    // webSocket
+    private static final String WEBSOCKET_SERVER = "/webSocketServer";
+    private static final String ECHO = "/echo";
+    // 不支持webSocket的话用sockjs
+    private static final String SOCKJS = "/sockjs/webSocketServer";
     //
     @Autowired
     protected ObjectMapper objectMapper;
@@ -47,12 +52,6 @@ public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter
     public SessionLocaleResolver localeResolver() {
         return new SessionLocaleResolver();
     }
-
-    // webSocket  
-    private static final String WEBSOCKET_SERVER = "/webSocketServer";
-    private static final String ECHO = "/echo";
-    // 不支持webSocket的话用sockjs  
-    private static final String SOCKJS = "/sockjs/webSocketServer";
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

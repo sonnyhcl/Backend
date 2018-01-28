@@ -43,6 +43,25 @@ public class Weagon extends AbstractFormType implements Serializable {
         // TODO Auto-generated constructor stub
     }
 
+    public Weagon(String name, String pid, String w_id, String w_Name, String x_Coor, String y_Coor, String w_Velocity,
+                  Date start, Date end, Date pArri, boolean needPlan, int planRes, Location w_TargLoc, boolean isArrival) {
+        super();
+        this.name = name;
+        this.pid = pid;
+        W_id = w_id;
+        W_Name = w_Name;
+        X_Coor = x_Coor;
+        Y_Coor = y_Coor;
+        W_Velocity = w_Velocity;
+        Start = start;
+        End = end;
+        this.pArri = pArri;
+        this.needPlan = needPlan;
+        this.planRes = planRes;
+        W_TargLoc = w_TargLoc;
+        this.isArrival = isArrival;
+    }
+
     public String getW_id() {
         return W_id;
     }
@@ -138,6 +157,10 @@ public class Weagon extends AbstractFormType implements Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public Object convertFormValueToModelValue(String propertyValue) {
         // TODO Auto-generated method stub
@@ -158,34 +181,11 @@ public class Weagon extends AbstractFormType implements Serializable {
         this.pid = pid;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public boolean getIsArrival() {
         return isArrival;
     }
 
     public void setIsArrival(boolean isArrival) {
-        this.isArrival = isArrival;
-    }
-
-    public Weagon(String name, String pid, String w_id, String w_Name, String x_Coor, String y_Coor, String w_Velocity,
-                  Date start, Date end, Date pArri, boolean needPlan, int planRes, Location w_TargLoc, boolean isArrival) {
-        super();
-        this.name = name;
-        this.pid = pid;
-        W_id = w_id;
-        W_Name = w_Name;
-        X_Coor = x_Coor;
-        Y_Coor = y_Coor;
-        W_Velocity = w_Velocity;
-        Start = start;
-        End = end;
-        this.pArri = pArri;
-        this.needPlan = needPlan;
-        this.planRes = planRes;
-        W_TargLoc = w_TargLoc;
         this.isArrival = isArrival;
     }
 

@@ -11,8 +11,8 @@ import java.util.List;
 
 public class SystemWebSocketHandler implements WebSocketHandler {
     public static final String USERNAME = "userName";
-    private static Logger logger = LoggerFactory.getLogger(SystemWebSocketHandler.class);
     protected final static List<WebSocketSession> sessions = Collections.synchronizedList(new ArrayList<WebSocketSession>());
+    private static Logger logger = LoggerFactory.getLogger(SystemWebSocketHandler.class);
 
     public SystemWebSocketHandler() {
     }

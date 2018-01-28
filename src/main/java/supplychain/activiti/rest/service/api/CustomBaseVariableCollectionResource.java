@@ -1,7 +1,6 @@
 package supplychain.activiti.rest.service.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import supplychain.global.GlobalVariables;
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.rest.exception.ActivitiConflictException;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import supplychain.global.GlobalVariables;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

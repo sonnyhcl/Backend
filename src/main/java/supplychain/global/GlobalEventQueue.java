@@ -1,8 +1,8 @@
 package supplychain.global;
 
+import org.springframework.stereotype.Component;
 import supplychain.event.ACTFEvent;
 import supplychain.event.VWFEvent;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.LinkedBlockingQueue;
 

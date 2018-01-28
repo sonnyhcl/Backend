@@ -172,7 +172,8 @@ public class CustomActivitiTaskFormService {
         for (HistoricVariableInstance historicVariableInstance : historicVariables) {
             ProcessInstanceVariableRepresentation processInstanceVariableRepresentation = new
                     ProcessInstanceVariableRepresentation(
-                    historicVariableInstance.getVariableName(), historicVariableInstance.getVariableTypeName(), historicVariableInstance.getValue());
+                    historicVariableInstance.getVariableName(), historicVariableInstance.getVariableTypeName(),
+                    historicVariableInstance.getValue());
             processInstanceVariables.put(historicVariableInstance.getId(), processInstanceVariableRepresentation);
         }
 

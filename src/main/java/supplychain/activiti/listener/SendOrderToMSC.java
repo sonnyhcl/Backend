@@ -5,7 +5,6 @@ import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
@@ -22,18 +21,18 @@ public class SendOrderToMSC implements TaskListener, Serializable {
     @Autowired
     private RuntimeService runtimeService;
     @Autowired
-	private GlobalVariables globalVariables;
+    private GlobalVariables globalVariables;
 
     @Override
     public void notify(DelegateTask dT) {
         // TODO Auto-generated method stub
         String mpid = dT.getProcessInstanceId();
         HashMap<String, Object> msgData = (HashMap<String, Object>) runtimeService.getVariables(mpid);
-        
+
         String spn = (String) msgData.get("SparePartName");
         double spw = globalVariables.getSpwMap().get(spn);
         runtimeService.setVariable(mpid, "SparePartWeight", spw); //在Order的时候知道spare part weight
-        System.out.println("spare part weight : "+spw);
+        System.out.println("spare part weight : " + spw);
         /*********************************Send to VMC******************************************/
 //		msgData.put("msgType" ,"Msg_FilterVPort");
 //		runtimeService.startProcessInstanceByMessage("Msg_StartVMC" , msgData);
