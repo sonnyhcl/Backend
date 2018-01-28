@@ -14,11 +14,11 @@ public class GlobalMqttClient {
 
     private String clientEndpoint = "a1sg3bdz3kie9t.iot.us-east-1.amazonaws.com";  // replace <prefix> and <region> with your own
     private String clientId = "activiti"; // replace with your own client ID. Use unique client IDs for concurrent connections.
-    private String certificateFile = "activiti.cert.pem";  // X.509 based certificate file
-    private String privateKeyFile = "activiti.private.key";   // PKCS#1 or PKCS#8 PEM encoded private key file
+    private String certificateFile = "G:\\Lab\\Backend\\src\\main\\resources\\activiti.cert.pem";  // X.509 based certificate file
+    private String privateKeyFile = "G:\\Lab\\Backend\\src\\main\\resources\\activiti.private.key";   // PKCS#1 or PKCS#8 PEM encoded private key file
 
 
-    //  Wildcard	Description
+    //  Wildcard Description
     //  #:  Must be the last character in the topic to which you are subscribing. Works as a wildcard by matching the current
     //      tree and all subtrees. For example, a subscription to Sensor/# will receive messages published to Sensor/,
     //      Sensor/temp, Sensor/temp/room1, but not the messages published to Sensor.
@@ -29,6 +29,7 @@ public class GlobalMqttClient {
 
     public GlobalMqttClient() throws
             AWSIotException {
+        System.out.println("单例mqtt客户端实例化");
         SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(certificateFile, privateKeyFile);
         this.client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
         connect();

@@ -10,7 +10,6 @@
     <artifactId>activiti-app</artifactId>
     <packaging>war</packaging>
     <properties>
-        <jetty.version>8.1.13.v20130916</jetty.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
     </properties>
@@ -22,6 +21,7 @@
             <version>1.1</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
@@ -37,61 +37,49 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        <!-- jetty -->
-        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-jsp -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-jsp</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>1.3.5.RELEASE</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.8.7</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.9.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.9.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.9.2</version>
         </dependency>
+
         <!--aws iot dependencies-->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-iot-device-sdk-java</artifactId>
             <version>1.1.1</version>
         </dependency>
+
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-iot-device-sdk-java-samples</artifactId>
@@ -102,7 +90,6 @@
 
     <!-- BUILD -->
     <build>
-
         <finalName>activiti-app</finalName>
 
         <resources>
@@ -150,7 +137,6 @@
 
         <pluginManagement>
             <plugins>
-
                 <!--This plugin's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
                 <plugin>
@@ -162,15 +148,9 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>
-                                            org.zeroturnaround
-                                        </groupId>
-                                        <artifactId>
-                                            jrebel-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.1.1,)
-                                        </versionRange>
+                                        <groupId> org.zeroturnaround</groupId>
+                                        <artifactId>jrebel-maven-plugin</artifactId>
+                                        <versionRange> [1.1.1,)</versionRange>
                                         <goals>
                                             <goal>generate</goal>
                                         </goals>
@@ -183,28 +163,8 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
-                <!-- jetty插件, 设定context path与spring profile -->
-                <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>${jetty.version}</version>
-                    <configuration>
-                        <webAppConfig>
-                            <contextPath>/${project.artifactId}</contextPath>
-                        </webAppConfig>
-                        <reload>automatic</reload>
-                        <scanIntervalSeconds>3</scanIntervalSeconds>
-                        <connectors>
-                            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                                <port>8084</port>
-                            </connector>
-                        </connectors>
-                        <stopKey>stop</stopKey>
-                        <stopPort>8082</stopPort>
-                    </configuration>
-                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
-
 </project>
