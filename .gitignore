@@ -36,3 +36,6 @@ transaction-logs
 .flattened-pom.xml
 secrets.yml
 *.iml
+
+activiti.cert.pem
+activiti.private.key
