@@ -96,12 +96,23 @@
         │       │   ├── GlobalMqttClient.java
         │       │   └── GlobalVariables.java
         │       ├── repository
+        │       │   └── LocationRepository.java
         │       ├── service
+        │       │   ├── BaseService.java
+        │       │   ├── LocationServiceImpl.java
+        │       │   └── LocationService.java
         │       ├── util
         │       │   ├── DateUtil.java
         │       │   ├── EqualUtil.java
         │       │   └── Topic.java
         │       └── web
+        │           ├── AbstractController.java
+        │           ├── CoordController.java
+        │           ├── ProcessInstancesResource.java
+        │           ├── TaskController.java
+        │           ├── TaskFormResource.java
+        │           ├── VesselController.java
+        │           └── VesselProcessInstanceVariableDataResource.java
         └── resources
             ├── activiti.cfg.xml
             ├── log4j.properties    # logger conf
