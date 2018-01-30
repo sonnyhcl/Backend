@@ -49,7 +49,7 @@ public class VPortRestVariableConverter implements RestVariableConverter {
     public VPort Map2VPort(HashMap<String, Object> map) {
         // TODO Auto-generated method stub
         String pname = map.get("pname") == null ? null : map.get("pname").toString();
-        System.out.println(map.get("quayRate"));
+//        System.out.println(map.get("quayRate"));
         double quayRate = map.get("quayRate") == null ? null : Double.parseDouble(map.get("quayRate").toString());
         double weight = map.get("weight") == null ? null : Double.parseDouble(map.get("weight").toString());
         boolean isCraneStart = map.get("isCraneStart") == null ? null : (boolean) map.get("isCraneStart");
