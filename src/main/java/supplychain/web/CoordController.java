@@ -4,8 +4,7 @@ import org.activiti.engine.impl.util.json.JSONArray;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import supplychain.entity.Location;
@@ -37,15 +36,31 @@ public class CoordController extends AbstractController {
             runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
         } else {
             System.out.println("用lambda");
-            callLambda(environment.getProperty("lambda.url"));
+//            runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
+            callLambda(environment.getProperty("lambda.url"), mp);
         }
-        return new ResponseEntity<HashMap<String, Object>>(mp, HttpStatus.OK);
+        return new ResponseEntity<>(mp, HttpStatus.OK);
     }
 
-    private void callLambda(String url) {
-        String s = restTemplate.getForEntity(url, String.class).getBody();
-        JSONObject res = new JSONObject(s);
-        System.out.println(res.toString());
+    @RequestMapping(value = "/coord/runtime/{MsgName}", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<HashMap<String, Object>> startProcessInstanceByLambdaMessage(@PathVariable("MsgName") String Msg_Name, @RequestBody HashMap<String, Object> mp)
+            throws InterruptedException {
+        System.out.println("startProcessInstanceByLambdaMessage:\n"+ mp.toString());
+        runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
+        return new ResponseEntity<>(mp, HttpStatus.OK);
+    }
+
+    private void callLambda(String url, HashMap<String, Object> mp) {
+        // generate headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        // generate postdata
+        JSONObject postData = new JSONObject(mp);
+        HttpEntity<String> entity = new HttpEntity<String>(postData.toString(), headers);
+        // generate post
+        String json = restTemplate.exchange(url, HttpMethod.POST, entity, String.class).getBody();
+//        System.out.println(json);
     }
 
     @RequestMapping(value = "/getPaths", method = RequestMethod.GET, produces = "application/json")

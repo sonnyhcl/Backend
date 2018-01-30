@@ -3,7 +3,6 @@ package supplychain.global;
 import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotMqttClient;
 import com.amazonaws.services.iot.client.AWSIotQos;
-import com.amazonaws.services.iot.client.sample.sampleUtil.SampleUtil;
 import org.springframework.stereotype.Component;
 import supplychain.util.Topic;
 
@@ -30,10 +29,10 @@ public class GlobalMqttClient {
     public GlobalMqttClient() throws
             AWSIotException {
         System.out.println("单例mqtt客户端实例化");
-        SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(certificateFile, privateKeyFile);
-        this.client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
-        connect();
-        subscribe();
+//        SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(certificateFile, privateKeyFile);
+//        this.client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
+//        connect();
+//        subscribe();
     }
 
     private void connect() throws AWSIotException {
