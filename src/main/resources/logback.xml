@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="false">
+<!-- We don't need the logback.xml to be checked every time, we will trigger in java
+the reload if we need it -->
+
+    <property file="/opt/program/log.properties"/>
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <!-- To enable JMX Management -->
+    <!--<jmxConfigurator/>-->
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} rerer [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+     <appender name="generalFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+         <file>${LOG_GENERAL_PATH}.log</file>
+         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>LOG_GENERAL_FILENAME.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+          </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <appender name="httpFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+         <file>${LOG_HTTP_PATH}.log</file>
+         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>LOG_HTTP_FILENAME.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+          </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+       <appender name="errorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+         <file>LOG_ERROR_PATH.log</file>
+         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>LOG_ERROR_FILENAME.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+          </rollingPolicy>
+        <encoder>
+            <pattern>${PATTERN_LOGS}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+      </appender>
+
+     <logger name="http" level="DEBUG" additivity="false">
+        <appender-ref ref="httpFile"/>
+        <appender-ref ref="generalFile"/>
+        <appender-ref ref="console"/>
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="console"/>
+        <appender-ref ref="generalFile"/>
+        <appender-ref ref="errorFile"/>
+    </root>
+</configuration>

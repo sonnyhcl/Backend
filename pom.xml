@@ -23,6 +23,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
             <version>4.3.3.RELEASE</version>
@@ -74,11 +82,11 @@
         </dependency>
 
         <!--aws iot dependencies-->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-iot-device-sdk-java</artifactId>
-            <version>1.1.1</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>com.amazonaws</groupId>-->
+        <!--<artifactId>aws-iot-device-sdk-java</artifactId>-->
+        <!--<version>1.1.1</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -148,9 +156,9 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId> org.zeroturnaround</groupId>
+                                        <groupId>org.zeroturnaround</groupId>
                                         <artifactId>jrebel-maven-plugin</artifactId>
-                                        <versionRange> [1.1.1,)</versionRange>
+                                        <versionRange>[1.1.1,)</versionRange>
                                         <goals>
                                             <goal>generate</goal>
                                         </goals>
