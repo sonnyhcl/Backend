@@ -34,6 +34,7 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
         w.setPid(pid);
         vars.put("W_Info", w);
         vars.put("DestPort", new WPort());
+        vars.put("W_TargLocList", runtimeService.getVariable(pid, "W_TargLocList"));
         runtimeService.setVariable(pid, "isArriving", false);
         runtimeService.setVariable(pid, "W_Info", w);
 

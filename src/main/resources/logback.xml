@@ -15,12 +15,12 @@ the reload if we need it -->
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} rerer [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
      <appender name="generalFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-         <file>${LOG_GENERAL_PATH}.log</file>
+         <file>LOG_GENERAL_PATH.log</file>
          <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>LOG_GENERAL_FILENAME.%d{yyyy-MM-dd}.log</fileNamePattern>
             <MaxHistory>30</MaxHistory>
@@ -48,7 +48,7 @@ the reload if we need it -->
             <MaxHistory>30</MaxHistory>
           </rollingPolicy>
         <encoder>
-            <pattern>${PATTERN_LOGS}</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
@@ -61,7 +61,7 @@ the reload if we need it -->
         <appender-ref ref="console"/>
     </logger>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="console"/>
         <appender-ref ref="generalFile"/>
         <appender-ref ref="errorFile"/>

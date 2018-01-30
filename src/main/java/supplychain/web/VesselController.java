@@ -127,6 +127,7 @@ public class VesselController extends AbstractController {
     @RequestMapping(value = "/zbq/variables/{pid}/{variableName}", method = RequestMethod.GET)
     public ResponseEntity<String> queryVariablesByName(@PathVariable String pid, @PathVariable String variableName) {
         JSONObject result = globalVariables.getVariableByName(pid, variableName);
+        System.out.println(result.toString());
         return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
     }
 

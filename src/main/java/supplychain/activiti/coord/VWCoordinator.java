@@ -58,6 +58,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
             //获取Vessel , Weagon 两边的港口列表
             List<VPort> vTargLocList = getVports(vpid, "TargLocList");
             List<WPort> wTargLocList = getWports(wpid, "W_TargLocList");
+            System.out.println(wTargLocList.toString());
             double sp_weight = (double) runtimeService.getVariable(wpid, "SparePartWeight");
 
             HashMap<String, VPort> vpMap = new HashMap<String, VPort>();
@@ -211,6 +212,8 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 
         @SuppressWarnings("unchecked")
         List<WPort> vtargLocMap = (List<WPort>) runtimeService.getVariable(wpid, vname);
+        System.out.println("获取W港口");
+        System.out.println(runtimeService.getVariable(wpid, vname).toString());
         return vtargLocMap;
     }
 }
