@@ -805,7 +805,7 @@ angular.module('activitiApp')
    	 		    	var curMs =$scope.dateStr2ms($scope.curTime)
    	 		    	var st = ($scope.dateStr2ms($scope.newED) - curMs)/(1000*60*60);
    	 		        $scope.leftTime = st.toFixed(2);
-   	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大1000倍， 相当与实际时间过了16.67分钟
+   	 		    	var nextMs = curMs+1000*$scope.ZoomInVal; // 此处放大500倍， 相当与实际时间过了8.335分钟
    	 		        $scope.curTime= $scope.ms2dateStr(nextMs); 
 //   		 		    console.log(" $scope.curTime : " , $scope.curTime);
    	 		        if($scope.vstate == 'anchoring' && $scope.newST != null){ //出现延误
@@ -841,7 +841,7 @@ angular.module('activitiApp')
 			console.log("$scope.estart : " , $scope.estart, "$scope.eend : " , $scope.eend);
 			console.log("$scope.dx : " , $scope.dx, "$scope.dy: " , $scope.dy);
 			console.log("$scope.newED : " , $scope.newED);
-			if($scope.dateStr2ms(t_newEd) > $scope.dateStr2ms(t_newSt)){ //首先保证新的新港时间大于新的靠港时间
+			if($scope.dateStr2ms(t_newEd) > $scope.dateStr2ms(t_newSt)){ //首先保证新的离港时间大于新的靠港时间
 				if($scope.dateStr2ms(t_newSt) > $scope.dateStr2ms($scope.curTime)){//新的靠港时间应该大于当前时间
 				  if($scope.dateStr2ms(t_newEd) < $scope.dateStr2ms($scope.newED)){
 					  console.log("相对于上一次离港时间提前");
@@ -931,7 +931,7 @@ angular.module('activitiApp')
 		    		    			 'msgType' : "msg_UpdateDest" ,
 		    		    			 'V_pid'  : $scope.model.task.processInstanceId ,
 		    		    			 'W_pid' : $scope.pvars[$scope.pidxs['W_pid']].value ,
-		    		    			 'reason' : $scope.pvars[$scope.pidxs['PrePort']].value.pname+"港 ： 延误 ： "+$scope.dy+"h"
+		    		    			 'reason' : $scope.pvars[$scope.pidxs['PrePort']].value.pname+"港 ："+ "延误 :  "+$scope.dx+"h,"+"延期 ： "+$scope.dy+"h"
 		    		    	};
 		    		    	$http.post(ACTIVITI.CONFIG.contextRoot + "/api/coord/messages/Msg_StartVWC", data2VWC)
 		    	             .success(function (data) {
