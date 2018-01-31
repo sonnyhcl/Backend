@@ -34,7 +34,7 @@ public class CustomArrayListRestVariableConverter implements RestVariableConvert
             } else if (resList.get(0).get("name").equals("WPort")) {
                 return Map2WPortList(resList);
             } else {
-                System.out.println("ArrayList getVariableValur fail!");
+                System.out.println("ArrayList getVariableValue fail!");
                 return null;
             }
 
@@ -46,7 +46,7 @@ public class CustomArrayListRestVariableConverter implements RestVariableConvert
     @Override
     public void convertVariableValue(Object variableValue, RestVariable result) {
         // TODO Auto-generated method stub
-        System.out.println("result" + variableValue.getClass());
+//        System.out.println("result " + variableValue.getClass());
 
         if (variableValue != null) {
             result.setValue(variableValue);

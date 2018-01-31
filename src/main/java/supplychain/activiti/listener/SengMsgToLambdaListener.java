@@ -46,13 +46,13 @@ public class SengMsgToLambdaListener implements ExecutionListener, Serializable 
             postData.put("key2", vars.get("key2"));
             postData.put("key3", vars.get("key3"));
         } catch (JSONException e) {
-            System.out.println(e.toString());
+            System.out.println("sengMsgToLambdaListener" + e.toString());
         }
 
-        System.out.println(postData.toString());
+        System.out.println("sengMsgToLambdaListener" + postData.toString());
         HttpEntity<String> entity = new HttpEntity<String>(postData.toString(), headers);
 
         String json = restTemplate.exchange(url, HttpMethod.POST, entity, String.class).getBody();
-        System.out.println(json);
+        System.out.println("SengMsgToLambdaListener: " + json);
     }
 }

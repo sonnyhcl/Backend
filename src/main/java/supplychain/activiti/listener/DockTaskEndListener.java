@@ -68,7 +68,7 @@ public class DockTaskEndListener implements ExecutionListener, Serializable {
                 }
             }
 
-            System.out.println(now.toString());
+            System.out.println("now" + now.toString());
         }
         runtimeService.setVariable(pid, "TargLocList", targLocList);
         runtimeService.setVariable(pid, "PrePort", preport);

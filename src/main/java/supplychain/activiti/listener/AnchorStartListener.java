@@ -34,7 +34,7 @@ public class AnchorStartListener implements ExecutionListener, Serializable {
         HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
                 .getVariables(pid);
         VPort preport = (VPort) vars.get("PrePort");
-        System.out.println(preport.toString());
+        System.out.println("anchStartListener: " + preport.toString());
         @SuppressWarnings("unchecked")
         List<VPort> targLocList = (List<VPort>) vars.get("TargLocList");
         for (int i = 0; i < targLocList.size(); i++) {

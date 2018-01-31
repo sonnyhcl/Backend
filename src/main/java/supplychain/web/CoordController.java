@@ -67,7 +67,7 @@ public class CoordController extends AbstractController {
     public int hello() {
         String url = "http://restapi.amap.com/v3/direction/driving?origin=115.13506,30.21027&destination=115.5674,29.83692&output=json&key=ec15fc50687bd2782d7e45de6d08a023";
         String s = restTemplate.getForEntity(url, String.class).getBody();
-        System.out.println(s);
+//        System.out.println(s);
         //  JSONObject json = new JSONObject(s);
         JSONObject res = new JSONObject(s);
         JSONObject route = (JSONObject) res.get("route");

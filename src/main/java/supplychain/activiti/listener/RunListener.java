@@ -28,7 +28,7 @@ public class RunListener implements TaskListener, Serializable {
     public void notify(DelegateTask exec) {
         // TODO Auto-generated method stub
         String pid = exec.getProcessInstanceId();
-        System.out.println(pid);
+        System.out.println("runListener" + pid);
 
         HashMap<String, Object> connVMData = (HashMap<String, Object>) runtimeService.getVariables(pid);
         connVMData.put("msgType", "msg_UpdateDest");

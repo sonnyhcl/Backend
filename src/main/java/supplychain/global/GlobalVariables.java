@@ -119,7 +119,7 @@ public class GlobalVariables {
                     }
                 }
                 if (createflag == true) {
-                    System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
+                    System.out.println("创建变量 ： " + variableName + " in " + pid + " process instance");
                     oldjvs.put(newVar);
                 }
             }

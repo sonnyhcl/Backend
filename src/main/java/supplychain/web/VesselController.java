@@ -67,7 +67,7 @@ public class VesselController extends AbstractController {
             // System.out.println("send lastId ：" + lastId +" --- e.getId() : "+e.getId());
             // if(e.getId()>=lastId) {
             result.put(e.getJson());
-            System.out.println(e.getJson());
+            System.out.println("sevents: " + e.getJson());
             // }
         }
 
@@ -127,7 +127,7 @@ public class VesselController extends AbstractController {
     @RequestMapping(value = "/zbq/variables/{pid}/{variableName}", method = RequestMethod.GET)
     public ResponseEntity<String> queryVariablesByName(@PathVariable String pid, @PathVariable String variableName) {
         JSONObject result = globalVariables.getVariableByName(pid, variableName);
-        System.out.println(result.toString());
+//        System.out.println(result.toString());
         return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
     }
 
@@ -161,7 +161,7 @@ public class VesselController extends AbstractController {
     @RequestMapping(value = "/zbq/variables/{processInstanceId}/complete", method = RequestMethod.PUT)
     public ResponseEntity<List<RestVariable>> updateVariablesCacheAndEngine(@PathVariable String processInstanceId,
                                                                             HttpServletRequest request, HttpServletResponse
-                                                                                        response) throws JsonProcessingException {
+                                                                                    response) throws JsonProcessingException {
 
         // System.out.println("/zbq/variables/ update :"+ body);
 

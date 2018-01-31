@@ -50,7 +50,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
         runtimeService.setVariable(vpid, "W_pid", wpid);
         globalVariables.createOrUpdateVariableByNameAndValue(vpid, "W_pid", wpid);
 
-
+        System.out.println("进入VWCCoordinator ");
         //需要计算目的地
         if (msgType.equals("msg_UpdateDest")) {
             //TODO : handle Anchring/Docking duration changes or  handle ET changes
@@ -212,8 +212,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 
         @SuppressWarnings("unchecked")
         List<WPort> vtargLocMap = (List<WPort>) runtimeService.getVariable(wpid, vname);
-        System.out.println("获取W港口");
-        System.out.println(runtimeService.getVariable(wpid, vname).toString());
+        System.out.println("获取W港口"+runtimeService.getVariable(wpid, vname));
         return vtargLocMap;
     }
 }

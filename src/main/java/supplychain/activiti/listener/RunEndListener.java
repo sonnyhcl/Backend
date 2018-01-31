@@ -30,7 +30,7 @@ public class RunEndListener implements TaskListener, Serializable {
         String pid = exec.getProcessInstanceId();
         HashMap<String, Object> vars = (HashMap<String, Object>) runtimeService
                 .getVariables(pid);
-        System.out.println(pid);
+        System.out.println("runEndListener" + pid);
         boolean isArriving = false;
         if (vars.get("isArriving") != null) {
             isArriving = (Boolean) vars.get("isArriving");
