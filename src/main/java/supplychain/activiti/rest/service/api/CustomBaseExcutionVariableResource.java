@@ -186,7 +186,8 @@ public class CustomBaseExcutionVariableResource extends BaseExecutionVariableRes
         // be updated using PUT
         boolean hasVariable = hasVariableOnScope(execution, name, scope);
         if (isNew && hasVariable) {
-            throw new ActivitiException("Variable '" + name + "' is already present on execution '" + execution.getId() + "'.");
+            System.out.println("Variable '" + name + "' is already present on execution '" + execution.getId() + "'.");
+//            throw new ActivitiException("Variable '" + name + "' is already present on execution '" + execution.getId() + "'.");
         }
 
         if (!isNew && !hasVariable) {

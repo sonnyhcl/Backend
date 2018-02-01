@@ -230,7 +230,7 @@ public class VesselController extends AbstractController {
         RestVariable restVariable = null;
         try {
             restVariable = objectMapper.readValue(request.getInputStream(), RestVariable.class);
-            System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete :" + restVariable);
+            System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete :" + restVariable.toString());
         } catch (Exception e) {
             throw new ActivitiIllegalArgumentException(
                     "request body could not be transformed to a RestVariable instance.");
@@ -245,7 +245,7 @@ public class VesselController extends AbstractController {
         }
 
         //PUT to engine
-        result = baseExcutionVariableResource.setSimpleVariable(restVariable, execution, false);
+        result = baseExcutionVariableResource.setSimpleVariable(restVariable, execution, true);
         //PUT to cache
         globalVariables.createOrUpdateVariableByRestVar(processInstanceId, variableName, restVariable);
 

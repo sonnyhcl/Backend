@@ -46,9 +46,8 @@ public class SendOrderToMSC implements TaskListener, Serializable {
         msgData.put("OrderId", orderId.toString());
         msgData.put("msgType", "Msg_StartSupplier");
         msgData.put("SparePartWeight", spw);
-        msgData.put("msgType", "Msg_StartMSC"); // 这里不能落了msgType
         //启动Supplier Process
-        globalVariables.sendMessageToCoordinator("Msg_StartMSC", msgData);
+        globalVariables.sendMessageToCoordinator("Msg_StartSupplier", msgData);
 //        runtimeService.startProcessInstanceByMessage("Msg_StartMSC", msgData);
     }
 
