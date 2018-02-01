@@ -153,8 +153,7 @@ public class VesselController extends AbstractController {
     /**
      * PUT to global variables cache and process engine
      *
-     * @param pid
-     * @param body
+     * @param processInstanceId
      * @return
      * @throws JsonProcessingException
      */
@@ -223,9 +222,6 @@ public class VesselController extends AbstractController {
                                                                              @PathVariable String variableName,
                                                                              HttpServletRequest request) throws
             JsonProcessingException {
-
-        // System.out.println("/zbq/variables/ update :"+ body);
-
         // 上传到流程引擎
         Execution execution = baseExcutionVariableResource.getProcessInstanceFromRequest(processInstanceId);
 
@@ -234,6 +230,7 @@ public class VesselController extends AbstractController {
         RestVariable restVariable = null;
         try {
             restVariable = objectMapper.readValue(request.getInputStream(), RestVariable.class);
+            System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete :" + restVariable);
         } catch (Exception e) {
             throw new ActivitiIllegalArgumentException(
                     "request body could not be transformed to a RestVariable instance.");
@@ -252,6 +249,7 @@ public class VesselController extends AbstractController {
         //PUT to cache
         globalVariables.createOrUpdateVariableByRestVar(processInstanceId, variableName, restVariable);
 
+        System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete done...");
         return new ResponseEntity<RestVariable>(result, HttpStatus.OK);
     }
 

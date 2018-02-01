@@ -42,14 +42,14 @@ public class SendOrderToMSC implements TaskListener, Serializable {
         //TODO : 将当前的Order数据发送给msMSC
         System.out.println("Send Ordder to Msc");
         UUID orderId = java.util.UUID.randomUUID();
-        System.out.println("orderId : " + orderId);
         msgData.put("M_pid", mpid);
         msgData.put("OrderId", orderId.toString());
         msgData.put("msgType", "Msg_StartSupplier");
         msgData.put("SparePartWeight", spw);
+        msgData.put("msgType", "Msg_StartMSC"); // 这里不能落了msgType
         //启动Supplier Process
-        runtimeService.startProcessInstanceByMessage("Msg_StartMSC", msgData);
-        System.out.println("MSC实例已启动");
+        globalVariables.sendMessageToCoordinator("Msg_StartMSC", msgData);
+//        runtimeService.startProcessInstanceByMessage("Msg_StartMSC", msgData);
     }
 
 

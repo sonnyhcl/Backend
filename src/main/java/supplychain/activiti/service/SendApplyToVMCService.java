@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import supplychain.entity.Location;
 import supplychain.entity.Weagon;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -21,10 +22,12 @@ public class SendApplyToVMCService implements TaskListener, Serializable {
     private static final long serialVersionUID = 1855827506708169338L;
     @Autowired
     RuntimeService runtimeService;
+    @Autowired
+    private GlobalVariables globalVariables;
 
     @Override
     public void notify(DelegateTask dt) {
-        // TODO Auto-generated method stub
+        // TODO 没用了
         System.out.println("---------------Send Application to VMC------------------");
         System.out.println("Apply_Time : " + runtimeService.getVariable(dt.getExecutionId(), "appy_time"));
         Map<String, Object> vars = new HashMap<String, Object>();

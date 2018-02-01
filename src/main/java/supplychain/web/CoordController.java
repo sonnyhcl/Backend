@@ -4,14 +4,22 @@ import org.activiti.engine.impl.util.json.JSONArray;
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import supplychain.activiti.rest.service.api.CustomArrayListRestVariableConverter;
 import supplychain.entity.Location;
+import supplychain.entity.VPort;
+import supplychain.event.EventType;
+import supplychain.event.VWFEvent;
+import supplychain.global.GlobalEventQueue;
 import supplychain.global.GlobalVariables;
 
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -25,19 +33,19 @@ public class CoordController extends AbstractController {
     @Autowired
     private GlobalVariables globalVariables;
 
+    @Autowired
+    private GlobalEventQueue globalEventQueue;
+
     @RequestMapping(value = "/coord/messages/{MsgName}", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<HashMap<String, Object>> startProcessInstanceByMessage(@PathVariable("MsgName") String Msg_Name, @RequestBody HashMap<String, Object> mp)
             throws InterruptedException {
-        System.out.println("这里判断用不用");
         System.out.println(Msg_Name);
-        String useLambda = environment.getProperty("lambda.use");
-        if (useLambda.equals("no")) {
+        if (environment.getProperty("lambda.use").equals("no")) {
             System.out.println("不用lambda");
             runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
         } else {
             System.out.println("用lambda");
-//            runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
-            callLambda(environment.getProperty("lambda.url"), mp);
+            globalVariables.sendMessageToCoordinator(Msg_Name, mp);
         }
         return new ResponseEntity<>(mp, HttpStatus.OK);
     }
@@ -45,22 +53,29 @@ public class CoordController extends AbstractController {
     @RequestMapping(value = "/coord/runtime/{MsgName}", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<HashMap<String, Object>> startProcessInstanceByLambdaMessage(@PathVariable("MsgName") String Msg_Name, @RequestBody HashMap<String, Object> mp)
             throws InterruptedException {
-        System.out.println("startProcessInstanceByLambdaMessage:\n"+ mp.toString());
+        System.out.println("startProcessInstanceByLambdaMessage: " + mp.toString());
+        System.out.println(Msg_Name);
         runtimeService.startProcessInstanceByMessage(Msg_Name, mp);
+        System.out.println("startProcessInstanceByLambdaMessage done...");
         return new ResponseEntity<>(mp, HttpStatus.OK);
     }
 
-    private void callLambda(String url, HashMap<String, Object> mp) {
-        // generate headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
-        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-        // generate postdata
-        JSONObject postData = new JSONObject(mp);
-        HttpEntity<String> entity = new HttpEntity<String>(postData.toString(), headers);
-        // generate post
-        String json = restTemplate.exchange(url, HttpMethod.POST, entity, String.class).getBody();
-//        System.out.println(json);
+    @RequestMapping(value = "/coord/event", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<HashMap<String, Object>> getEventFromLambda(@RequestBody HashMap<String, Object> mp)
+            throws InterruptedException {
+        System.out.println("/coord/event: " + mp.toString());
+
+        @SuppressWarnings("unchecked")
+        List<HashMap<String, Object>> targLocMap = (List<HashMap<String, Object>>) mp.get("MSC_TargPorts");
+        CustomArrayListRestVariableConverter vpac = new CustomArrayListRestVariableConverter();
+        List<VPort> targLocList = vpac.Map2VPortList(targLocMap);
+
+        VWFEvent e = new VWFEvent(EventType.values()[(Integer) (mp.get("type"))]);
+        e.getData().put("createAt", (new Date()).toString());
+        e.getData().put("MSC_TargPorts", targLocList);
+        globalEventQueue.sendMsg(e);
+
+        return new ResponseEntity<>(mp, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getPaths", method = RequestMethod.GET, produces = "application/json")

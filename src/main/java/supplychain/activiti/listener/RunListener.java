@@ -7,6 +7,7 @@ import org.activiti.engine.delegate.TaskListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import supplychain.global.GlobalEventQueue;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class RunListener implements TaskListener, Serializable {
     private RuntimeService runtimeService;
     @Autowired
     private GlobalEventQueue globalEventQueue;
+    @Autowired
+    private GlobalVariables globalVariables;
 
     @Override
     public void notify(DelegateTask exec) {
@@ -34,10 +37,8 @@ public class RunListener implements TaskListener, Serializable {
         connVMData.put("msgType", "msg_UpdateDest");
         connVMData.put("W_pid", pid);
         connVMData.put("reason", "货车出发， 规划路径");
-        runtimeService.startProcessInstanceByMessage("Msg_StartVWC", connVMData);
+        globalVariables.sendMessageToCoordinator("Msg_StartVWC", connVMData);
+//        runtimeService.startProcessInstanceByMessage("Msg_StartVWC", connVMData);
         System.out.println("Send  Msg_StartVWC message to VWC to connect to vessel");
-
     }
-
 }
-

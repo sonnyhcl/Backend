@@ -48,7 +48,7 @@ public class InitListener implements ExecutionListener, Serializable {
     @Override
     public void notify(DelegateExecution dExe) {
         // TODO Auto-generated method stub
-        System.out.println("\033[33;1m 初始化vessel-process : \033[0m" + runtimeService);
+        System.out.println("初始化vessel-process " + runtimeService);
         Map<String, Object> vars = new HashMap<String, Object>();
         String pid = dExe.getProcessInstanceId();
         List<VPort> vports = new ArrayList<VPort>();

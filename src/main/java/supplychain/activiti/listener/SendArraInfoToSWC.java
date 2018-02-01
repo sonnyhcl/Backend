@@ -5,6 +5,7 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import supplychain.global.GlobalVariables;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -19,6 +20,8 @@ public class SendArraInfoToSWC implements ExecutionListener, Serializable {
 
     @Autowired
     private RuntimeService runtimeService;
+    @Autowired
+    private GlobalVariables globalVariables;
 
     @Override
     public void notify(DelegateExecution exec) {
@@ -31,7 +34,8 @@ public class SendArraInfoToSWC implements ExecutionListener, Serializable {
         vars.put("S_pid", spid);
         vars.put("msgType", "Msg_StartWeagon");
         // 启动Supplier Process
-        runtimeService.startProcessInstanceByMessage("Msg_StartSWC", vars);
+        globalVariables.sendMessageToCoordinator("Msg_StartSWC", vars);
+//        runtimeService.startProcessInstanceByMessage("Msg_StartSWC", vars);
         System.out.println("SWC实例已启动");
     }
 

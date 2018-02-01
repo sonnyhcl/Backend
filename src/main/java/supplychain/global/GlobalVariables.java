@@ -9,7 +9,13 @@ import org.activiti.rest.service.api.RestResponseFactory;
 import org.activiti.rest.service.api.engine.variable.RestVariable;
 import org.activiti.rest.service.api.engine.variable.RestVariable.RestVariableScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import supplychain.entity.Location;
 import supplychain.entity.VPort;
 
@@ -29,6 +35,24 @@ public class GlobalVariables {
     private Map<String, Double> carRateMp;
     private Map<String, Double> spwMap;
     private Location supLoc;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private Environment environment;
+
+    public void sendMessageToCoordinator(String msg, Map<String, Object> map) {
+        String url = environment.getProperty("lambda.url");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        JSONObject body = new JSONObject(map);
+        HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
+
+        System.out.println("sendMessageToCoordinator:\nmsg=" + msg + "\nentity=" + entity.toString());
+        restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+    }
 
     public GlobalVariables() {
         super();
@@ -155,7 +179,7 @@ public class GlobalVariables {
                     }
                 }
                 if (createflag == true) {
-                    System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
+                    System.out.println("创建变量 ： " + variableName + " in " + pid + " process instance");
                     oldjvs.put(newVar);
                 }
             }
@@ -191,7 +215,7 @@ public class GlobalVariables {
             }
 
             if (createflag == true) {
-                System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
+                System.out.println("创建变量 ： " + variableName + " in " + pid + " process instance");
                 jsonVars.put(result);
             }
         } else {
@@ -220,7 +244,7 @@ public class GlobalVariables {
             }
 
             if (createflag == true) {
-                System.out.println("创建变量 ： " + variableName + " in " + pid + "process instance");
+                System.out.println("创建变量 ： " + variableName + " in " + pid + " process instance");
                 jsonVars.put(result);
             }
         } else {
