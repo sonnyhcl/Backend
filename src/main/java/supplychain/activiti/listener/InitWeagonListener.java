@@ -27,11 +27,21 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
     @Override
     public void notify(DelegateExecution dExe) {
         // TODO Auto-generated method stub
-        System.out.println("\033[33;1m 初始化Weagon : \033[0m" + runtimeService);
+        System.out.println("初始化Wagon:" + runtimeService);
         Map<String, Object> vars = new HashMap<String, Object>();
         String pid = dExe.getProcessInstanceId();
-        Weagon w = (Weagon) runtimeService.getVariable(pid, "W_Info");
+
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> W_Info = (HashMap<String, Object>)runtimeService.getVariable(pid, "W_Info");
+        System.out.println(runtimeService.getVariable(pid, "W_Info").toString());
+
+        Weagon w = new Weagon();
+        w.setW_Name(W_Info.get("W_Name").toString());
+        w.setIsArrival((boolean)W_Info.get("isArrival"));
+        w.setX_Coor(W_Info.get("X_Coor").toString());
+        w.setY_Coor(W_Info.get("Y_Coor").toString());
         w.setPid(pid);
+
         vars.put("W_Info", w);
         vars.put("DestPort", new WPort());
         vars.put("W_TargLocList", runtimeService.getVariable(pid, "W_TargLocList"));
@@ -39,6 +49,7 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
 
         runtimeService.setVariable(pid, "isArriving", false);
         runtimeService.setVariable(pid, "W_Info", w);
+        System.out.println("init Wagon Listener done....\n");
     }
 
 }
