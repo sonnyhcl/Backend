@@ -243,6 +243,7 @@ public class VesselController extends AbstractController {
             throw new ActivitiIllegalArgumentException(
                     "Variable name in the body should be equal to the name used in the requested URL.");
         }
+        System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete begin...");
 
         //PUT to engine
         result = baseExcutionVariableResource.setSimpleVariable(restVariable, execution, true);

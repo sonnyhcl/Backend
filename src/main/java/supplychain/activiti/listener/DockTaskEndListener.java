@@ -49,7 +49,7 @@ public class DockTaskEndListener implements ExecutionListener, Serializable {
             System.out.println("dock end lastId: " + lastValidId);
         }
         String dpName = null;
-        if (vars.get("dpName") != null) {
+        if (vars.get("dpName") != null && vars.get("dpName") != "") {
             dpName = (String) vars.get("dpName");
         }
         boolean isMeet = false;
