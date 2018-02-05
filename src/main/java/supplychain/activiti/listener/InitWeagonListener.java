@@ -32,12 +32,12 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
         String pid = dExe.getProcessInstanceId();
 
         @SuppressWarnings("unchecked")
-        HashMap<String, Object> W_Info = (HashMap<String, Object>)runtimeService.getVariable(pid, "W_Info");
+        HashMap<String, Object> W_Info = (HashMap<String, Object>) runtimeService.getVariable(pid, "W_Info");
         System.out.println(runtimeService.getVariable(pid, "W_Info").toString());
 
         Weagon w = new Weagon();
         w.setW_Name(W_Info.get("W_Name").toString());
-        w.setIsArrival((boolean)W_Info.get("isArrival"));
+        w.setIsArrival((boolean) W_Info.get("isArrival"));
         w.setX_Coor(W_Info.get("X_Coor").toString());
         w.setY_Coor(W_Info.get("Y_Coor").toString());
         w.setPid(pid);
@@ -45,6 +45,7 @@ public class InitWeagonListener implements ExecutionListener, Serializable {
         vars.put("W_Info", w);
         vars.put("DestPort", new WPort());
         vars.put("W_TargLocList", runtimeService.getVariable(pid, "W_TargLocList"));
+        vars.put("SparePartWeight", runtimeService.getVariable(pid, "SparePartWeight"));
         globalVariables.createOrUpdateVariablesByValue(pid, vars);
 
         runtimeService.setVariable(pid, "isArriving", false);

@@ -17,6 +17,9 @@ import supplychain.global.GlobalEventQueue;
 import supplychain.global.GlobalVariables;
 
 import javax.inject.Inject;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -115,9 +118,14 @@ public class CoordController extends AbstractController {
             e.getData().put("V_pid", vpid);
             System.out.println("V_pid=" + vpid);
 
-            Date v_start_date = (Date) mp.get("StartTime");
-            e.getData().put("StartTime", v_start_date);
-            System.out.println("StartTime=" + v_start_date.toString());
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                Date v_start_date = df.parse((String) mp.get("StartTime"));
+                e.getData().put("StartTime", v_start_date);
+                System.out.println("StartTime=" + v_start_date.toString());
+            } catch (ParseException parseException) {
+                System.out.println("parseException StartTime error");
+            }
 
             String rea = (String) mp.get("Reason");
             e.getData().put("Reason", rea);
