@@ -191,8 +191,7 @@ public class GlobalVariables {
     }
 
     public JSONObject createOrUpdateVariableByNameAndValue(String pid, String variableName, Object value) {
-        RestVariable restVar = restResponseFactory.createRestVariable(variableName, value, RestVariableScope.LOCAL, pid,
-                RestResponseFactory.VARIABLE_PROCESS, false, null);
+        RestVariable restVar = restResponseFactory.createRestVariable(variableName, value, RestVariableScope.LOCAL, pid, RestResponseFactory.VARIABLE_PROCESS, false, null);
         JSONArray jsonVars = variableMap.get(pid);
 
         JSONObject result = null;

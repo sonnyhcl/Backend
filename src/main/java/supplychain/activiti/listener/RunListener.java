@@ -39,6 +39,6 @@ public class RunListener implements TaskListener, Serializable {
         connVMData.put("reason", "货车出发， 规划路径");
         globalVariables.sendMessageToCoordinator("Msg_StartVWC", connVMData);
 //        runtimeService.startProcessInstanceByMessage("Msg_StartVWC", connVMData);
-        System.out.println("Send  Msg_StartVWC message to VWC to connect to vessel");
+        System.out.println("Send Msg_StartVWC message to VWC to connect to vessel");
     }
 }

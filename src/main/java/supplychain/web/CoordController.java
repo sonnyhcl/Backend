@@ -60,10 +60,10 @@ public class CoordController extends AbstractController {
         return new ResponseEntity<>(mp, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/coord/event", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/coord/msc_event", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<HashMap<String, Object>> getEventFromLambda(@RequestBody HashMap<String, Object> mp)
             throws InterruptedException {
-        System.out.println("/coord/event: " + mp.toString());
+        System.out.println("/coord/msc_event: " + mp.toString());
 
         @SuppressWarnings("unchecked")
         List<HashMap<String, Object>> targLocMap = (List<HashMap<String, Object>>) mp.get("MSC_TargPorts");
@@ -75,6 +75,57 @@ public class CoordController extends AbstractController {
         e.getData().put("MSC_TargPorts", targLocList);
         globalEventQueue.sendMsg(e);
 
+        return new ResponseEntity<>(mp, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/coord/vwc_event", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<HashMap<String, Object>> getVWCEventFromLambda(@RequestBody HashMap<String, Object> mp)
+            throws InterruptedException {
+        System.out.println("/coord/vwc_event: " + mp.toString());
+
+        VWFEvent e = new VWFEvent(EventType.W_RUN);
+        e.getData().put("createAt", (new Date()).toString());
+
+        String state = (String) mp.get("State");
+        e.getData().put("State", state);
+        System.out.println("State=" + state);
+
+        @SuppressWarnings("unchecked")
+        JSONObject w_info = new JSONObject((HashMap<String, Object>) mp.get("W_Info"));
+        e.getData().put("W_Info", w_info);
+        System.out.println("W_Info=" + w_info.toString());
+
+        if (state.equals("success")) {
+            @SuppressWarnings("unchecked")
+            JSONObject wDestPort = new JSONObject((HashMap<String, Object>) mp.get("wDestPort"));
+            e.getData().put("wDestPort", wDestPort);
+            System.out.println("wDestPort=" + wDestPort.toString());
+
+            @SuppressWarnings("unchecked")
+            HashMap<String, Object> vDestPort = (HashMap<String, Object>) mp.get("vDestPort");
+            e.getData().put("vDestPort", vDestPort);
+            System.out.println("vDestPort=" + vDestPort.toString());
+
+            @SuppressWarnings("unchecked")
+            JSONObject pathResult = new JSONObject((HashMap<String, Object>) mp.get("pathResult"));
+            e.getData().put("pathResult", pathResult);
+            System.out.println("pathResult=" + pathResult.toString());
+
+            String vpid = (String) mp.get("V_pid");
+            e.getData().put("V_pid", vpid);
+            System.out.println("V_pid=" + vpid);
+
+            Date v_start_date = (Date) mp.get("StartTime");
+            e.getData().put("StartTime", v_start_date);
+            System.out.println("StartTime=" + v_start_date.toString());
+
+            String rea = (String) mp.get("Reason");
+            e.getData().put("Reason", rea);
+            System.out.println("Reason=" + rea);
+        }
+        globalEventQueue.sendMsg(e);
+
+        System.out.println("/coord/vwc_event: " + mp.toString() + " done...");
         return new ResponseEntity<>(mp, HttpStatus.OK);
     }
 

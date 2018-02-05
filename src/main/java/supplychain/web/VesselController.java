@@ -185,10 +185,9 @@ public class VesselController extends AbstractController {
      * @throws JsonProcessingException
      */
     @RequestMapping(value = "/zbq/variables/{processInstanceId}/{variableName}", method = RequestMethod.PUT)
-    public ResponseEntity<RestVariable> updateVariablesByNameToCache(@PathVariable String processInstanceId, @PathVariable
-            String variableName,
-                                                                     HttpServletRequest request) throws JsonProcessingException {
-        Execution execution = baseExcutionVariableResource.getProcessInstanceFromRequest(processInstanceId);
+    public ResponseEntity<RestVariable> updateVariablesByNameToCache(@PathVariable String processInstanceId, @PathVariable String variableName, HttpServletRequest request) throws JsonProcessingException {
+        System.out.println("/zbq/variables/processInstanceId=" + processInstanceId + "\t/variableName=" + variableName + " put begin");
+//        Execution execution = baseExcutionVariableResource.getProcessInstanceFromRequest(processInstanceId);
         RestVariable restVariable = null;
         try {
             restVariable = objectMapper.readValue(request.getInputStream(), RestVariable.class);
@@ -204,6 +203,7 @@ public class VesselController extends AbstractController {
             throw new ActivitiIllegalArgumentException(
                     "Variable name in the body should be equal to the name used in the requested URL.");
         }
+        System.out.println(restVariable.toString());
         globalVariables.createOrUpdateVariableByRestVar(processInstanceId, variableName, restVariable);
         return new ResponseEntity<RestVariable>(restVariable, HttpStatus.OK);
     }
@@ -230,7 +230,6 @@ public class VesselController extends AbstractController {
         RestVariable restVariable = null;
         try {
             restVariable = objectMapper.readValue(request.getInputStream(), RestVariable.class);
-            System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete :" + restVariable.toString());
         } catch (Exception e) {
             throw new ActivitiIllegalArgumentException(
                     "request body could not be transformed to a RestVariable instance.");
@@ -243,14 +242,15 @@ public class VesselController extends AbstractController {
             throw new ActivitiIllegalArgumentException(
                     "Variable name in the body should be equal to the name used in the requested URL.");
         }
-        System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete begin...");
+
+        System.out.println("/zbq/variables/" + processInstanceId + "/" + variableName + "/complete begin...\nrestVariable=" + restVariable.toString());
 
         //PUT to engine
         result = baseExcutionVariableResource.setSimpleVariable(restVariable, execution, true);
         //PUT to cache
         globalVariables.createOrUpdateVariableByRestVar(processInstanceId, variableName, restVariable);
 
-        System.out.println("/zbq/variables/{processInstanceId}/{variableName}/complete done...");
+        System.out.println("/zbq/variables/" + processInstanceId + "/" + variableName + "/complete done...");
         return new ResponseEntity<RestVariable>(result, HttpStatus.OK);
     }
 
