@@ -12,7 +12,7 @@
 [Run Configuration](Run_Configuration.md)
 
 ## Dependencies
--   [`The Simulator of vessel and wagon`](https://www.github.com/sonnyhcl/Frontend)
+-   [`The Simulator of vessel and wagon`](https://github.com/sonnyhcl/Frontend/tree/lambda)
 
     > Attention: In order to perform as [demo](#demo) shows, The `Activiti Backend` project must be coordinated with the `Vessel Frontend` project.
 -   [`Coordinator`](https://github.com/sonnyhcl/coordinator)
