@@ -1,12 +1,13 @@
 # README
 ## Table Of Contents
--   [Demo](#demo)
+-   [Video](#video)
 -   [Run configuration](#run-configuration)
 -   [Dependencies](#dependencies)
 -   [Repository organizing](#repository-organizing)
 
-## Demo
-[demo video in dropbox](https://www.dropbox.com/s/gi2rrvfkl17vlng/vessel.mp4?dl=0)
+
+## Video
+[Demo video](https://www.dropbox.com/s/kvhavse90hicdi9/cases_demo.mp4?dl=0)
 
 ## Run configuration
 [Run Configuration](Run_Configuration.md)
