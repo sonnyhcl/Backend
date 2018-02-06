@@ -1,8 +1,9 @@
 # README
 ## Table Of Contents
--   [Demo](#demo)
+-   [Video](#Video)
 -   [Run in Intellij IDEA (recommend)](#run-in-intellij-idea)
 -   [Run in Spring Tool Suite](#run-in-spring-tool-suite)
+
 ## Repo tree
 ```bash
 com/zbq/                 # Implementation of global cache and message queue
@@ -89,13 +90,11 @@ supplychain/entity/     # Some custom Types for process model.
 ├── VPort.java
 ├── Weagon.java
 └── WPort.java
-
-
-
 ```
 
-## Demo
-[demo video in dropbox](https://www.dropbox.com/s/gi2rrvfkl17vlng/vessel.mp4?dl=0)
+## Video
+[Demo video](https://www.dropbox.com/s/kvhavse90hicdi9/cases_demo.mp4?dl=0)
+
 ## Run in `Intellij IDEA`
 1.  Download development tool:
 
@@ -103,7 +102,7 @@ supplychain/entity/     # Some custom Types for process model.
     
     Web Container: [Tomcat](http://tomcat.apache.org/)
     
-    Database: [Mysql](https://www.mysql.com/)
+    Database: [MYSQL](https://www.mysql.com/)
 
 2.  Clone Source Code:
 
