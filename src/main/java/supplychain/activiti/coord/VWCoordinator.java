@@ -82,6 +82,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			List<WPort> candinateWports = new ArrayList<WPort>(); //候选港口信息
 			HashMap<String , JSONObject> routeMp = new HashMap<String , JSONObject>();
 //			List<WPort> validPorts =  new ArrayList<WPort>();
+			System.out.println("车当前位置 ： （"+ w_xc+ " , "+w_yc+")");
 			for(int i = 0 ; i < wTargLocList.size() ; i++) {		//计算成本	
 				WPort nowWport = wTargLocList.get(i);
 				VPort nowVport = vpMap.get(nowWport.getPname());
@@ -100,6 +101,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 //						nowWport.setRoute(route);
 						routeMp.put(nowWport.getPname(), route);
 						candinateWports.add(nowWport);
+						//System.out.println(nowWport.getPname()+" : "+nowWport.getSupCost());
 					}
 //					validPorts.add(nowWport);
 				}
@@ -125,8 +127,9 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 			for(int i = 0 ; i < candinateWports.size() ; i++) {
 				WPort twp = candinateWports.get(i);
 				double co = (1 - Math.pow(k, i+1))*twp.getSupCost();
-				twp.setSupCost(co);
-				candinateWports.set(i, twp);
+				//twp.setSupCost(co);
+			//	candinateWports.set(i, twp);
+				System.out.println(twp.getPname()+" : "+twp.getSupCost()+" , "+co);
 				if(co < minCost) {
 					minCost =co;
 					destPort = twp;
@@ -146,12 +149,14 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 				e.getData().put("W_Info", w_info);
 				e.getData().put("wDestPort" , new JSONObject(destPort));
 				e.getData().put("vDestPort",  new JSONObject(vpMap.get(destPort.getPname())));
+				e.getData().put("W_TargPortList" , candinateWports);
 				e.getData().put("pathResult", pathResult);
 				e.getData().put("V_pid", vpid);
 				e.getData().put("StartTime",v_start_date);
 				e.getData().put("State", "success");
 				String rea = (String) msgData.get("reason");
 				e.getData().put("Reason", rea);
+				System.out.println("DestPort : "+destPort.getPname());
 			}else{
 				e.getData().put("W_Info", w_info);
 				runtimeService.setVariable(vpid, "dpName", null);
