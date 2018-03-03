@@ -848,12 +848,14 @@ angular.module('activitiApp')
 				  }else{
 					  console.log("相对于上一次离港时间延期");
 				  }
-				  if($scope.dx+$scope.dy < 0 ){
+				  if(parseInt($scope.dx)+parseInt($scope.dy) < 0 ){
 					  adxy = 0;
 				  }else{
-					  adxy = ($scope.dx+$scope.dy)*60*60*1000;
+					  console.log("adxy0 : " , parseInt($scope.dx)+parseInt($scope.dy));
+					  adxy = (parseInt($scope.dx)+parseInt($scope.dy))*60*60*1000;
+					 
 				  }
-				  
+				  console.log("adxy : " , adxy);
 				  $scope.newST = t_newSt;
 				  $scope.newED = t_newEd;
 				  validFlag = true;
@@ -894,10 +896,12 @@ angular.module('activitiApp')
 			        	$scope.pvars[$scope.pidxs['PrePort']].value = angular.copy($scope.newPortList.value[i]);
 			        }
 			        if(x.state == 'AfterAD'){
+			        	 
 					      var s_ms = Date.parse($scope.oldPortList.value[i].estart)+adxy;
 					      var e_ms = Date.parse($scope.oldPortList.value[i].eend)+adxy;
 					      $scope.newPortList.value[i].estart = $scope.ms2dateStr(s_ms);
 					      $scope.newPortList.value[i].eend = $scope.ms2dateStr(e_ms);
+					      console.log("AfterAD : " , $scope.newPortList.value[i] , x);
 			        }
 			        
 			        if(x.pname == $scope.pvars[$scope.pidxs['NextPort']].value.pname){
