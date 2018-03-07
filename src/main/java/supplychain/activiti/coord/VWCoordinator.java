@@ -140,6 +140,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 		
 			VWFEvent e = new VWFEvent(EventType.W_RUN);
 			e.getData().put("createAt", (new Date()).toString());
+			e.getData().put("sp_weight",sp_weight);
 			if(destPort != null){
 				runtimeService.setVariable(vpid, "dpName", destPort.getPname());
 				//runtimeService.setVariable(wpid,"W_TargPortList" , candinateWports);
