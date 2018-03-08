@@ -95,7 +95,7 @@ public class VWCoordinator implements JavaDelegate, Serializable {
 					nowWport.setDist(estiDist);
 					nowWport.setEsTime(estiDateStr);
 					if(DateUtil.TimeMinus(nowVport.getEEnd() ,  nowWport.getEsTime()) >  0) {
-						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime()), 0)*nowVport.getQuayRate()*sp_weight/(60*60*1000) + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
+						double c = Math.max(DateUtil.TimeMinus(nowVport.getEStart() , nowWport.getEsTime()), 0)*nowVport.getQuayRate()*sp_weight/(1000 * 60 * 60) + nowWport.getDist()*nowWport.getCarryRate()*sp_weight;
 						nowWport.setSupCost(c); //暂时把总成本记在这
 						nowWport.setSortFlag(nowVport.getSortFlag());
 //						nowWport.setRoute(route);

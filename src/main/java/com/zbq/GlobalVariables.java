@@ -47,20 +47,20 @@ public class GlobalVariables {
 	public GlobalVariables() {
 		super();
 		this.portsInfo = new ConcurrentHashMap<String, VPort>();
-		this.portsInfo.put("黄石", new VPort("黄石", "AfterAD" , 3.8 , 2.1,"115.13506", "30.21027", true , 0 ));
-		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 5.8,  2.1,"115.5674", "29.83692" , true ,1));
-		this.portsInfo.put("九江", new VPort("九江", "AfterAD" ,3.8,  2.1,"115.95308", "29.72574",true , 2));
-		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,4.2,  2.1,"117.03104", "30.49944", true , 3));
-		this.portsInfo.put("池州", new VPort("池州", "AfterAD" ,3.8,  2.1, "117.52272", "30.7332",  true , 4));
-		this.portsInfo.put("铜陵", new VPort("铜陵", "AfterAD" ,5.6,  2.1, "117.7291", "30.95259", true , 5));
-		this.portsInfo.put("芜湖", new VPort("芜湖", "AfterAD" ,3.8,   2.1, "118.34633", "31.33907", true ,6));
-		this.portsInfo.put("马鞍山", new VPort("马鞍山","AfterAD" , 3.2, 2.1,  "118.45491", "31.729427", true ,7));
-		this.portsInfo.put("南京", new VPort("南京","AfterAD" ,4.3,  2.1,  "118.800095", "32.146214",  true ,8));
-		this.portsInfo.put("仪征", new VPort("仪征", "AfterAD" ,3.8,  2.1,  "119.17036", "32.24261", true ,9));
-		this.portsInfo.put("镇江", new VPort("镇江","AfterAD" , 5.6,  2.1, "119.37172", "32.21107", true ,10));
-		this.portsInfo.put("泰州", new VPort("泰州", "AfterAD" ,3.8,  2.1,  "119.83584", "32.29552", true ,11));
-		this.portsInfo.put("常州", new VPort("常州","AfterAD" , 3.2,  2.1,   "120.006065", "31.976147", true , 12));
-		this.portsInfo.put("江阴", new VPort("江阴", "AfterAD" ,3.8,  2.1,  "120.250824", "31.93615", true ,13));
+		this.portsInfo.put("黄石", new VPort("黄石", "AfterAD" , 3.8 , 21,"115.13506", "30.21027", true , 0 ));
+		this.portsInfo.put("武穴", new VPort("武穴","AfterAD" , 5.8,  21,"115.5674", "29.83692" , true ,1));
+		this.portsInfo.put("九江", new VPort("九江", "AfterAD" ,3.8,  21,"115.95308", "29.72574",true , 2));
+		this.portsInfo.put("安庆", new VPort("安庆", "AfterAD" ,4.2,  21,"117.03104", "30.49944", true , 3));
+		this.portsInfo.put("池州", new VPort("池州", "AfterAD" ,3.8,  21, "117.52272", "30.7332",  true , 4));
+		this.portsInfo.put("铜陵", new VPort("铜陵", "AfterAD" ,5.6,  21, "117.7291", "30.95259", true , 5));
+		this.portsInfo.put("芜湖", new VPort("芜湖", "AfterAD" ,3.8,   21, "118.34633", "31.33907", true ,6));
+		this.portsInfo.put("马鞍山", new VPort("马鞍山","AfterAD" , 3.2, 21,  "118.45491", "31.729427", true ,7));
+		this.portsInfo.put("南京", new VPort("南京","AfterAD" ,4.3,  21,  "118.800095", "32.146214",  true ,8));
+		this.portsInfo.put("仪征", new VPort("仪征", "AfterAD" ,3.8,  21,  "119.17036", "32.24261", true ,9));
+		this.portsInfo.put("镇江", new VPort("镇江","AfterAD" , 5.6,  21, "119.37172", "32.21107", true ,10));
+		this.portsInfo.put("泰州", new VPort("泰州", "AfterAD" ,3.8,  21,  "119.83584", "32.29552", true ,11));
+		this.portsInfo.put("常州", new VPort("常州","AfterAD" , 3.2,  21,   "120.006065", "31.976147", true , 12));
+		this.portsInfo.put("江阴", new VPort("江阴", "AfterAD" ,3.8,  21,  "120.250824", "31.93615", true ,13));
 		variableMap = new ConcurrentHashMap<String, JSONArray>();
 		
 		this.carRateMp = new ConcurrentHashMap<String, Double>();

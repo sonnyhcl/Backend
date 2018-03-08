@@ -931,12 +931,25 @@ angular.module('activitiApp')
 		        		$scope.pidxs = $scope.createPidxs($scope.pvars);
 		        		console.log("Docking sendMsgVWC ",$scope.pvars[$scope.pidxs['W_pid']]);
 		        		if($scope.pvars[$scope.pidxs['W_pid']]!= null){
+		        			var tempdx='';
+		        			var tempdy='';
+		        			if($scope.dx>0){
+		        				tempdx="推迟"+$scope.dx+"h进港,";
+		        			}else if($scope.dx<0){
+		        				tempdx="提前"+(-$scope.dx)+"h进港,";
+		        			}
+		        			if($scope.dy>0){
+		        				tempdy="推迟"+$scope.dy+"h离港";
+		        			}else if($scope.dy<0){
+		        				tempdy="提前"+(-$scope.dy)+"h离港";
+		        			}
 		        			var data2VWC = {
 		    		    			 'msgType' : "msg_UpdateDest" ,
 		    		    			 'V_pid'  : $scope.model.task.processInstanceId ,
 		    		    			 'W_pid' : $scope.pvars[$scope.pidxs['W_pid']].value ,
-		    		    			 'reason' : $scope.pvars[$scope.pidxs['PrePort']].value.pname+"港 ："+ "延误 :  "+$scope.dx+"h,"+"延期 ： "+$scope.dy+"h"
+		    		    			 'reason' : tempdx+tempdy
 		    		    	};
+		      
 		    		    	$http.post(ACTIVITI.CONFIG.contextRoot + "/api/coord/messages/Msg_StartVWC", data2VWC)
 		    	             .success(function (data) {
 		    	                 console.log("Send Message to VMC!", data);
